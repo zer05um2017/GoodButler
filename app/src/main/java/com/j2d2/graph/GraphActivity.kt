@@ -1,4 +1,4 @@
-package com.j2d2.goodbutler
+package com.j2d2.graph
 
 import android.graphics.Color
 import android.os.Bundle
@@ -7,14 +7,15 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import kotlinx.android.synthetic.main.activity_main.*
+import com.j2d2.R
+import kotlinx.android.synthetic.main.activity_graph.*
 
-class MainActivity : AppCompatActivity() {
+class GraphActivity : AppCompatActivity() {
     private var data: ArrayList<Entry>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_graph)
 
         if(savedInstanceState != null) {
             this.data = savedInstanceState.getSerializable("chart") as ArrayList<Entry>?

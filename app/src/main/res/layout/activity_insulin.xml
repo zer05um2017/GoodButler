@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GraphActivity">
+
+    <Button
+        android:id="@+id/btnInsert"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="17dp"
+        android:text="완       료"
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="22dp"
+        android:editable="true"
+        android:text="처방시간"
+        android:textAlignment="textEnd"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        tools:layout_editor_absoluteY="731dp" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:text="종       류"
+        android:textAlignment="textEnd"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:text="원액용량"
+        android:textAlignment="textEnd"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/textView6"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:text="주  사  량"
+        android:textAlignment="textEnd"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/textView8"
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="38dp"
+        android:text="메       모"
+        android:textAlignment="textEnd"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/textView11"
+        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+    <Button
+        android:id="@+id/btnList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="전체목록"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView12" />
+
+    <Button
+        android:id="@+id/btnDeleteAll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="전체삭제"
+        app:layout_constraintStart_toStartOf="@+id/btnList"
+        app:layout_constraintTop_toBottomOf="@+id/btnList" />
+
+    <EditText
+        android:id="@+id/editTextDate"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
+        android:editable="false"
+        android:ems="10"
+        android:focusable="false"
+        android:hint="06/07/2020"
+        android:inputType="date"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextTime"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:editable="false"
+        android:ems="10"
+        android:focusable="false"
+        android:hint="18:10"
+        android:inputType="time"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/editTextDate"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextNumber"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:focusable="auto"
+        android:hint="0.5"
+        android:inputType="numberDecimal"
+        android:textAlignment="textEnd"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/textView8"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup7" />
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="32dp"
+        android:focusable="auto"
+        android:text="희석"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/textView9"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup7" />
+
+    <EditText
+        android:id="@+id/editTextNumber2"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:focusable="auto"
+        android:hint="20"
+        android:inputType="numberDecimal"
+        android:textAlignment="textEnd"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/textView11"
+        app:layout_constraintTop_toBottomOf="@+id/editTextNumber" />
+
+    <EditText
+        android:id="@+id/editTextTextMultiLine2"
+        android:layout_width="250dp"
+        android:layout_height="115dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:focusable="auto"
+        android:gravity="start|top"
+        android:hint="오이 30g \n당근 30g"
+        android:inputType="textMultiLine"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/textView12"
+        app:layout_constraintTop_toBottomOf="@+id/editTextNumber2" />
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="iu"
+        android:textSize="16sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/editTextNumber2"
+        app:layout_constraintStart_toEndOf="@+id/editTextNumber2" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="22dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toEndOf="@+id/textView6"
+        app:layout_constraintTop_toBottomOf="@+id/editTextDate">
+
+        <RadioButton
+            android:id="@+id/radioButton"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:focusable="auto"
+            android:selectAllOnFocus="true"
+            android:text="휴물린엔"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:focusable="auto"
+            android:text="캐닌슐린"
+            android:textSize="18sp" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="iu"
+        android:textSize="16sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/editTextNumber"
+        app:layout_constraintStart_toEndOf="@+id/editTextNumber" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.j2d2.goodbutler
+package com.j2d2.graph
 
 import org.junit.Test
 
