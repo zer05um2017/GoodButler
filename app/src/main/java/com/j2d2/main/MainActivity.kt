@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.j2d2.R
 import com.j2d2.graph.GraphActivity
 import com.j2d2.insulin.InsulinActivity
+import com.j2d2.pedometer.PedometerActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -20,6 +21,11 @@ class MainActivity : AppCompatActivity() {
 
         btnInsulin.setOnClickListener {
             val intent = Intent(this@MainActivity, InsulinActivity::class.java)
+            startActivity(intent)
+        }
+
+        btnPedometer.setOnClickListener {
+            val intent = Intent(this@MainActivity, PedometerActivity::class.java)
             startActivity(intent)
         }
     }

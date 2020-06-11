@@ -30,7 +30,7 @@ class InsulinActivity : AppCompatActivity() {
 
     private fun setCurrentDate() {
         val cal = Calendar.getInstance()
-        val myFormat = "M/dd/yyyy" // mention the format you needa
+        val myFormat = "M-dd-yyyy" // mention the format you needa
         val sdf = SimpleDateFormat(myFormat, Locale.US)
         editTextDate.setText(sdf.format(cal.time))
     }

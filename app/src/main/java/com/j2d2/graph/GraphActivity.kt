@@ -36,7 +36,7 @@ class GraphActivity : AppCompatActivity() {
         d1.lineWidth = 2.5f
         d1.circleRadius = 4.5f
         d1.highLightColor = Color.rgb(244, 117, 117)
-        d1.setDrawValues(false)
+        d1.setDrawValues(true)
         val sets = arrayListOf<ILineDataSet>()
         sets.add(d1)
         return LineData(sets)

@@ -8,22 +8,35 @@
 
     <Button
         android:id="@+id/btnGraph"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="63dp"
+        android:layout_marginTop="21dp"
         android:text="Graph"
         android:textAllCaps="false"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/btnPedometer"
+        app:layout_constraintStart_toStartOf="@+id/btnPedometer"
+        app:layout_constraintTop_toBottomOf="@+id/btnInsulin" />
 
     <Button
         android:id="@+id/btnInsulin"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="45dp"
+        android:layout_marginTop="81dp"
         android:text="Insulin"
         android:textAllCaps="false"
-        app:layout_constraintBaseline_toBaselineOf="@+id/btnGraph"
-        app:layout_constraintStart_toEndOf="@+id/btnGraph" />
+        app:layout_constraintEnd_toEndOf="@+id/btnGraph"
+        app:layout_constraintStart_toStartOf="@+id/btnGraph"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnPedometer"
+        android:layout_width="136dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="39dp"
+        android:layout_marginTop="22dp"
+        android:text="Pedometer"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnGraph" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
