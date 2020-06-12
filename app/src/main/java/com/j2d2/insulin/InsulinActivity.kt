@@ -30,7 +30,7 @@ class InsulinActivity : AppCompatActivity() {
 
     private fun setCurrentDate() {
         val cal = Calendar.getInstance()
-        val myFormat = "M-dd-yyyy" // mention the format you needa
+        val myFormat = "yyyy-MM-dd"
         val sdf = SimpleDateFormat(myFormat, Locale.US)
         editTextDate.setText(sdf.format(cal.time))
     }
@@ -44,23 +44,37 @@ class InsulinActivity : AppCompatActivity() {
 
     private fun setDataEventListener() {
         btnInsert.setOnClickListener {
+            if(editTextDate.text.trim().isEmpty()) return@setOnClickListener
+            if(editTextTime.text.trim().isEmpty()) return@setOnClickListener
+
             CoroutineScope(Dispatchers.IO).launch {
-                appDatabase?.userDao()?.insert(User(0, "엥", "휴"))
+                appDatabase?.insulinDao()?.insert(
+                    Insulin(
+                        uid = 0,
+                        date = editTextDate.text.toString(),
+                        time = editTextTime.text.toString(),
+                        type = if(rdoHumulinN.isChecked) 0 else 1,
+                        undiluted = editUndiluted.text.toString().toFloat(),
+                        totalCapacity = editTotalCapacity.text.toString().toFloat(),
+                        dilution = if(chkDilution.isChecked) 1 else 0,
+                        remark = editRemark.text.toString()
+                    )
+                )
             }
         }
 
         btnList.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
-                val user = appDatabase?.userDao()?.getAll()
-                for (u:User in user!!) {
-                    println("${u.uid} => First Name : ${u.firstName.toString()} Last Name : ${u.lastName.toString()}")
-                }
+//                val user = appDatabase?.userDao()?.getAll()
+//                for (u:User in user!!) {
+//                    println("${u.uid} => First Name : ${u.firstName.toString()} Last Name : ${u.lastName.toString()}")
+//                }
             }
         }
 
         btnDeleteAll.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
-                appDatabase?.userDao()?.deleteAll()
+                appDatabase?.insulinDao()?.deleteAll()
             }
         }
     }

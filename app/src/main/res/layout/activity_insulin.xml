@@ -141,7 +141,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editTextNumber"
+        android:id="@+id/editUndiluted"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -153,10 +153,10 @@
         android:textAlignment="textEnd"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView8"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup7" />
+        app:layout_constraintTop_toBottomOf="@+id/rdoInsulinType" />
 
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/chkDilution"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -165,10 +165,10 @@
         android:text="희석"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/textView9"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup7" />
+        app:layout_constraintTop_toBottomOf="@+id/rdoInsulinType" />
 
     <EditText
-        android:id="@+id/editTextNumber2"
+        android:id="@+id/editTotalCapacity"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -180,10 +180,10 @@
         android:textAlignment="textEnd"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView11"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber" />
+        app:layout_constraintTop_toBottomOf="@+id/editUndiluted" />
 
     <EditText
-        android:id="@+id/editTextTextMultiLine2"
+        android:id="@+id/editRemark"
         android:layout_width="250dp"
         android:layout_height="115dp"
         android:layout_marginStart="30dp"
@@ -195,7 +195,7 @@
         android:inputType="textMultiLine"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView12"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber2" />
+        app:layout_constraintTop_toBottomOf="@+id/editTotalCapacity" />
 
     <TextView
         android:id="@+id/textView10"
@@ -203,11 +203,11 @@
         android:layout_height="wrap_content"
         android:text="iu"
         android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/editTextNumber2"
-        app:layout_constraintStart_toEndOf="@+id/editTextNumber2" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/editTotalCapacity"
+        app:layout_constraintStart_toEndOf="@+id/editTotalCapacity" />
 
     <RadioGroup
-        android:id="@+id/radioGroup7"
+        android:id="@+id/rdoInsulinType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -217,7 +217,7 @@
         app:layout_constraintTop_toBottomOf="@+id/editTextDate">
 
         <RadioButton
-            android:id="@+id/radioButton"
+            android:id="@+id/rdoHumulinN"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:checked="true"
@@ -227,7 +227,7 @@
             android:textSize="18sp" />
 
         <RadioButton
-            android:id="@+id/radioButton3"
+            android:id="@+id/rdoCaninsulin"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -243,7 +243,7 @@
         android:layout_height="wrap_content"
         android:text="iu"
         android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/editTextNumber"
-        app:layout_constraintStart_toEndOf="@+id/editTextNumber" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/editUndiluted"
+        app:layout_constraintStart_toEndOf="@+id/editUndiluted" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

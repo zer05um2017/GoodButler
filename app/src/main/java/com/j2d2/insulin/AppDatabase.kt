@@ -7,7 +7,8 @@ import androidx.room.RoomDatabase
 
 @Database(entities = arrayOf(User::class), version = 1)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
+//    abstract fun userDao(): UserDao
+    abstract fun insulinDao(): InsulinDao
 
     companion object {
         private var INSTANCE: AppDatabase? = null
@@ -18,7 +19,7 @@ abstract class AppDatabase : RoomDatabase() {
                     INSTANCE = Room.databaseBuilder(
                         context.applicationContext,
                         AppDatabase::class.java,
-                        "db.db"
+                        "lovelyterry.db"
                     ).build()
                 }
             }
