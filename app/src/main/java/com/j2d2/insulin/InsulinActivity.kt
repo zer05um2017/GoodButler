@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import com.j2d2.R
 import kotlinx.android.synthetic.main.activity_insulin.*
 import kotlinx.coroutines.CoroutineScope
@@ -44,16 +45,23 @@ class InsulinActivity : AppCompatActivity() {
 
     private fun setDataEventListener() {
         btnInsert.setOnClickListener {
-            if(editTextDate.text.trim().isEmpty()) return@setOnClickListener
-            if(editTextTime.text.trim().isEmpty()) return@setOnClickListener
+            if(editUndiluted.text.trim().isEmpty()) {
+                Toast.makeText(this@InsulinActivity, "원액 용량을 입력하세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if(editTotalCapacity.text.trim().isEmpty()) {
+                Toast.makeText(this@InsulinActivity, "인슐린 주사량을 입력하세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             CoroutineScope(Dispatchers.IO).launch {
                 appDatabase?.insulinDao()?.insert(
                     Insulin(
                         uid = 0,
-                        date = editTextDate.text.toString(),
-                        time = editTextTime.text.toString(),
-                        type = if(rdoHumulinN.isChecked) 0 else 1,
+                        date = editTextDate.text.toString().replace("-",""),
+                        time = editTextTime.text.toString().replace(":",""),
+                        type = if(rdoDried.isChecked) 0 else 1,
                         undiluted = editUndiluted.text.toString().toFloat(),
                         totalCapacity = editTotalCapacity.text.toString().toFloat(),
                         dilution = if(chkDilution.isChecked) 1 else 0,
@@ -65,10 +73,23 @@ class InsulinActivity : AppCompatActivity() {
 
         btnList.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
-//                val user = appDatabase?.userDao()?.getAll()
-//                for (u:User in user!!) {
-//                    println("${u.uid} => First Name : ${u.firstName.toString()} Last Name : ${u.lastName.toString()}")
-//                }
+                val cal = Calendar.getInstance()
+                val myFormat = "yyyyMMdd" // mention the format you need
+                val sdf = SimpleDateFormat(myFormat, Locale.US)
+//                cal.set(year, monthOfYear, dayOfMonth)
+//                sdf.format(cal.time)
+                val insulins = appDatabase?.insulinDao()?.findByToday(sdf.format(cal.time).toString()) ?: return@launch
+                for (ins:Insulin in insulins) {
+                    println("${ins.uid} => date : ${ins.date.toString()}")
+                    println("${ins.uid} => time : ${ins.time.toString()}")
+                    println("${ins.uid} => type : ${if(ins.type == 0) "휴물린엔" else "캐닌슐린"}")
+                    println("${ins.uid} => undt : ${ins.undiluted.toString()}")
+                    println("${ins.uid} => dilt : ${if(ins.dilution == 1) "희석" else "희석X"}")
+                    println("${ins.uid} => volm : ${ins.totalCapacity.toString()}")
+                    println("${ins.uid} => remk : ${ins.remark.toString()}")
+                    println("============================")
+                    println("============================")
+                }
             }
         }
 
@@ -89,7 +110,7 @@ class InsulinActivity : AppCompatActivity() {
                     val m = cal.get(Calendar.MONTH)
                     val d = cal.get(Calendar.DAY_OF_MONTH)
                     val datepickerdialog:DatePickerDialog = DatePickerDialog(this@InsulinActivity, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-                        val myFormat = "MM/dd/yyyy" // mention the format you needa
+                        val myFormat = "yyyy-MM-dd" // mention the format you need
                         val sdf = SimpleDateFormat(myFormat, Locale.US)
                         cal.set(year, monthOfYear, dayOfMonth)
                         editTextDate!!.setText(sdf.format(cal.time))

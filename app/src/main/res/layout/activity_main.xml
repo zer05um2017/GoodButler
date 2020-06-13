@@ -8,7 +8,7 @@
 
     <Button
         android:id="@+id/btnGraph"
-        android:layout_width="0dp"
+        android:layout_width="136dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="21dp"
         android:text="Graph"
@@ -19,7 +19,7 @@
 
     <Button
         android:id="@+id/btnInsulin"
-        android:layout_width="0dp"
+        android:layout_width="136dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="81dp"
         android:text="Insulin"
@@ -32,11 +32,21 @@
         android:id="@+id/btnPedometer"
         android:layout_width="136dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="39dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="22dp"
         android:text="Pedometer"
         android:textAllCaps="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnGraph" />
+
+    <Button
+        android:id="@+id/btnFeeding"
+        android:layout_width="136dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:text="Feeding"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toStartOf="@+id/btnPedometer"
+        app:layout_constraintTop_toBottomOf="@+id/btnPedometer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

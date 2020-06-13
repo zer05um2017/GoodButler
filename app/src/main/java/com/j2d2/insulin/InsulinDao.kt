@@ -1,22 +1,18 @@
 package com.j2d2.insulin
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface InsulinDao {
-    @Query("SELECT * FROM insulin")
-    fun getAll(): List<Insulin>
+//    @Query("SELECT * FROM insulin")
+//    fun getAll(): List<Insulin>
 
-    @Query("SELECT * FROM user WHERE uid IN (:userIds)")
-    fun loadAllByIds(userIds: IntArray): List<Insulin>
+//    @Query("SELECT * FROM insulin WHERE uid IN (:userIds)")
+//    fun loadAllByIds(userIds: IntArray): List<Insulin>
 
-    @Query("SELECT * FROM insulin WHERE first_name LIKE :first AND " +
-            "last_name LIKE :last LIMIT 1")
-    fun findByName(first: String, last: String): Insulin
+    @Query("SELECT * FROM insulin WHERE date LIKE :today ORDER BY date, time DESC")
+    fun findByToday(today: String): List<Insulin>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg insulin: Insulin)
 
 //    @Insert

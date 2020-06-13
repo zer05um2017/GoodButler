@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.j2d2.R
+import com.j2d2.feeding.FeedingActivity
 import com.j2d2.graph.GraphActivity
 import com.j2d2.insulin.InsulinActivity
 import com.j2d2.pedometer.PedometerActivity
@@ -26,6 +27,11 @@ class MainActivity : AppCompatActivity() {
 
         btnPedometer.setOnClickListener {
             val intent = Intent(this@MainActivity, PedometerActivity::class.java)
+            startActivity(intent)
+        }
+
+        btnFeeding.setOnClickListener {
+            val intent = Intent(this@MainActivity, FeedingActivity::class.java)
             startActivity(intent)
         }
     }
