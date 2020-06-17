@@ -1,5 +1,6 @@
 package com.j2d2.insulin
 
+import android.app.Application
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
@@ -27,13 +28,12 @@ class InsulinActivity : AppCompatActivity() {
 
     companion object {
         fun isOverMashmellow(): Boolean {
-            if(Build.VERSION <= 23) {
-                return false
+            if(Build.VERSION.SDK_INT >= 23) {
+                return true
             }
-            return true
+            return false
         }
     }
-
     private val sharedEnPreferences: SharedPreferences by lazy {
         val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
         val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
@@ -47,7 +47,7 @@ class InsulinActivity : AppCompatActivity() {
     }
 
     private val sharedPreferences: SharedPreferences by lazy {
-        this@InsulinActivity?.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+        applicationContext.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +59,11 @@ class InsulinActivity : AppCompatActivity() {
         setDateTimeListener()
         setCurrentDate()
         setCurrentTime()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        getLatestInputDataFromPreference()
     }
 
     /**
@@ -125,10 +130,10 @@ class InsulinActivity : AppCompatActivity() {
      * 주사량
      * @since 2020.06.17
      * @author perry912
-     * @return float type
+     * @return int type
      */
-    private fun getTotalInjectionCapacity(): Float {
-        return editTotalCapacity.text.toString().toFloat()
+    private fun getTotalInjectionCapacity(): Int {
+        return editTotalCapacity.text.toString().toInt()
     }
 
     /**
@@ -213,20 +218,29 @@ class InsulinActivity : AppCompatActivity() {
      * 현재 입력 값 암호화해서 Preference에 저장
      */
     private fun setLatestInputDataIntoPreference() {
+        val sharedPrefsEditor: SharedPreferences.Editor
 
-        try {
-            val sharedPrefsEditor = sharedEnPreferences.edit()
-
-            sharedPrefsEditor.putInt(R.string.com_j2d2_insulin_ins_type.toString(), getInsulinType())
-            sharedPrefsEditor.putFloat(R.string.com_j2d2_insulin_ins_undiluted_capacity.toString(), getUndilutedCapacity())
-            sharedPrefsEditor.putFloat(R.string.com_j2de_insulin_ins_message_total_insulin_capacity.toString(), getTotalInjectionCapacity())
-            sharedPrefsEditor.putInt(R.string.com_j2d2_insulin_ins_dilution.toString(), isDiluted())
-            sharedPrefsEditor.putString(R.string.com_j2d2_insulin_ins_memo.toString(), getMemo())
+        if(isOverMashmellow()) {
+            sharedPrefsEditor = sharedEnPreferences.edit()
+        } else {
+            sharedPrefsEditor = sharedPreferences.edit()
         }
+
+        sharedPrefsEditor.putInt(R.string.com_j2d2_insulin_ins_type.toString(), getInsulinType())
+        sharedPrefsEditor.putFloat(R.string.com_j2d2_insulin_ins_undiluted_capacity.toString(), getUndilutedCapacity())
+        sharedPrefsEditor.putInt(R.string.com_j2de_insulin_ins_message_total_insulin_capacity.toString(), getTotalInjectionCapacity())
+        sharedPrefsEditor.putInt(R.string.com_j2d2_insulin_ins_dilution.toString(), isDiluted())
+        sharedPrefsEditor.putString(R.string.com_j2d2_insulin_ins_memo.toString(), getMemo())
     }
 
     private fun getLatestInputDataFromPreference() {
-        val sharedPrefsReader = sharedEnPreferences
+        val sharedPrefsReader: SharedPreferences
+
+        if(isOverMashmellow()) {
+            sharedPrefsReader = sharedEnPreferences
+        } else {
+            sharedPrefsReader = sharedPreferences
+        }
 
         if(sharedPrefsReader.getInt(R.string.com_j2d2_insulin_ins_type.toString(), 0) == 0) {
             rdoHumulinN.callOnClick()
@@ -235,7 +249,7 @@ class InsulinActivity : AppCompatActivity() {
         }
 
         editUndiluted.setText(sharedPrefsReader.getFloat(R.string.com_j2d2_insulin_ins_undiluted_capacity.toString(), 0.0F).toString())
-        editTotalCapacity.setText(sharedPrefsReader.getFloat(R.string.com_j2de_insulin_ins_message_total_insulin_capacity.toString(),0.0F).toString())
+        editTotalCapacity.setText(sharedPrefsReader.getInt(R.string.com_j2de_insulin_ins_message_total_insulin_capacity.toString(),0).toString())
 
         if(sharedPrefsReader.getInt(R.string.com_j2d2_insulin_ins_dilution.toString(), 0) == 0) {
             rdoHumulinN.callOnClick()
