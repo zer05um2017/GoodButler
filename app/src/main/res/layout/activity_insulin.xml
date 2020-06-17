@@ -218,7 +218,7 @@
         app:layout_constraintTop_toBottomOf="@+id/editTextDate">
 
         <RadioButton
-            android:id="@+id/rdoDried"
+            android:id="@+id/rdoHumulinN"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:checked="true"
@@ -228,7 +228,7 @@
             android:textSize="18sp" />
 
         <RadioButton
-            android:id="@+id/rdoHumid"
+            android:id="@+id/rdoCaninsulin"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

@@ -1,3 +1,17 @@
 <resources>
+    <!-- App Name -->
     <string name="app_name">GoodButler</string>
+
+    <!-- Preference -->
+    <string name="preference_file_key">EncrypedInfo</string>
+
+    <!-- Insulin Activity -->
+    <string name="com.j2d2.insulin.ins_type">ins_type</string>
+    <string name="com.j2d2.insulin.ins_undiluted_capacity">ins_undiluted_capacity</string>
+    <string name="com.j2d2.insulin.ins_total_capacity">ins_total_capacity</string>
+    <string name="com.j2d2.insulin.ins_dilution">ins_dilution</string>
+    <string name="com.j2d2.insulin.ins_memo">ins_memo</string>
+    <string name="com.j2de.insulin.ins_message.undiluted_capacity">원액 용량을 입력하세요.</string>
+    <string name="com.j2de.insulin.ins_message.total_insulin_capacity">인슐린 주사량을 입력하세요.</string>
+    <string name="com.j2de.insulin.ins_message.input_complete">입력이 완료 되었습니다.</string>
 </resources>

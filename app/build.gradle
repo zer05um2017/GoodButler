@@ -26,6 +26,7 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.security:security-crypto:1.0.0-alpha02'
     def room_version = "2.2.3"
     def lifecycle_version = "2.2.0"
     implementation fileTree(dir: "libs", include: ["*.jar"])
