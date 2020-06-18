@@ -7,7 +7,7 @@
     tools:context="com.j2d2.insulin.InsulinActivity">
 
     <Button
-        android:id="@+id/btnInsert"
+        android:id="@+id/btnSave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -98,6 +98,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="전체목록"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
@@ -107,6 +108,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="전체삭제"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@+id/btnList"
         app:layout_constraintTop_toBottomOf="@+id/btnList" />
 
@@ -154,7 +156,7 @@
         android:textAlignment="textEnd"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView8"
-        app:layout_constraintTop_toBottomOf="@+id/rdoFeedingType" />
+        app:layout_constraintTop_toBottomOf="@+id/rdoInsulinType" />
 
     <CheckBox
         android:id="@+id/chkDilution"
@@ -166,7 +168,7 @@
         android:text="희석"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/textView9"
-        app:layout_constraintTop_toBottomOf="@+id/rdoFeedingType" />
+        app:layout_constraintTop_toBottomOf="@+id/rdoInsulinType" />
 
     <EditText
         android:id="@+id/editTotalCapacity"
@@ -208,7 +210,7 @@
         app:layout_constraintStart_toEndOf="@+id/editTotalCapacity" />
 
     <RadioGroup
-        android:id="@+id/rdoFeedingType"
+        android:id="@+id/rdoInsulinType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -221,7 +223,7 @@
             android:id="@+id/rdoHumulinN"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:checked="true"
+            android:checked="false"
             android:focusable="auto"
             android:selectAllOnFocus="true"
             android:text="휴물린엔"
@@ -232,6 +234,7 @@
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:checked="false"
             android:focusable="auto"
             android:text="캐닌슐린"
             android:textSize="18sp" />

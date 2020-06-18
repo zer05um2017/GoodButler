@@ -8,13 +8,12 @@
     tools:context="com.j2d2.feeding.FeedingActivity">
 
     <Button
-        android:id="@+id/btnInsert"
+        android:id="@+id/btnSave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="17dp"
-        android:background="#FFFFFF"
         android:backgroundTint="@android:color/holo_blue_dark"
         android:text="완       료"
         android:textColor="@android:color/background_light"
@@ -64,20 +63,21 @@
         app:layout_constraintTop_toBottomOf="@+id/editTextTime">
 
         <RadioButton
-            android:id="@+id/rdoHumulinN"
+            android:id="@+id/rdoDryMethod"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:checked="true"
+            android:checked="false"
             android:focusable="auto"
             android:selectAllOnFocus="true"
             android:text="건식"
             android:textSize="18sp" />
 
         <RadioButton
-            android:id="@+id/rdoCaninsulin"
+            android:id="@+id/rdoWetMethod"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:checked="false"
             android:focusable="auto"
             android:text="습식"
             android:textSize="18sp" />

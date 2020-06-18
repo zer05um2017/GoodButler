@@ -1,4 +1,5 @@
 package com.j2d2.insulin
+
 import androidx.room.*
 
 @Dao

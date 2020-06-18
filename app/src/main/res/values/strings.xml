@@ -14,4 +14,13 @@
     <string name="com.j2de.insulin.ins_message.undiluted_capacity">원액 용량을 입력하세요.</string>
     <string name="com.j2de.insulin.ins_message.total_insulin_capacity">인슐린 주사량을 입력하세요.</string>
     <string name="com.j2de.insulin.ins_message.input_complete">입력이 완료 되었습니다.</string>
+
+    <!-- Feeding Activity -->
+    <string name="com.j2d2.feeding.feed_type">feed_type</string>
+    <string name="com.j2d2.feeding.feed_brand_name">feed_brand_name</string>
+    <string name="com.j2d2.feeding.feed_amount">feed_amount</string>
+    <string name="com.j2d2.feeding.feed_memo">feed_memo</string>
+    <string name="com.j2de.feeding.feed_message.brand">사료 브랜드명을 입력하세요.</string>
+    <string name="com.j2de.feeding.feed_message.amount">급여량을 입력하세요.</string>
+    <string name="com.j2de.feeding.feeed_message.input_complete">입력이 완료 되었습니다.</string>
 </resources>
