@@ -8,14 +8,18 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.j2d2.R
+import com.j2d2.main.AppDatabase
 import kotlinx.android.synthetic.main.activity_graph.*
 
 class GraphActivity : AppCompatActivity() {
     private var data: ArrayList<Entry>? = null
+    private var appDatabase: AppDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_graph)
+
+        appDatabase = AppDatabase.getInstance(this)
 
         if(savedInstanceState != null) {
             this.data = savedInstanceState.getSerializable("chart") as ArrayList<Entry>?
