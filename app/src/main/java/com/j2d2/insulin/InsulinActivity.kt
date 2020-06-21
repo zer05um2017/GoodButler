@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
-import com.j2d2.main.AppDB
+import com.j2d2.main.AppDatabase
 import com.j2d2.main.SharedPref
 import kotlinx.android.synthetic.main.activity_insulin.*
 import kotlinx.coroutines.CoroutineScope
@@ -19,14 +19,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class InsulinActivity : AppCompatActivity() {
-//    var appDatabase: AppDatabase? = null
-    var appDatabase: AppDB.AppDatabase? = null
+    var appDatabase: AppDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_insulin)
 
-        appDatabase = AppDB.AppDatabase.getInstance(this)
+        appDatabase = AppDatabase.getInstance(this)
         setDataEventListener()
         setDateTimeListener()
         setCurrentDate()
@@ -127,7 +126,7 @@ class InsulinActivity : AppCompatActivity() {
             if (editUndiluted.text.trim().isEmpty()) {
                 Toast.makeText(
                     this@InsulinActivity,
-                    getString(R.string.com_j2de_insulin_ins_message_undiluted_capacity),
+                    getString(R.string.com_j2d2_insulin_ins_message_undiluted_capacity),
                     Toast.LENGTH_SHORT
                 ).show()
                 return@setOnClickListener
@@ -136,7 +135,7 @@ class InsulinActivity : AppCompatActivity() {
             if (editTotalCapacity.text.trim().isEmpty()) {
                 Toast.makeText(
                     this@InsulinActivity,
-                    getString(R.string.com_j2de_insulin_ins_message_total_insulin_capacity),
+                    getString(R.string.com_j2d2_insulin_ins_message_total_insulin_capacity),
                     Toast.LENGTH_SHORT
                 ).show()
                 return@setOnClickListener
@@ -160,7 +159,7 @@ class InsulinActivity : AppCompatActivity() {
                     setLatestInputDataIntoPreference()
                     Toast.makeText(
                         this@InsulinActivity,
-                        getString(R.string.com_j2de_insulin_ins_message_input_complete),
+                        getString(R.string.com_j2d2_insulin_ins_message_input_complete),
                         Toast.LENGTH_LONG
                     ).show()
                     finish()

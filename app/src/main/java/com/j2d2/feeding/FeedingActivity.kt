@@ -8,8 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
-import com.j2d2.insulin.AppDatabase
-import com.j2d2.main.AppDB
+import com.j2d2.main.AppDatabase
 import com.j2d2.main.SharedPref
 import kotlinx.android.synthetic.main.activity_feeding.*
 import kotlinx.coroutines.CoroutineScope
@@ -20,17 +19,17 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class FeedingActivity : AppCompatActivity() {
-    var appDatabase: AppDB.AppDatabase? = null
+    private var appDatabase: AppDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feeding)
 
-        appDatabase = AppDB.AppDatabase.getInstance(this)
-        this.setDataEventListener()
-        this.setDateTimeListener()
-        this.setCurrentDate()
-        this.setCurrentTime()
+        appDatabase = AppDatabase.getInstance(this)
+        setDataEventListener()
+        setDateTimeListener()
+        setCurrentDate()
+        setCurrentTime()
     }
 
     override fun onStart() {
@@ -41,12 +40,12 @@ class FeedingActivity : AppCompatActivity() {
     private fun setDataEventListener() {
         btnSave.setOnClickListener {
             if (editBrand.text.trim().isEmpty()) {
-                Toast.makeText(this@FeedingActivity, getString(R.string.com_j2de_feeding_feed_message_brand), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@FeedingActivity, getString(R.string.com_j2d2_feeding_feed_message_brand), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             if (editAmount.text.trim().isEmpty()) {
-                Toast.makeText(this@FeedingActivity, getString(R.string.com_j2de_feeding_feed_message_amount), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@FeedingActivity, getString(R.string.com_j2d2_feeding_feed_message_amount), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -54,12 +53,12 @@ class FeedingActivity : AppCompatActivity() {
                 appDatabase?.feedingDao()?.insert(
                     Feeding(
                         uid = 0,
-                        date = editTextDate.text.toString().replace("-",""),
-                        time = editTextTime.text.toString().replace(":",""),
+                        date = getCurrentDate(),
+                        time = getCurrentTime(),
                         type = if(rdoDryMethod.isChecked) 0 else 1,
-                        brandName = editBrand.text.toString().toFloat(),
-                        feedingAmount = editAmount.text.toString().toFloat(),
-                        remark = editRemark.text.toString()
+                        brandName = getBrandName(),
+                        feedingAmount = getFeedingAmount(),
+                        remark = getMemo()
                     )
                 )
 
@@ -67,7 +66,7 @@ class FeedingActivity : AppCompatActivity() {
                     setLatestInputDataIntoPreference()
                     Toast.makeText(
                         this@FeedingActivity,
-                        getString(R.string.com_j2de_feeding_feeed_message_input_complete),
+                        getString(R.string.com_j2d2_feeding_feed_message_input_complete),
                         Toast.LENGTH_LONG
                     ).show()
                     finish()
@@ -130,7 +129,7 @@ class FeedingActivity : AppCompatActivity() {
     }
 
     /**
-     * 인슐린 주사 날짜
+     * 사료 급여 날짜
      * @since 2020.06.18
      * @author perry912
      * @return date
@@ -140,7 +139,7 @@ class FeedingActivity : AppCompatActivity() {
     }
 
     /**
-     * 인슐린 주사 시간
+     * 사료 급여 시간
      * @since 2020.06.18
      * @author perry912
      * @return time
@@ -160,7 +159,7 @@ class FeedingActivity : AppCompatActivity() {
     }
 
     /**
-     * 인슐린 원액량
+     * 사료 브랜드
      * @since 2020.06.17
      * @author perry912
      * @return float type
@@ -170,7 +169,7 @@ class FeedingActivity : AppCompatActivity() {
     }
 
     /**
-     * 주사량
+     * 급여량
      * @since 2020.06.17
      * @author perry912
      * @return int type
@@ -178,7 +177,12 @@ class FeedingActivity : AppCompatActivity() {
     private fun getFeedingAmount(): Int {
         return editAmount.text.toString().toInt()
     }
-
+    /**
+     * 메
+     * @since 2020.06.21
+     * @author perry912
+     * @return String type
+     */
     private fun getMemo(): String {
         return editRemark.text.toString()
     }

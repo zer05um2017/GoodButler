@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.j2d2.R
+import com.j2d2.bloodglucose.BloodGlucoseActivity
 import com.j2d2.feeding.FeedingActivity
 import com.j2d2.graph.GraphActivity
 import com.j2d2.insulin.InsulinActivity
@@ -32,6 +33,11 @@ class MainActivity : AppCompatActivity() {
 
         btnFeeding.setOnClickListener {
             val intent = Intent(this@MainActivity, FeedingActivity::class.java)
+            startActivity(intent)
+        }
+
+        btnBloodGlucose.setOnClickListener {
+            val intent = Intent(this@MainActivity, BloodGlucoseActivity::class.java)
             startActivity(intent)
         }
     }

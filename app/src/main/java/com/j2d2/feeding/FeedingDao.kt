@@ -1,11 +1,9 @@
 package com.j2d2.feeding
 
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.j2d2.insulin.Insulin
 
+@Dao
 interface FeedingDao {
     //    @Query("SELECT * FROM insulin")
 //    fun getAll(): List<Insulin>
@@ -17,7 +15,7 @@ interface FeedingDao {
     fun findByToday(today: String): List<Feeding>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(vararg feeding: Feeding)
+    fun insert(feeding: Feeding)
 
 //    @Insert
 //    fun insertAll(vararg users: Insulin)

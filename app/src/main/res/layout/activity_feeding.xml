@@ -199,7 +199,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="17dp"
         android:layout_marginTop="22dp"
-        android:editable="true"
         android:text="급여시간"
         android:textAlignment="textEnd"
         android:textSize="18sp"
