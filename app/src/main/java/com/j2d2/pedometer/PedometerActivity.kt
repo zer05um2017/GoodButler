@@ -20,6 +20,7 @@ class PedometerActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.title = getString(R.string.com_j2d2_pedometer)
         setContentView(R.layout.activity_pedometer)
 
         try {

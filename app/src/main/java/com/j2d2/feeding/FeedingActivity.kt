@@ -29,6 +29,7 @@ class FeedingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.title = getString(R.string.com_j2d2_feeding)
         setContentView(R.layout.activity_feeding)
 
         appDatabase = AppDatabase.getInstance(this)
@@ -194,6 +195,16 @@ class FeedingActivity : AppCompatActivity() {
     }
 
     /**
+     * 사료종류
+     * @since 2020.06.21
+     * @author perry912
+     * @return 0:건식, 1:습식
+     */
+    private fun isDriedMethod(): Int {
+        return if(rdoDryMethod.isChecked) 0 else 1
+    }
+
+    /**
      * @author perry912
      * @since 2020.06.17
      * 현재 입력 값 암호화해서 Preference에 저장
@@ -212,16 +223,6 @@ class FeedingActivity : AppCompatActivity() {
             putString(R.string.com_j2d2_feeding_feed_memo.toString(), getMemo())
             commit()
         }
-    }
-
-    /**
-     * 사료종류
-     * @since 2020.06.21
-     * @author perry912
-     * @return 0:건식, 1:습식
-     */
-    private fun isDriedMethod(): Int {
-        return if(rdoDryMethod.isChecked) 0 else 1
     }
 
     /**
