@@ -27,4 +27,7 @@
     <!-- BloodGlucoseAcitivity -->
     <string name="com.j2d2.bloodglucose.blood_message.input_complete">입력이 완료 되었습니다.</string>
     <string name="com.j2d2.bloodglucose.blood_message.input_value">혈당값을 입력하세요.</string>
+
+    <!-- PedometerActivity -->
+    <string name="com.j2d2.pedometer.pedometer_message.unsupported_pedometer">해당 기능을 지원하지 않습니다.</string>
 </resources>

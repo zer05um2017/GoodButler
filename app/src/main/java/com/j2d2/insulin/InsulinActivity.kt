@@ -5,6 +5,7 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
@@ -225,38 +226,52 @@ class InsulinActivity : AppCompatActivity() {
      */
     private fun getLatestInputDataFromPreference() {
         with(SharedPref.prefs) {
-            if (getInt(R.string.com_j2d2_insulin_ins_type.toString(), 0) == 0) {
-                rdoHumulinN!!.post {
-                    rdoHumulinN!!.isChecked = true
-                    rdoHumulinN!!.jumpDrawablesToCurrentState()
-                }
-            } else {
-                rdoCaninsulin!!.post {
-                    rdoCaninsulin!!.isChecked = true
-                    rdoCaninsulin!!.jumpDrawablesToCurrentState()
-                }
-            }
-
-            if (getInt(R.string.com_j2d2_insulin_ins_dilution.toString(), 0) == 1) {
-                chkDilution!!.post {
-                    chkDilution!!.isChecked = true
-                    chkDilution!!.jumpDrawablesToCurrentState()
+            if(contains(R.string.com_j2d2_insulin_ins_type.toString())) {
+                if (getInt(R.string.com_j2d2_insulin_ins_type.toString(), 0) == 0) {
+                    rdoHumulinN!!.post {
+                        rdoHumulinN!!.isChecked = true
+                        rdoHumulinN!!.jumpDrawablesToCurrentState()
+                    }
+                } else {
+                    rdoCaninsulin!!.post {
+                        rdoCaninsulin!!.isChecked = true
+                        rdoCaninsulin!!.jumpDrawablesToCurrentState()
+                    }
                 }
             }
 
-            editUndiluted.setText(
-                getFloat(
-                    R.string.com_j2d2_insulin_ins_undiluted_capacity.toString(),
-                    0.0F
-                ).toString()
-            )
-            editTotalCapacity.setText(
-                getInt(
-                    R.string.com_j2d2_insulin_ins_total_capacity.toString(),
-                    0
-                ).toString()
-            )
-            editRemark.setText(getString(R.string.com_j2d2_insulin_ins_memo.toString(), ""))
+            if(contains(R.string.com_j2d2_insulin_ins_dilution.toString())) {
+                if (getInt(R.string.com_j2d2_insulin_ins_dilution.toString(), 0) == 1) {
+                    chkDilution!!.post {
+                        chkDilution!!.isChecked = true
+                        chkDilution!!.jumpDrawablesToCurrentState()
+                    }
+                }
+            }
+
+            if(contains(R.string.com_j2d2_insulin_ins_undiluted_capacity.toString())) {
+                editUndiluted.setText(
+                    getFloat(
+                        R.string.com_j2d2_insulin_ins_undiluted_capacity.toString(),
+                        0.0F
+                    ).toString()
+                )
+            }
+
+            if(contains(R.string.com_j2d2_insulin_ins_total_capacity.toString())) {
+                editTotalCapacity.setText(
+                    getInt(
+                        R.string.com_j2d2_insulin_ins_total_capacity.toString(),
+                        0
+                    ).toString()
+                )
+                editTotalCapacity.requestFocus()
+                window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+            }
+
+            if(contains(R.string.com_j2d2_insulin_ins_memo.toString())) {
+                editRemark.setText(getString(R.string.com_j2d2_insulin_ins_memo.toString(), ""))
+            }
         }
     }
 

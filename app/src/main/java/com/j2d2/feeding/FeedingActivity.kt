@@ -5,12 +5,18 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
 import com.j2d2.main.AppDatabase
 import com.j2d2.main.SharedPref
 import kotlinx.android.synthetic.main.activity_feeding.*
+import kotlinx.android.synthetic.main.activity_feeding.btnSave
+import kotlinx.android.synthetic.main.activity_feeding.editRemark
+import kotlinx.android.synthetic.main.activity_feeding.editTextDate
+import kotlinx.android.synthetic.main.activity_feeding.editTextTime
+import kotlinx.android.synthetic.main.activity_insulin.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -55,7 +61,7 @@ class FeedingActivity : AppCompatActivity() {
                         uid = 0,
                         date = getCurrentDate(),
                         time = getCurrentTime(),
-                        type = if(rdoDryMethod.isChecked) 0 else 1,
+                        type = isDriedMethod(),
                         brandName = getBrandName(),
                         feedingAmount = getFeedingAmount(),
                         remark = getMemo()
@@ -209,37 +215,61 @@ class FeedingActivity : AppCompatActivity() {
     }
 
     /**
+     * 사료종류
+     * @since 2020.06.21
+     * @author perry912
+     * @return 0:건식, 1:습식
+     */
+    private fun isDriedMethod(): Int {
+        return if(rdoDryMethod.isChecked) 0 else 1
+    }
+
+    /**
      * @author perry912
      * @since 2020.06.17
      * 입력된 Preference 가져오기
      */
     private fun getLatestInputDataFromPreference() {
         with(SharedPref.prefs) {
-            if (getInt(R.string.com_j2d2_feeding_feed_type.toString(), 0) == 0) {
-                rdoDryMethod!!.post {
-                    rdoDryMethod!!.isChecked = true
-                    rdoDryMethod!!.jumpDrawablesToCurrentState()
-                }
-            } else {
-                rdoWetMethod!!.post {
-                    rdoWetMethod!!.isChecked = true
-                    rdoWetMethod!!.jumpDrawablesToCurrentState()
+            if(contains(R.string.com_j2d2_feeding_feed_type.toString())) {
+                if (getInt(R.string.com_j2d2_feeding_feed_type.toString(), 0) == 0) {
+                    rdoDryMethod!!.post {
+                        rdoDryMethod!!.isChecked = true
+                        rdoDryMethod!!.jumpDrawablesToCurrentState()
+                    }
+                } else {
+                    rdoWetMethod!!.post {
+                        rdoWetMethod!!.isChecked = true
+                        rdoWetMethod!!.jumpDrawablesToCurrentState()
+                    }
                 }
             }
 
-            editBrand.setText(
-                getString(
-                    R.string.com_j2d2_feeding_feed_brand_name.toString(),
-                    ""
-                ).toString()
-            )
-            editAmount.setText(
-                getInt(
-                    R.string.com_j2d2_feeding_feed_amount.toString(),
-                    0
-                ).toString()
-            )
-            editRemark.setText(getString(R.string.com_j2d2_feeding_feed_memo.toString(), ""))
+            if(contains(R.string.com_j2d2_feeding_feed_brand_name.toString())) {
+                editBrand.setText(
+                    getString(
+                        R.string.com_j2d2_feeding_feed_brand_name.toString(),
+                        ""
+                    ).toString()
+                )
+                editAmount.requestFocus()
+            } else {
+                editBrand.requestFocus()
+            }
+
+            if(contains(R.string.com_j2d2_feeding_feed_amount.toString())) {
+                editAmount.setText(
+                    getInt(
+                        R.string.com_j2d2_feeding_feed_amount.toString(),
+                        0
+                    ).toString()
+                )
+                window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+            }
+
+            if(contains(R.string.com_j2d2_feeding_feed_memo.toString())) {
+                editRemark.setText(getString(R.string.com_j2d2_feeding_feed_memo.toString(), ""))
+            }
         }
     }
 
