@@ -8,13 +8,20 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.j2d2.R
+import com.j2d2.bloodglucose.BloodGlucose
 import com.j2d2.main.AppDatabase
 import kotlinx.android.synthetic.main.activity_graph.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class GraphActivity : AppCompatActivity() {
     private var data: ArrayList<Entry>? = null
     private var appDatabase: AppDatabase? = null
-
+    private val values1 = arrayListOf<Entry>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_graph)
@@ -24,7 +31,23 @@ class GraphActivity : AppCompatActivity() {
         if(savedInstanceState != null) {
             this.data = savedInstanceState.getSerializable("chart") as ArrayList<Entry>?
         } else {
-            this.data = generateDataLine(1)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val cal = Calendar.getInstance()
+                val myFormat = "yyyyMMdd" // mention the format you need
+                val sdf = SimpleDateFormat(myFormat, Locale.US)
+                val glucose = appDatabase?.bloodGlucoseDao()?.findByToday(sdf.format(cal.time).toString())?: return@launch
+                if (glucose != null) {
+                    for (gcs: BloodGlucose in glucose) {
+                        values1.add(Entry(gcs.time.toFloat(), gcs.bloodSugar.toString().toFloat()))
+                        println("${gcs.uid} => date : ${gcs.date.toString()}")
+                        println("${gcs.uid} => time : ${gcs.time.toString()}")
+                        println("${gcs.uid} => value : ${gcs.bloodSugar.toString()}")
+                    }
+                }
+            }
+            this.data = values1
+//            this.data = generateDataLine(1)
         }
 
         lineChart.data = this.data?.let { makeLineDataSet(it) }
@@ -47,10 +70,27 @@ class GraphActivity : AppCompatActivity() {
     }
 
     private fun generateDataLine(cnt: Int): ArrayList<Entry>? {
+//        val values1 = arrayListOf<Entry>()
+//
+//        for(i:Int in 1..12) {
+//            values1.add(Entry(i.toFloat(), ((Math.random() * 65) + 40).toFloat()))
+//        }
+//        this.data = values1
+//        return values1
         val values1 = arrayListOf<Entry>()
-
-        for(i:Int in 1..12) {
-            values1.add(Entry(i.toFloat(), ((Math.random() * 65) + 40).toFloat()))
+        CoroutineScope(Dispatchers.IO).launch {
+            val cal = Calendar.getInstance()
+            val myFormat = "yyyyMMdd" // mention the format you need
+            val sdf = SimpleDateFormat(myFormat, Locale.US)
+            val glucose = appDatabase?.bloodGlucoseDao()?.findByToday(sdf.format(cal.time).toString())?: return@launch
+            if (glucose != null) {
+                for (gcs: BloodGlucose in glucose) {
+                    values1.add(Entry(gcs.time.toFloat(), gcs.bloodSugar.toString().toFloat()))
+                    println("${gcs.uid} => date : ${gcs.date.toString()}")
+                    println("${gcs.uid} => time : ${gcs.time.toString()}")
+                    println("${gcs.uid} => value : ${gcs.bloodSugar.toString()}")
+                }
+            }
         }
         this.data = values1
         return values1

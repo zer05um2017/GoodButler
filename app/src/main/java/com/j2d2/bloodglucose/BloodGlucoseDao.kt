@@ -5,7 +5,7 @@ import com.j2d2.feeding.Feeding
 
 @Dao
 interface BloodGlucoseDao {
-    @Query("SELECT * FROM bloodglucose WHERE date LIKE :today ORDER BY date, time DESC")
+    @Query("SELECT * FROM bloodglucose WHERE date LIKE :today ORDER BY date, time")
     fun findByToday(today: String): List<BloodGlucose>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

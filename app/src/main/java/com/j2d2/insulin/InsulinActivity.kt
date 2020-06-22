@@ -11,7 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
 import com.j2d2.main.AppDatabase
 import com.j2d2.main.SharedPref
+import kotlinx.android.synthetic.main.activity_blood_glucose.*
 import kotlinx.android.synthetic.main.activity_insulin.*
+import kotlinx.android.synthetic.main.activity_insulin.editTextDate
+import kotlinx.android.synthetic.main.activity_insulin.editTextTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -314,8 +317,11 @@ class InsulinActivity : AppCompatActivity() {
                     val timePickerDialog: TimePickerDialog = TimePickerDialog(
                         this@InsulinActivity,
                         TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-                            editTextTime!!.setText("" + hourOfDay + ":" + minute);
-                        }, hh, mm, true
+                            val sdf = SimpleDateFormat("HH:mm")
+                            c.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                            c.set(Calendar.MINUTE, minute)
+                            editTextTime!!.setText(sdf.format(c.time))
+                        }, hh, mm, false
                     )
                     timePickerDialog.show()
                     false

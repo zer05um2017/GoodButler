@@ -17,6 +17,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.min
 
 
 class BloodGlucoseActivity : AppCompatActivity() {
@@ -32,7 +33,7 @@ class BloodGlucoseActivity : AppCompatActivity() {
         setDateTimeListener()
         setCurrentDate()
         setCurrentTime()
-        //loadData()
+        loadData()
     }
 
     private fun getBloodGlucose():Int {
@@ -152,8 +153,11 @@ class BloodGlucoseActivity : AppCompatActivity() {
                     val timePickerDialog: TimePickerDialog = TimePickerDialog(
                         this@BloodGlucoseActivity,
                         TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-                            editTextTime!!.setText("" + hourOfDay + ":" + minute);
-                        }, hh, mm, true
+                            val sdf = SimpleDateFormat("HH:mm")
+                            c.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                            c.set(Calendar.MINUTE, minute)
+                            editTextTime!!.setText(sdf.format(c.time))
+                        }, hh, mm, false
                     )
                     timePickerDialog.show()
                     false
@@ -174,7 +178,7 @@ class BloodGlucoseActivity : AppCompatActivity() {
             for (gcs: BloodGlucose in glucose) {
                 println("${gcs.uid} => date : ${gcs.date.toString()}")
                 println("${gcs.uid} => time : ${gcs.time.toString()}")
-                println("${gcs.uid} => type : ${gcs.bloodSugar.toString()}")
+                println("${gcs.uid} => value : ${gcs.bloodSugar.toString()}")
             }
         }
     }

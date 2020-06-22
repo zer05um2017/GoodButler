@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
 import com.j2d2.main.AppDatabase
 import com.j2d2.main.SharedPref
+import kotlinx.android.synthetic.main.activity_blood_glucose.*
 import kotlinx.android.synthetic.main.activity_feeding.*
 import kotlinx.android.synthetic.main.activity_feeding.btnSave
 import kotlinx.android.synthetic.main.activity_feeding.editRemark
@@ -307,15 +308,17 @@ class FeedingActivity : AppCompatActivity() {
         editTextTime.setOnTouchListener { _: View, event: MotionEvent ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-//                    Toast.makeText(this@MainActivity, "focused", Toast.LENGTH_SHORT).show()
                     val c: Calendar = Calendar.getInstance()
                     val hh = c.get(Calendar.HOUR_OF_DAY)
                     val mm = c.get(Calendar.MINUTE)
                     val timePickerDialog: TimePickerDialog = TimePickerDialog(
                         this@FeedingActivity,
                         TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-                            editTextTime!!.setText("" + hourOfDay + ":" + minute);
-                        }, hh, mm, true
+                            val sdf = SimpleDateFormat("HH:mm")
+                            c.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                            c.set(Calendar.MINUTE, minute)
+                            editTextTime!!.setText(sdf.format(c.time))
+                        }, hh, mm, false
                     )
                     timePickerDialog.show()
                     false
