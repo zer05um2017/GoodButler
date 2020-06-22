@@ -112,7 +112,7 @@ class BloodGlucoseActivity : AppCompatActivity() {
      * @return time
      */
     private fun getCurrentTime(): String {
-        return editTextTime.text.toString().replace(":", "")
+        return editTextTime.text.toString()
     }
 
     private fun setDateTimeListener() {

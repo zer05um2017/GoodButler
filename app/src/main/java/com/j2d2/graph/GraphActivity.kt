@@ -3,9 +3,12 @@ package com.j2d2.graph
 import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.j2d2.R
 import com.j2d2.bloodglucose.BloodGlucose
@@ -27,6 +30,7 @@ class GraphActivity : AppCompatActivity() {
         setContentView(R.layout.activity_graph)
 
         appDatabase = AppDatabase.getInstance(this)
+        val xValsDateLabel = ArrayList<String>()
 
         if(savedInstanceState != null) {
             this.data = savedInstanceState.getSerializable("chart") as ArrayList<Entry>?
@@ -42,6 +46,7 @@ class GraphActivity : AppCompatActivity() {
                         values1.add(Entry(gcs.time.toFloat(), gcs.bloodSugar.toString().toFloat()))
                         println("${gcs.uid} => date : ${gcs.date.toString()}")
                         println("${gcs.uid} => time : ${gcs.time.toString()}")
+                        xValsDateLabel.add(gcs.date.toString())
                         println("${gcs.uid} => value : ${gcs.bloodSugar.toString()}")
                     }
                 }
@@ -49,9 +54,16 @@ class GraphActivity : AppCompatActivity() {
             this.data = values1
 //            this.data = generateDataLine(1)
         }
+//        val xAxis: XAxis  = lineChart.xAxis
+//        xAxis.labelCount = this.data?.size ?: 0
+//        xAxis.valueFormatter = (MyValueFormatter(xValsDateLabel))
 
         lineChart.data = this.data?.let { makeLineDataSet(it) }
+
+
     }
+
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putSerializable("chart", this.data)
@@ -64,6 +76,7 @@ class GraphActivity : AppCompatActivity() {
         d1.circleRadius = 4.5f
         d1.highLightColor = Color.rgb(244, 117, 117)
         d1.setDrawValues(true)
+
         val sets = arrayListOf<ILineDataSet>()
         sets.add(d1)
         return LineData(sets)
@@ -94,5 +107,20 @@ class GraphActivity : AppCompatActivity() {
         }
         this.data = values1
         return values1
+    }
+
+    class MyValueFormatter(private val xValsDateLabel: ArrayList<String>) : ValueFormatter() {
+
+        override fun getFormattedValue(value: Float): String {
+            return value.toString()
+        }
+
+        override fun getAxisLabel(value: Float, axis: AxisBase): String {
+            if (value.toInt() >= 0 && value.toInt() <= xValsDateLabel.size - 1) {
+                return xValsDateLabel[value.toInt()]
+            } else {
+                return ("").toString()
+            }
+        }
     }
 }
