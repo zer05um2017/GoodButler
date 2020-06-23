@@ -10,7 +10,7 @@ interface InsulinDao {
 //    @Query("SELECT * FROM insulin WHERE uid IN (:userIds)")
 //    fun loadAllByIds(userIds: IntArray): List<Insulin>
 
-    @Query("SELECT * FROM insulin WHERE date LIKE :today ORDER BY date, time DESC")
+    @Query("SELECT * FROM insulin WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE :today ORDER BY millis")
     fun findByToday(today: String): List<Insulin>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

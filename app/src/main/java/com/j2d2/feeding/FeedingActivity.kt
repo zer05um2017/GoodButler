@@ -61,8 +61,7 @@ class FeedingActivity : AppCompatActivity() {
                 appDatabase?.feedingDao()?.insert(
                     Feeding(
                         uid = 0,
-                        date = getCurrentDate(),
-                        time = getCurrentTime(),
+                        millis = getTimeInMillis(),
                         type = isDriedMethod(),
                         brandName = getBrandName(),
                         feedingAmount = getFeedingAmount(),
@@ -85,7 +84,7 @@ class FeedingActivity : AppCompatActivity() {
 //        btnList.setOnClickListener {
 //            CoroutineScope(Dispatchers.IO).launch {
 //                val cal = Calendar.getInstance()
-//                val myFormat = "yyyyMMdd" // mention the format you need
+//                val myFormat = "yyyy-MM-dd" // mention the format you need
 //                val sdf = SimpleDateFormat(myFormat, Locale.US)
 //
 ////                val insulins = appDatabase?.insulinDao()?.findByToday(sdf.format(cal.time).toString()) ?: return@launch
@@ -154,6 +153,18 @@ class FeedingActivity : AppCompatActivity() {
      */
     private fun getCurrentTime(): String {
         return editTextTime.text.toString().replace(":", "")
+    }
+
+    /**
+     * 시간
+     * @since 2020.06.18
+     * @author perry912
+     * @return milliseconds:Long
+     */
+    private fun getTimeInMillis(): Long {
+        val date = editTextDate.text.split("-")
+        val time = editTextTime.text.toString().split(":")
+        return GregorianCalendar(date[0].toInt(), date[1].toInt(), date[2].toInt(), time[0].toInt(), time[1].toInt()).timeInMillis
     }
 
     /**

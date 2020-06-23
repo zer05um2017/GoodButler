@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
 import com.j2d2.main.AppDatabase
 import com.j2d2.main.SharedPref
-import kotlinx.android.synthetic.main.activity_blood_glucose.*
 import kotlinx.android.synthetic.main.activity_insulin.*
 import kotlinx.android.synthetic.main.activity_insulin.editTextDate
 import kotlinx.android.synthetic.main.activity_insulin.editTextTime
@@ -63,13 +62,16 @@ class InsulinActivity : AppCompatActivity() {
     }
 
     /**
-     * 인슐린 주사 날짜
+     * 시
      * @since 2020.06.17
      * @author perry912
-     * @return date
+     * @return milliseconds:Long
      */
-    private fun getCurrentDate(): String {
-        return editTextDate.text.toString().replace("-", "")
+    private fun getTimeInMillis(): Long {
+        val date = editTextDate.text.split("-")
+        val time = editTextTime.text.toString().split(":")
+
+        return GregorianCalendar(date[0].toInt(), date[1].toInt(), date[2].toInt(), time[0].toInt(), time[1].toInt()).timeInMillis
     }
 
     /**
@@ -150,8 +152,7 @@ class InsulinActivity : AppCompatActivity() {
                 appDatabase?.insulinDao()?.insert(
                     Insulin(
                         uid = 0,
-                        date = getCurrentDate(),
-                        time = getCurrentTime(),
+                        millis = getTimeInMillis(),
                         type = getInsulinType(),
                         undiluted = getUndilutedCapacity(),
                         totalCapacity = getTotalInjectionCapacity(),
@@ -175,7 +176,7 @@ class InsulinActivity : AppCompatActivity() {
         btnList.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 val cal = Calendar.getInstance()
-                val myFormat = "yyyyMMdd" // mention the format you need
+                val myFormat = "yyyy-MM-dd" // mention the format you need
                 val sdf = SimpleDateFormat(myFormat, Locale.US)
 //                cal.set(year, monthOfYear, dayOfMonth)
 //                sdf.format(cal.time)
@@ -183,8 +184,7 @@ class InsulinActivity : AppCompatActivity() {
                     appDatabase?.insulinDao()?.findByToday(sdf.format(cal.time).toString())
                         ?: return@launch
                 for (ins: Insulin in insulins) {
-                    println("${ins.uid} => date : ${ins.date.toString()}")
-                    println("${ins.uid} => time : ${ins.time.toString()}")
+                    println("${ins.uid} => date : ${ins.millis.toString()}")
                     println("${ins.uid} => type : ${if (ins.type == 0) "휴물린엔" else "캐닌슐린"}")
                     println("${ins.uid} => undt : ${ins.undiluted.toString()}")
                     println("${ins.uid} => dilt : ${if (ins.dilution == 1) "희석" else "희석X"}")

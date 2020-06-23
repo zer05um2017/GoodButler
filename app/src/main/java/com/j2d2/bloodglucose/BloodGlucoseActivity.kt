@@ -11,6 +11,9 @@ import com.j2d2.R
 import com.j2d2.insulin.Insulin
 import com.j2d2.main.AppDatabase
 import kotlinx.android.synthetic.main.activity_blood_glucose.*
+import kotlinx.android.synthetic.main.activity_blood_glucose.editTextDate
+import kotlinx.android.synthetic.main.activity_blood_glucose.editTextTime
+import kotlinx.android.synthetic.main.activity_feeding.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -51,8 +54,7 @@ class BloodGlucoseActivity : AppCompatActivity() {
                 appDatabase?.bloodGlucoseDao()?.insert(
                     BloodGlucose(
                         uid = 0,
-                        date = getCurrentDate(),
-                        time = getCurrentTime(),
+                        millis = getTimeInMillis(),
                         bloodSugar = getBloodGlucose()
                     )
                 )
@@ -90,7 +92,7 @@ class BloodGlucoseActivity : AppCompatActivity() {
      */
     private fun setCurrentTime() {
         val cal = Calendar.getInstance()
-        val myFormat = "HH:mm" // mention the format you needa
+        val myFormat = "HH:mm" // mention the format you need
         val sdf = SimpleDateFormat(myFormat, Locale.US)
         editTextTime.setText(sdf.format(cal.time))
     }
@@ -113,6 +115,18 @@ class BloodGlucoseActivity : AppCompatActivity() {
      */
     private fun getCurrentTime(): String {
         return editTextTime.text.toString()
+    }
+
+    /**
+     * 시간
+     * @since 2020.06.18
+     * @author perry912
+     * @return milliseconds:Long
+     */
+    private fun getTimeInMillis(): Long {
+        val date = editTextDate.text.split("-")
+        val time = editTextTime.text.toString().split(":")
+        return GregorianCalendar(date[0].toInt(), date[1].toInt(), date[2].toInt(), time[0].toInt(), time[1].toInt()).timeInMillis
     }
 
     private fun setDateTimeListener() {
@@ -156,6 +170,7 @@ class BloodGlucoseActivity : AppCompatActivity() {
                             val sdf = SimpleDateFormat("HH:mm")
                             c.set(Calendar.HOUR_OF_DAY, hourOfDay)
                             c.set(Calendar.MINUTE, minute)
+                            c.get(Calendar.MILLISECOND)
                             editTextTime!!.setText(sdf.format(c.time))
                         }, hh, mm, false
                     )
@@ -170,14 +185,13 @@ class BloodGlucoseActivity : AppCompatActivity() {
     private fun loadData() {
         CoroutineScope(Dispatchers.IO).launch {
             val cal = Calendar.getInstance()
-            val myFormat = "yyyyMMdd" // mention the format you need
+            val myFormat = "yyyy-MM-dd" // mention the format you need
             val sdf = SimpleDateFormat(myFormat, Locale.US)
             val glucose =
                 appDatabase?.bloodGlucoseDao()?.findByToday(sdf.format(cal.time).toString())
                     ?: return@launch
             for (gcs: BloodGlucose in glucose) {
-                println("${gcs.uid} => date : ${gcs.date.toString()}")
-                println("${gcs.uid} => time : ${gcs.time.toString()}")
+                println("${gcs.uid} => date : ${gcs.millis.toString()}")
                 println("${gcs.uid} => value : ${gcs.bloodSugar.toString()}")
             }
         }

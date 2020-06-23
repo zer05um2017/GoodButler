@@ -7,7 +7,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "bloodglucose")
 data class BloodGlucose (
     @PrimaryKey(autoGenerate = true) val uid: Long,
-    @ColumnInfo(name = "date") val date: String,
-    @ColumnInfo(name = "time") val time: String,
+    @ColumnInfo(name = "millis") val millis: Long, // milli seconds
     @ColumnInfo(name = "blood_glucose") val bloodSugar: Int? // 혈당
 )
