@@ -28,7 +28,7 @@ class BloodGlucoseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportActionBar?.title = getString(R.string.com_j2d2_bloodglucose)
+        supportActionBar?.title = getString(R.string.com_j2d2_bloodglucose_title)
         setContentView(R.layout.activity_blood_glucose)
 
         appDatabase = AppDatabase.getInstance(this)

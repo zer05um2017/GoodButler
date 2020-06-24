@@ -26,7 +26,7 @@ class InsulinActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportActionBar?.title = getString(R.string.com_j2d2_insulin)
+        supportActionBar?.title = getString(R.string.com_j2d2_insulin_title)
         setContentView(R.layout.activity_insulin)
 
         appDatabase = AppDatabase.getInstance(this)

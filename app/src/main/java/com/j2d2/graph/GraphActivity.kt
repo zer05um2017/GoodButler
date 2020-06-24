@@ -28,16 +28,18 @@ import kotlin.collections.ArrayList
 class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedListener {
     private var data: ArrayList<Entry>? = null
     private var appDatabase: AppDatabase? = null
-
+    private var gloucoseListOfDay = listOf<BloodGlucose>()
     private var dayMap = mutableMapOf<Int, String>()
     private var indexOfDay: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.title = getString(R.string.com_j2d2_graph_title)
         setContentView(R.layout.activity_graph)
 
         setButtonEvent()
         loadLatestData()
+        lineChart.setOnChartValueSelectedListener(this)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -53,10 +55,10 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         appDatabase = AppDatabase.getInstance(this)
 
         CoroutineScope(Dispatchers.IO).launch {
-            val days = appDatabase?.bloodGlucoseDao()?.getDayList()
+            val dayOfList = appDatabase?.bloodGlucoseDao()?.getDayList()
 
-            if (days != null) {
-                for ((i, day: String) in days.withIndex()) {
+            if (dayOfList != null) {
+                for ((i, day: String) in dayOfList.withIndex()) {
                     dayMap?.put(i, day)
                 }
                 val curDate = dayMap[indexOfDay]
@@ -80,6 +82,7 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         val glucose =
             appDatabase?.bloodGlucoseDao()?.findByToday(curDate)
                 ?: return
+        gloucoseListOfDay = glucose
         var i = 0f
         if (glucose != null) {
             for (gcs: BloodGlucose in glucose) {
@@ -102,7 +105,7 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
     }
 
     private fun makeLineDataSet(value: ArrayList<Entry>):LineData {
-        val d1 = LineDataSet(value, getString(R.string.com_j2d2_graph_title))
+        val d1 = LineDataSet(value, getString(R.string.com_j2d2_graph_graph_title))
         d1.lineWidth = 2.5f
         d1.circleRadius = 4.5f
         d1.highLightColor = Color.rgb(244, 117, 117)
@@ -125,6 +128,7 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
                 indexOfDay++
                 return@setOnClickListener
             }
+            textInfo.text = ""
             setDate(day.toString())
             CoroutineScope(Dispatchers.IO).launch {
                 loadData(day.toString())
@@ -142,6 +146,7 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
                 indexOfDay--
                 return@setOnClickListener
             }
+            textInfo.text = ""
             setDate(day.toString())
             CoroutineScope(Dispatchers.IO).launch {
                 loadData(day.toString())
@@ -157,7 +162,8 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
 
         override fun getAxisLabel(value: Float, axis: AxisBase): String {
             if (value.toInt() >= 0 && value.toInt() <= xValsDateLabel.size - 1) {
-                return xValsDateLabel[value.toInt()]
+                var str = xValsDateLabel[value.toInt()].split(":")
+                return "%02d:%02d".format(str[0].toInt(), str[1].toInt())
             } else {
                 return ("").toString()
             }
@@ -170,9 +176,7 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         }
     }
 
-    override fun onNothingSelected() {
-        TODO("Not yet implemented")
-    }
+    override fun onNothingSelected() {}
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
         Log.i(
@@ -180,5 +184,11 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
             "Value: " + e!!.y + ", xIndex: " + e!!.x
                     + ", DataSet index: " + h!!.dataSetIndex
         )
+        val gloucose = gloucoseListOfDay[e!!.x.toInt()]
+        val calendar = GregorianCalendar.getInstance()
+        calendar.timeInMillis = gloucose.millis
+//        Log.v("#####", calendar.get(Calendar.YEAR).toString())
+
+        textInfo.text = "시간 : %02d시%02d분\n혈당 : %d".format(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), gloucose.bloodSugar)
     }
 }

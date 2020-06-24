@@ -30,7 +30,7 @@ class FeedingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportActionBar?.title = getString(R.string.com_j2d2_feeding)
+        supportActionBar?.title = getString(R.string.com_j2d2_feeding_title)
         setContentView(R.layout.activity_feeding)
 
         appDatabase = AppDatabase.getInstance(this)
