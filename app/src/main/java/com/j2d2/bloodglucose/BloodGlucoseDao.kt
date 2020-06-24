@@ -8,6 +8,9 @@ interface BloodGlucoseDao {
     @Query("SELECT * FROM bloodglucose WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE :today ORDER BY millis")
     fun findByToday(today: String): List<BloodGlucose>
 
+    @Query("SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as chkdate FROM bloodglucose WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') GROUP BY chkdate ORDER BY chkdate DESC")
+    fun getDayList(): List<String>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(bloodGlucose: BloodGlucose)
 

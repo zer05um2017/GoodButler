@@ -33,5 +33,12 @@
 
     <!-- PedometerActivity -->
     <string name="com.j2d2.pedometer">아가 좀 걸을까??</string>
-    <string name="com.j2d2.pedometer.pedometer_message.unsupported_pedometer">해당 기능을 지원하지 않는 기기입니다.</string>
+    <string name="com.j2d2.pedometer.pedometer_message.unsupported_pedometer">해당 기능을 지원하지 않습니다.</string>
+
+
+    <!-- Graph -->
+    <string name="com.j2d2.graph.message_last">마지막 데이터입니다.</string>
+    <string name="com.j2d2.graph.message_nodata">혈당 데이터가 존재하지 않습니다.</string>
+    <string name="com.j2d2.graph.title">혈당 그래프</string>
+
 </resources>
