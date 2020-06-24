@@ -37,7 +37,7 @@
 
 
     <!-- Graph -->
-    <string name="com.j2d2.graph.title">어디보자 잘하고 있나~</string>
+    <string name="com.j2d2.graph.title">잘 이겨내고 있지~</string>
     <string name="com.j2d2.graph.message_last">마지막 데이터입니다.</string>
     <string name="com.j2d2.graph.message_nodata">혈당 데이터가 존재하지 않습니다.</string>
     <string name="com.j2d2.graph.graph_title">혈당 그래프</string>

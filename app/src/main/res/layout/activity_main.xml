@@ -4,60 +4,92 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:backgroundTint="@android:color/darker_gray"
     tools:context="com.j2d2.main.MainActivity">
 
     <Button
         android:id="@+id/btnGraph"
-        android:layout_width="136dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="77dp"
+        android:background="@drawable/btn_rounded"
         android:text="혈당 그래프"
         android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="@+id/btnPedometer"
-        app:layout_constraintStart_toStartOf="@+id/btnPedometer"
-        app:layout_constraintTop_toBottomOf="@+id/btnInsulin" />
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/btnInsulin"
-        android:layout_width="136dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="81dp"
+        android:layout_marginBottom="23dp"
+        android:background="@drawable/btn_rounded"
         android:text="인슐린 주사"
         android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="@+id/btnGraph"
-        app:layout_constraintStart_toStartOf="@+id/btnGraph"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btnPedometer"
-        android:layout_width="136dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="22dp"
-        android:text="산책"
-        android:textAllCaps="false"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnGraph" />
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnBloodGlucose"
+        app:layout_constraintStart_toStartOf="@+id/btnBloodGlucose" />
 
     <Button
         android:id="@+id/btnFeeding"
-        android:layout_width="136dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
-        android:text="급여"
+        android:layout_marginBottom="22dp"
+        android:background="@drawable/btn_rounded"
+        android:text="사료급여"
         android:textAllCaps="false"
-        app:layout_constraintStart_toStartOf="@+id/btnPedometer"
-        app:layout_constraintTop_toBottomOf="@+id/btnPedometer" />
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnInsulin"
+        app:layout_constraintStart_toStartOf="@+id/btnInsulin" />
 
     <Button
         android:id="@+id/btnBloodGlucose"
-        android:layout_width="136dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
-        android:text="혈당 입력"
+        android:layout_marginStart="30dp"
+        android:background="@drawable/btn_rounded"
+        android:text="혈당 체크"
         android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="@+id/btnFeeding"
-        app:layout_constraintStart_toStartOf="@+id/btnFeeding"
-        app:layout_constraintTop_toBottomOf="@+id/btnFeeding" />
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/btnGraph"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnGraph" />
+
+    <Button
+        android:id="@+id/btnHelp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="22dp"
+        android:background="@drawable/btn_rounded"
+        android:text="도움말"
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnPedometer"
+        app:layout_constraintStart_toStartOf="@+id/btnPedometer" />
+
+    <Button
+        android:id="@+id/btnPedometer"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="23dp"
+        android:background="@drawable/btn_rounded"
+        android:text="산책"
+        android:textAllCaps="false"
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnGraph"
+        app:layout_constraintStart_toStartOf="@+id/btnGraph" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
