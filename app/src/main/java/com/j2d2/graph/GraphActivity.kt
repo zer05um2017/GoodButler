@@ -1,20 +1,27 @@
 package com.j2d2.graph
 
 import android.graphics.Color
+import android.graphics.DashPathEffect
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.LimitLine
+import com.github.mikephil.charting.components.LimitLine.LimitLabelPosition
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IFillFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.github.mikephil.charting.utils.Utils
 import com.j2d2.R
 import com.j2d2.bloodglucose.BloodGlucose
 import com.j2d2.main.AppDatabase
@@ -36,7 +43,7 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         super.onCreate(savedInstanceState)
         supportActionBar?.title = getString(R.string.com_j2d2_graph_title)
         setContentView(R.layout.activity_graph)
-
+        supportActionBar?.hide()
         setButtonEvent()
         loadLatestData()
         lineChart.setOnChartValueSelectedListener(this)
@@ -79,6 +86,8 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         val xValsDateLabel = ArrayList<String>()
         val calendar = GregorianCalendar.getInstance()
         val glucoseList = arrayListOf<Entry>()
+        var upperLimited: Float = 0f
+        var lowerLimited: Float = 0f
         val glucose =
             appDatabase?.bloodGlucoseDao()?.findByToday(curDate)
                 ?: return
@@ -86,7 +95,20 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         var i = 0f
         if (glucose != null) {
             for (gcs: BloodGlucose in glucose) {
+                if(i == 0f) {
+                    upperLimited = gcs.bloodSugar.toString().toFloat()
+                    lowerLimited = gcs.bloodSugar.toString().toFloat()
+                }
                 glucoseList.add(Entry(i, gcs.bloodSugar.toString().toFloat()))
+
+                if(gcs.bloodSugar.toString().toFloat() > upperLimited) {
+                    upperLimited = gcs.bloodSugar.toString().toFloat()
+                }
+
+                if(gcs.bloodSugar.toString().toFloat() < lowerLimited) {
+                    lowerLimited = gcs.bloodSugar.toString().toFloat()
+                }
+
                 calendar.timeInMillis = gcs.millis
                 xValsDateLabel.add(
                     "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
@@ -99,21 +121,91 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
             val xAxis: XAxis  = lineChart.xAxis
             xAxis.labelCount = glucoseList?.size - 1 ?: 0
             xAxis.valueFormatter = xValsDateLabel?.let { MyValueFormatter(it) }
+            // vertical grid lines
+            xAxis.enableGridDashedLine(10f, 10f, 0f)
+            var yAxis: YAxis
+            yAxis = lineChart.getAxisLeft()
+            // disable dual axis (only use LEFT axis)
+            lineChart.getAxisRight().setEnabled(false)
+            // horizontal grid lines
+            yAxis.enableGridDashedLine(10f, 10f, 0f)
+            // axis range
+            yAxis.axisMaximum = upperLimited + 50f
+            yAxis.axisMinimum = lowerLimited - 30f
+
+            val llXAxis = LimitLine(9f, "Index 10")
+            llXAxis.lineWidth = 4f
+            llXAxis.enableDashedLine(10f, 10f, 0f)
+            llXAxis.labelPosition = LimitLabelPosition.RIGHT_BOTTOM
+            llXAxis.textSize = 10f
+            val ll1 = LimitLine(upperLimited, "최대")
+            ll1.lineWidth = 4f
+            ll1.enableDashedLine(10f, 10f, 0f)
+            ll1.labelPosition = LimitLabelPosition.RIGHT_TOP
+            ll1.textSize = 10f
+            val ll2 = LimitLine(lowerLimited, "최저")
+            ll2.lineWidth = 4f
+            ll2.enableDashedLine(10f, 10f, 0f)
+            ll2.labelPosition = LimitLabelPosition.RIGHT_BOTTOM
+            ll2.textSize = 10f
+
+            // draw limit lines behind data instead of on top
+            yAxis.setDrawLimitLinesBehindData(true)
+            xAxis.setDrawLimitLinesBehindData(true)
+
+            // add limit lines
+            yAxis.removeAllLimitLines()
+            yAxis.addLimitLine(ll1)
+            yAxis.addLimitLine(ll2)
+            //xAxis.addLimitLine(llXAxis);
+            lineChart.setDrawGridBackground(false)
+//            lineChart.setGridBackgroundColor(0)
             lineChart.data = glucoseList?.let { makeLineDataSet(it) }
-            invalidate(lineChart = lineChart)
+            CoroutineScope(Dispatchers.Main).launch {
+                lineChart.animateX(500)
+//                invalidate(lineChart = lineChart)
+            }
         }
     }
 
     private fun makeLineDataSet(value: ArrayList<Entry>):LineData {
-        val d1 = LineDataSet(value, getString(R.string.com_j2d2_graph_graph_title))
-        d1.lineWidth = 2.5f
-        d1.circleRadius = 4.5f
-        d1.highLightColor = Color.rgb(244, 117, 117)
-        d1.setDrawValues(true)
+        val set1 = LineDataSet(value, getString(R.string.com_j2d2_graph_graph_title))
+        set1.setDrawIcons(false)
+        // draw dashed line
+        set1.enableDashedLine(10f, 5f, 0f)
+        // black lines and points
+        set1.setColor(Color.BLACK)
+        set1.setCircleColor(Color.BLACK)
+        // line thickness and point size
+        set1.setLineWidth(1f)
+        set1.setCircleRadius(3f)
+        // draw points as solid circles
+        set1.setDrawCircleHole(false)
+        // customize legend entry
+        set1.setFormLineWidth(1f)
+        set1.setFormLineDashEffect(DashPathEffect(floatArrayOf(10f, 5f), 0f))
+        set1.setFormSize(15f)
+        // text size of values
+        set1.setValueTextSize(9f)
+        // draw selection line as dashed
+        set1.enableDashedHighlightLine(10f, 5f, 0f)
+        // set the filled area
+        set1.setDrawFilled(true)
+        set1.setFillFormatter(IFillFormatter { dataSet, dataProvider ->
+            lineChart.getAxisLeft().getAxisMinimum()
+        })
+        // set color of filled area
+        if (Utils.getSDKInt() >= 18) {
+            // drawables only supported on api level 18 and above
+            val drawable = ContextCompat.getDrawable(this, R.drawable.fade_red)
+            set1.setFillDrawable(drawable)
+        } else {
+            set1.setFillColor(Color.BLACK)
+        }
 
-        val sets = arrayListOf<ILineDataSet>()
-        sets.add(d1)
-        return LineData(sets)
+        val dataSets = arrayListOf<ILineDataSet>()
+        dataSets.add(set1) // add the data sets
+        return LineData(dataSets)
     }
 
     private fun setButtonEvent() {

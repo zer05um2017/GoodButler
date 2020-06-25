@@ -44,6 +44,65 @@ class BloodGlucoseActivity : AppCompatActivity() {
     }
 
     private fun setDataEventListener() {
+        btnGenData.setOnClickListener {
+            val dateT = arrayListOf<Long>()
+            val bloodT = arrayListOf<Int>()
+
+            dateT.add(1595451600000)
+            dateT.add(1595462400000)
+            dateT.add(1595469600000)
+            dateT.add(1595476800000)
+            dateT.add(1595484000000)
+            dateT.add(1595491200000)
+            dateT.add(1595495220000)
+            dateT.add(1595502000000)
+            dateT.add(1595509620000)
+            dateT.add(1595513220000)
+            dateT.add(1595538120000)
+            dateT.add(1595545380000)
+            dateT.add(1595552760000)
+            dateT.add(1595559780000)
+            dateT.add(1595567400000)
+            dateT.add(1595574000000)
+            dateT.add(1595581440000)
+            dateT.add(1595588640000)
+            dateT.add(1595595840000)
+            dateT.add(1595602560000)
+
+            bloodT.add(108)
+            bloodT.add(323)
+            bloodT.add(290)
+            bloodT.add(150)
+            bloodT.add(93)
+            bloodT.add(81)
+            bloodT.add(109)
+            bloodT.add(297)
+            bloodT.add(257)
+            bloodT.add(132)
+            bloodT.add(189)
+            bloodT.add(297)
+            bloodT.add(254)
+            bloodT.add(196)
+            bloodT.add(150)
+            bloodT.add(89)
+            bloodT.add(120)
+            bloodT.add(323)
+            bloodT.add(251)
+            bloodT.add(148)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                for (i in 0..19) {
+                    appDatabase?.bloodGlucoseDao()?.insert(
+                        BloodGlucose(
+                            uid = 0,
+                            millis = dateT[i],
+                            bloodSugar = bloodT[i]
+                        )
+                    )
+                }
+            }
+        }
+
         btnInput.setOnClickListener {
             if (editValue.text.trim().isEmpty()) {
                 Toast.makeText(this@BloodGlucoseActivity, getString(R.string.com_j2d2_bloodglucose_blood_message_input_value), Toast.LENGTH_SHORT).show()
