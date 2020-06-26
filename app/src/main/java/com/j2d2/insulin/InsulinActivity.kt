@@ -151,7 +151,6 @@ class InsulinActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 appDatabase?.insulinDao()?.insert(
                     Insulin(
-                        uid = 0,
                         millis = getTimeInMillis(),
                         type = getInsulinType(),
                         undiluted = getUndilutedCapacity(),
@@ -184,12 +183,12 @@ class InsulinActivity : AppCompatActivity() {
                     appDatabase?.insulinDao()?.findByToday(sdf.format(cal.time).toString())
                         ?: return@launch
                 for (ins: Insulin in insulins) {
-                    println("${ins.uid} => date : ${ins.millis.toString()}")
-                    println("${ins.uid} => type : ${if (ins.type == 0) "휴물린엔" else "캐닌슐린"}")
-                    println("${ins.uid} => undt : ${ins.undiluted.toString()}")
-                    println("${ins.uid} => dilt : ${if (ins.dilution == 1) "희석" else "희석X"}")
-                    println("${ins.uid} => volm : ${ins.totalCapacity.toString()}")
-                    println("${ins.uid} => remk : ${ins.remark.toString()}")
+                    println("date : ${ins.millis.toString()}")
+                    println("type : ${if (ins.type == 0) "휴물린엔" else "캐닌슐린"}")
+                    println("undt : ${ins.undiluted.toString()}")
+                    println("dilt : ${if (ins.dilution == 1) "희석" else "희석X"}")
+                    println("volm : ${ins.totalCapacity.toString()}")
+                    println("remk : ${ins.remark.toString()}")
                 }
             }
         }

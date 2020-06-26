@@ -1,7 +1,6 @@
 package com.j2d2.graph
 
 import android.graphics.Color
-import android.graphics.DashPathEffect
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -19,10 +18,11 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import com.github.mikephil.charting.utils.ColorTemplate
 import com.github.mikephil.charting.utils.Utils
 import com.j2d2.R
 import com.j2d2.bloodglucose.BloodGlucose
+import com.j2d2.feeding.Feeding
+import com.j2d2.insulin.Insulin
 import com.j2d2.main.AppDatabase
 import kotlinx.android.synthetic.main.activity_graph.*
 import kotlinx.coroutines.CoroutineScope
@@ -35,6 +35,8 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
     private var data: ArrayList<Entry>? = null
     private var appDatabase: AppDatabase? = null
     private var gloucoseListOfDay = listOf<BloodGlucose>()
+    private var insulinListOfDay = listOf<Insulin>()
+    private var feedListOfDay = listOf<Feeding>()
     private var dayMap = mutableMapOf<Int, String>()
     private var indexOfDay: Int = 0
 
@@ -45,7 +47,7 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         supportActionBar?.hide()
         setButtonEvent()
         loadLatestData()
-        combChart.setOnChartValueSelectedListener(this)
+        lineChart.setOnChartValueSelectedListener(this)
 //        testData1()
 //        testData2()
     }
@@ -70,7 +72,8 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
                     dayMap?.put(i, day)
                 }
                 val curDate = dayMap[indexOfDay]
-                loadData(curDate.toString())
+                loadGlaucoseData(curDate.toString())
+                loadCombinedData(curDate.toString())
             } else {
                 Toast.makeText(
                     this@GraphActivity,
@@ -82,7 +85,7 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         }
     }
 
-    private fun loadData(curDate:String) {
+    private fun loadGlaucoseData(curDate:String) {
         appDatabase = AppDatabase.getInstance(this)
         val xValsDateLabel = ArrayList<String>()
         val calendar = GregorianCalendar.getInstance()
@@ -119,244 +122,281 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
                 i++
             }
 
-            val xAxis: XAxis  = combChart.xAxis
-            xAxis.labelCount = glucoseList?.size - 1 ?: 0
-            xAxis.valueFormatter = xValsDateLabel?.let { MyValueFormatter(it) }
-            // vertical grid lines
-            xAxis.enableGridDashedLine(10f, 10f, 0f)
-            var yAxis: YAxis
-            yAxis = combChart.getAxisLeft()
-            // disable dual axis (only use LEFT axis)
-            combChart.getAxisRight().setEnabled(false)
-            // horizontal grid lines
-            yAxis.enableGridDashedLine(10f, 10f, 0f)
-            // axis range
-            yAxis.axisMaximum = upperLimited + 50f
-            yAxis.axisMinimum = lowerLimited - 30f
+            setLineChartLayout(glucose.size, xValsDateLabel, upperLimited, lowerLimited)
 
-            val llXAxis = LimitLine(9f, "Index 10")
-            llXAxis.lineWidth = 4f
-            llXAxis.enableDashedLine(10f, 10f, 0f)
-            llXAxis.labelPosition = LimitLabelPosition.RIGHT_BOTTOM
-            llXAxis.textSize = 10f
-            val ll1 = LimitLine(upperLimited, "최대")
-            ll1.lineWidth = 4f
-            ll1.enableDashedLine(10f, 10f, 0f)
-            ll1.labelPosition = LimitLabelPosition.RIGHT_TOP
-            ll1.textSize = 10f
-            val ll2 = LimitLine(lowerLimited, "최저")
-            ll2.lineWidth = 4f
-            ll2.enableDashedLine(10f, 10f, 0f)
-            ll2.labelPosition = LimitLabelPosition.RIGHT_BOTTOM
-            ll2.textSize = 10f
-
-            // draw limit lines behind data instead of on top
-            yAxis.setDrawLimitLinesBehindData(true)
-            xAxis.setDrawLimitLinesBehindData(true)
-
-            // add limit lines
-            yAxis.removeAllLimitLines()
-            yAxis.addLimitLine(ll1)
-            yAxis.addLimitLine(ll2)
-            //xAxis.addLimitLine(llXAxis);
-            combChart.setDrawGridBackground(false)
+//            combChart.setDrawGridBackground(false)
+//            combChart.description.isEnabled = false
 //            lineChart.setGridBackgroundColor(0)
-            var combData = CombinedData()
-            combData.setData(glucoseList?.let { makeLineDataSet(it) })
-            combData.setData(generateScatterData())
-            combData.setData(generateBarData())
-            combChart.data = combData
+            lineChart.description.isEnabled = false
+            var lineData = CombinedData()
+//            var combData = CombinedData()
+            lineData.setData(glucoseList?.let { makeLineDataSet(it) })
+//            combData.setData(generateScatterData())
+//            combData.setData(generateBarData())
+//            combChart.data = combData
+            lineChart.data = lineData
             CoroutineScope(Dispatchers.Main).launch {
-                combChart.animateX(500)
+                lineChart.animateX(500)
+//                combChart.animateX(500)
 //                invalidate(lineChart = lineChart)
             }
         }
     }
 
-//    private fun testData1() {
-//        barChartForInsulin.getDescription().setEnabled(false)
+    private fun loadCombinedData(curDate:String) {
+//        appDatabase = AppDatabase.getInstance(this)
+//        val xValsDateLabel = ArrayList<String>()
+//        val calendar = GregorianCalendar.getInstance()
+//        val insulinList = arrayListOf<BarEntry>()
+//        val feedList = arrayListOf<Entry>()
+//        var upperLimited: Float = 0f
+//        var lowerLimited: Float = 0f
+//        val insulin = appDatabase?.insulinDao()?.findByToday(curDate)?: return
+//        val feeding = appDatabase?.feedingDao()?.findByToday(curDate)?: return
 //
-//        // if more than 60 entries are displayed in the chart, no values will be
-//        // drawn
+//        insulinListOfDay = insulin
+//        feedListOfDay = feeding
 //
-//        // if more than 60 entries are displayed in the chart, no values will be
-//        // drawn
-//        barChartForInsulin.setMaxVisibleValueCount(60)
+//        var i = 0f
+//        if (insulin != null) {
+//            for (insl: Insulin in insulin) {
+//                if(i == 0f) {
+//                    upperLimited = insl.totalCapacity.toString().toFloat()
+//                    lowerLimited = insl.totalCapacity.toString().toFloat()
+//                }
+//                insulinList.add(BarEntry(i, insl.totalCapacity.toString().toFloat()))
 //
-//        // scaling can now only be done on x- and y-axis separately
+//                if(insl.totalCapacity.toString().toFloat() > upperLimited) {
+//                    upperLimited = insl.totalCapacity.toString().toFloat()
+//                }
 //
-//        // scaling can now only be done on x- and y-axis separately
-//        barChartForInsulin.setPinchZoom(false)
+//                if(insl.totalCapacity.toString().toFloat() < lowerLimited) {
+//                    lowerLimited = insl.totalCapacity.toString().toFloat()
+//                }
 //
-//        barChartForInsulin.setDrawBarShadow(false)
-//        barChartForInsulin.setDrawGridBackground(false)
-//
-//        val xAxis: XAxis = barChartForInsulin.getXAxis()
-//        xAxis.position = XAxisPosition.BOTTOM
-//        xAxis.setDrawGridLines(false)
-//
-//        barChartForInsulin.getAxisLeft().setDrawGridLines(false)
-//
-//        // setting data
-//
-//        // setting data
-//        val values = arrayListOf<BarEntry>()
-//
-//        for (i in 0 until 2) {
-//            val multi: Float = (2 + 1).toFloat()
-//            val val1 = (Math.random() * multi).toFloat() + multi / 3
-//            val barE = BarEntry(i.toFloat(), val1)
-//            values.add(barE)
+//                calendar.timeInMillis = insl.millis
+//                xValsDateLabel.add(
+//                    "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
+//                        Calendar.MINUTE
+//                    )}"
+//                )
+//                i++
+//            }
+
+//            setLineChartLayout(insulin.size, xValsDateLabel, upperLimited, lowerLimited)
+
+
+            combChart.setDrawGridBackground(false)
+            combChart.description.isEnabled = false
+//            lineChart.setGridBackgroundColor(0)
+//            var lineData = CombinedData()
+            var combData = CombinedData()
+//            lineData.setData(insulinList?.let { makeLineDataSet(it) })
+            combData.setData(generateBarData(curDate))
+            combData.setData(generateScatterData(curDate))
+            combChart.data = combData
+//            lineChart.data = lineData
+            CoroutineScope(Dispatchers.Main).launch {
+//                lineChart.animateX(500)
+                combChart.animateX(500)
+//                invalidate(lineChart = lineChart)
+            }
 //        }
-//
-//        val set1: BarDataSet
-//
-//        if (barChartForInsulin.getData() != null &&
-//            barChartForInsulin.getData().getDataSetCount() > 0
-//        ) {
-//            set1 =
-//                barChartForInsulin.data.getDataSetByIndex(0) as BarDataSet// .getData().getDataSetByIndex(0)
-//            set1.values = values
-//            barChartForInsulin.getData().notifyDataChanged()
-//            barChartForInsulin.notifyDataSetChanged()
-//        } else {
-//            set1 = BarDataSet(values, "Data Set")
-//            set1.setColors(*ColorTemplate.VORDIPLOM_COLORS)
-//            set1.setDrawValues(false)
-//            val dataSets = java.util.ArrayList<IBarDataSet>()
-//            dataSets.add(set1)
-//            val data = BarData(dataSets)
-//            barChartForInsulin.setData(data)
-//            barChartForInsulin.setFitBars(true)
-//        }
-//
-//        barChartForInsulin.invalidate()
-//        // add a nice and smooth animation
-//
-//        // add a nice and smooth animation
-//        barChartForInsulin.animateY(500)
-//
-//        barChartForInsulin.getLegend().setEnabled(false)
-//    }
-//
-//    private fun testData2() {
-//        barChartForFeeding.getDescription().setEnabled(false)
-//
-//        // if more than 60 entries are displayed in the chart, no values will be
-//        // drawn
-//
-//        // if more than 60 entries are displayed in the chart, no values will be
-//        // drawn
-//        barChartForFeeding.setMaxVisibleValueCount(60)
-//
-//        // scaling can now only be done on x- and y-axis separately
-//
-//        // scaling can now only be done on x- and y-axis separately
-//        barChartForFeeding.setPinchZoom(false)
-//
-//        barChartForFeeding.setDrawBarShadow(false)
-//        barChartForFeeding.setDrawGridBackground(false)
-//
-//        val xAxis: XAxis = barChartForFeeding.getXAxis()
-//        xAxis.position = XAxisPosition.BOTTOM
-//        xAxis.setDrawGridLines(false)
-//
-//        barChartForFeeding.getAxisLeft().setDrawGridLines(false)
-//
-//        // setting data
-//
-//        // setting data
-//        val values = arrayListOf<BarEntry>()
-//
-//        for (i in 0 until 2) {
-//            val multi: Float = (2 + 1).toFloat()
-//            val val1 = (Math.random() * multi).toFloat() + multi / 3
-//            val barE = BarEntry(i.toFloat(), val1)
-//            values.add(barE)
-//        }
-//
-//        val set1: BarDataSet
-//
-//        if (barChartForFeeding.getData() != null &&
-//            barChartForFeeding.getData().getDataSetCount() > 0
-//        ) {
-//            set1 =
-//                barChartForFeeding.data.getDataSetByIndex(0) as BarDataSet// .getData().getDataSetByIndex(0)
-//            set1.values = values
-//            barChartForFeeding.getData().notifyDataChanged()
-//            barChartForFeeding.notifyDataSetChanged()
-//        } else {
-//            set1 = BarDataSet(values, "Data Set")
-//            set1.setColors(*ColorTemplate.VORDIPLOM_COLORS)
-//            set1.setDrawValues(false)
-//            val dataSets = java.util.ArrayList<IBarDataSet>()
-//            dataSets.add(set1)
-//            val data = BarData(dataSets)
-//            barChartForFeeding.setData(data)
-//            barChartForFeeding.setFitBars(true)
-//        }
-//
-//        barChartForFeeding.invalidate()
-//        // add a nice and smooth animation
-//
-//        // add a nice and smooth animation
-//        barChartForFeeding.animateY(500)
-//
-//        barChartForFeeding.getLegend().setEnabled(false)
-//    }
+    }
+
+    private fun setLineChartLayout(size: Int, list:ArrayList<String>, upperLimited:Float, lowerLimited: Float) {
+        val xAxis: XAxis  = lineChart.xAxis
+        xAxis.labelCount = size - 1 ?: 0
+        xAxis.valueFormatter = list?.let { MyValueFormatter(it) }
+        // vertical grid lines
+        xAxis.enableGridDashedLine(10f, 10f, 0f)
+        xAxis.gridColor = Color.rgb(211,214,219)
+        var yAxis: YAxis
+        yAxis = lineChart.getAxisLeft()
+        yAxis.gridColor = Color.rgb(211,214,219)
+        // disable dual axis (only use LEFT axis)
+        lineChart.getAxisRight().setEnabled(false)
+        // horizontal grid lines
+        yAxis.enableGridDashedLine(10f, 10f, 0f)
+        // axis range
+        yAxis.axisMaximum = upperLimited + 20f
+        yAxis.axisMinimum = lowerLimited - 20f
+
+        val llXAxis = LimitLine(9f, "Index 10")
+        llXAxis.lineWidth = 4f
+        llXAxis.enableDashedLine(10f, 10f, 0f)
+        llXAxis.labelPosition = LimitLabelPosition.RIGHT_BOTTOM
+        llXAxis.textSize = 10f
+        val ll1 = LimitLine(upperLimited, "최대")
+        ll1.lineWidth = 1f
+        ll1.lineColor = Color.rgb(46,190,197)
+        ll1.enableDashedLine(10f, 10f, 0f)
+        ll1.labelPosition = LimitLabelPosition.RIGHT_TOP
+        ll1.textSize = 10f
+        val ll2 = LimitLine(lowerLimited, "최저")
+        ll2.lineWidth = 1f
+        ll2.lineColor = Color.rgb(46,190,197)
+        ll2.enableDashedLine(10f, 10f, 0f)
+        ll2.labelPosition = LimitLabelPosition.RIGHT_BOTTOM
+        ll2.textSize = 10f
+
+        // draw limit lines behind data instead of on top
+        yAxis.setDrawLimitLinesBehindData(true)
+        xAxis.setDrawLimitLinesBehindData(true)
+
+        // add limit lines
+        yAxis.removeAllLimitLines()
+        yAxis.addLimitLine(ll1)
+        yAxis.addLimitLine(ll2)
+        //xAxis.addLimitLine(llXAxis);
+        lineChart.setDrawGridBackground(false)
+        lineChart.description.isEnabled = false
+    }
+
+    private fun setCombChartLayout(size: Int, list:ArrayList<String>, upperLimited:Float, lowerLimited: Float) {
+        val xAxis: XAxis  = combChart.xAxis
+        xAxis.labelCount = size - 1 ?: 0
+        xAxis.valueFormatter = list?.let { MyValueFormatter(it) }
+        // vertical grid lines
+        xAxis.enableGridDashedLine(10f, 10f, 0f)
+        xAxis.gridColor = Color.rgb(211,214,219)
+        var yAxis: YAxis
+        yAxis = combChart.getAxisLeft()
+        yAxis.gridColor = Color.rgb(211,214,219)
+        // disable dual axis (only use LEFT axis)
+        combChart.getAxisRight().setEnabled(false)
+        // horizontal grid lines
+        yAxis.enableGridDashedLine(10f, 10f, 0f)
+        // axis range
+        yAxis.axisMaximum = upperLimited + 20f
+        yAxis.axisMinimum = lowerLimited - 20f
+
+//        val llXAxis = LimitLine(9f, "Index 10")
+//        llXAxis.lineWidth = 4f
+//        llXAxis.enableDashedLine(10f, 10f, 0f)
+//        llXAxis.labelPosition = LimitLabelPosition.RIGHT_BOTTOM
+//        llXAxis.textSize = 10f
+//        val ll1 = LimitLine(upperLimited, "최대")
+//        ll1.lineWidth = 1f
+//        ll1.lineColor = Color.rgb(46,190,197)
+//        ll1.enableDashedLine(10f, 10f, 0f)
+//        ll1.labelPosition = LimitLabelPosition.RIGHT_TOP
+//        ll1.textSize = 10f
+//        val ll2 = LimitLine(lowerLimited, "최저")
+//        ll2.lineWidth = 1f
+//        ll2.lineColor = Color.rgb(46,190,197)
+//        ll2.enableDashedLine(10f, 10f, 0f)
+//        ll2.labelPosition = LimitLabelPosition.RIGHT_BOTTOM
+//        ll2.textSize = 10f
+
+        // draw limit lines behind data instead of on top
+        yAxis.setDrawLimitLinesBehindData(true)
+        xAxis.setDrawLimitLinesBehindData(true)
+
+        // add limit lines
+        yAxis.removeAllLimitLines()
+//        yAxis.addLimitLine(ll1)
+//        yAxis.addLimitLine(ll2)
+        //xAxis.addLimitLine(llXAxis);
+        combChart.setDrawGridBackground(false)
+        combChart.description.isEnabled = false
+    }
 
     private fun makeLineDataSet(value: ArrayList<Entry>):LineData {
-        val set1 = LineDataSet(value, getString(R.string.com_j2d2_graph_graph_title))
-        set1.setDrawIcons(false)
+        val set = LineDataSet(value, getString(R.string.com_j2d2_graph_graph_title))
+        set.setDrawIcons(false)
         // draw dashed line
-        set1.enableDashedLine(10f, 5f, 0f)
+//        set1.enableDashedLine(10f, 5f, 0f)
         // black lines and points
-        set1.setColor(Color.BLACK)
-        set1.setCircleColor(Color.BLACK)
+        set.setColor(Color.rgb(247, 153, 164))
+        set.setValueTextColors(arrayListOf(Color.DKGRAY))
+//        set.setCircleColor(Color.DKGRAY)
         // line thickness and point size
-        set1.setLineWidth(1f)
-        set1.setCircleRadius(3f)
+        set.setLineWidth(1f)
+//        set1.circleHoleRadius = 3f
+        set.setCircleRadius(4f)
+        set.setCircleColor(Color.rgb(221,82,117))
         // draw points as solid circles
-        set1.setDrawCircleHole(false)
+        set.setDrawCircleHole(true)
         // customize legend entry
-        set1.setFormLineWidth(1f)
-        set1.setFormLineDashEffect(DashPathEffect(floatArrayOf(10f, 5f), 0f))
-        set1.setFormSize(15f)
+        set.setFormLineWidth(1f)
+
+//        set1.setFormLineDashEffect(DashPathEffect(floatArrayOf(10f, 5f), 0f))
+        set.setFormSize(15f)
         // text size of values
-        set1.setValueTextSize(9f)
+        set.setValueTextSize(12f)
         // draw selection line as dashed
-        set1.enableDashedHighlightLine(10f, 5f, 0f)
+//        set1.enableDashedHighlightLine(10f, 5f, 0f)
         // set the filled area
-        set1.setDrawFilled(true)
-        set1.setFillFormatter(IFillFormatter { dataSet, dataProvider ->
-            combChart.getAxisLeft().getAxisMinimum()
+        set.setDrawFilled(true)
+        set.setFillFormatter(IFillFormatter { dataSet, dataProvider ->
+            lineChart.getAxisLeft().getAxisMinimum()
         })
         // set color of filled area
         if (Utils.getSDKInt() >= 18) {
             // drawables only supported on api level 18 and above
             val drawable = ContextCompat.getDrawable(this, R.drawable.fade_red)
-            set1.setFillDrawable(drawable)
+            set.setFillDrawable(drawable)
         } else {
-            set1.setFillColor(Color.BLACK)
+            set.setFillColor(Color.BLACK)
         }
 
         val dataSets = arrayListOf<ILineDataSet>()
-        dataSets.add(set1) // add the data sets
+        dataSets.add(set) // add the data sets
         return LineData(dataSets)
     }
 
-    private fun generateScatterData():ScatterData {
+    private fun generateScatterData(curDate:String): ScatterData? {
 
         var d = ScatterData();
+//
+//        var entries = arrayListOf<Entry>()
+//
+//        for (index in 0 until 2)
+//            entries.add(Entry(0.5f + (index * 8), ((Math.random()* 100) + 55).toFloat()));
+        appDatabase = AppDatabase.getInstance(this)
+//        val xValsDateLabel = ArrayList<String>()
+        val calendar = GregorianCalendar.getInstance()
+//        val insulinList = arrayListOf<BarEntry>()
+        val feedList = arrayListOf<Entry>()
+//        var upperLimited: Float = 0f
+//        var lowerLimited: Float = 0f
+        val feeding = appDatabase?.feedingDao()?.findByToday(curDate)?: return null
 
-        var entries = arrayListOf<Entry>()
+//        insulinListOfDay = insulin
+        feedListOfDay = feeding
 
-        for (i in 0..8)
-            entries.add(Entry(i + 0.25f, ((Math.random()* 100) + 55).toFloat()));
+        var i = 0f
+        if (feeding != null) {
+            for (fed: Feeding in feeding) {
+//                if (i == 0f) {
+//                    upperLimited = insl.totalCapacity.toString().toFloat()
+//                    lowerLimited = insl.totalCapacity.toString().toFloat()
+//                }
+                feedList.add(BarEntry(i, fed.feedingAmount.toString().toFloat()))
 
-        var set = ScatterDataSet(entries, "Scatter DataSet");
-        set.setColors(*ColorTemplate.MATERIAL_COLORS)
-        set.setScatterShapeSize(7.5f);
+//                if (insl.totalCapacity.toString().toFloat() > upperLimited) {
+//                    upperLimited = insl.totalCapacity.toString().toFloat()
+//                }
+//
+//                if (insl.totalCapacity.toString().toFloat() < lowerLimited) {
+//                    lowerLimited = insl.totalCapacity.toString().toFloat()
+//                }
+
+//                calendar.timeInMillis = insl.millis
+//                xValsDateLabel.add(
+//                    "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
+//                        Calendar.MINUTE
+//                    )}"
+//                )
+                i++
+            }
+        }
+
+
+        var set = ScatterDataSet(feedList, "인슐린");
+        set.setColors(Color.rgb(236,32,8))
+        set.setScatterShapeSize(10f);
         set.setDrawValues(false);
         set.setValueTextSize(10f);
         d.addDataSet(set);
@@ -364,39 +404,95 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         return d;
     }
 
-    private fun generateBarData(): BarData? {
-        val entries1 = java.util.ArrayList<BarEntry>()
-        val entries2 = java.util.ArrayList<BarEntry>()
-        for (index in 0 until 8) {
-            entries1.add(BarEntry(0.0f, ((Math.random()* 100) + 55).toFloat()))
+    private fun generateBarData(curDate:String): BarData? {
+//        val entries1 = java.util.ArrayList<BarEntry>()
+////        val entries2 = java.util.ArrayList<BarEntry>()
+//        for (index in 0 until 2) {
+//            entries1.add(BarEntry(0.1f + (index * 7), ((Math.random()* 100) + 55).toFloat()))
+//
+//            // stacked
+////            entries2.add(BarEntry(0.0f, floatArrayOf(((Math.random()* 100) + 55).toFloat(), ((Math.random()* 100) + 55).toFloat())))
+//        }
+        appDatabase = AppDatabase.getInstance(this)
+        val xValsDateLabel = ArrayList<String>()
+        val calendar = GregorianCalendar.getInstance()
+        val insulinList = arrayListOf<BarEntry>()
+//        val feedList = arrayListOf<Entry>()
+        var upperLimited: Float = 0f
+        var lowerLimited: Float = 0f
+        val insulin = appDatabase?.insulinDao()?.findByToday(curDate)?: return null
+//        val feeding = appDatabase?.feedingDao()?.findByToday(curDate)?: return null
 
-            // stacked
-            entries2.add(BarEntry(0.0f, floatArrayOf(((Math.random()* 100) + 55).toFloat(), ((Math.random()* 100) + 55).toFloat())))
+        insulinListOfDay = insulin
+//        feedListOfDay = feeding
+
+        var i = 0f
+        if (insulin != null) {
+            for (insl: Insulin in insulin) {
+                if (i == 0f) {
+                    upperLimited = insl.totalCapacity.toString().toFloat()
+                    lowerLimited = insl.totalCapacity.toString().toFloat()
+                }
+                insulinList.add(BarEntry(i, insl.totalCapacity.toString().toFloat()))
+
+                if (insl.totalCapacity.toString().toFloat() > upperLimited) {
+                    upperLimited = insl.totalCapacity.toString().toFloat()
+                }
+
+                if (insl.totalCapacity.toString().toFloat() < lowerLimited) {
+                    lowerLimited = insl.totalCapacity.toString().toFloat()
+                }
+
+//                calendar.timeInMillis = insl.millis
+//                xValsDateLabel.add(
+//                    "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
+//                        Calendar.MINUTE
+//                    )}"
+//                )
+                i++
+            }
         }
-        val set1 = BarDataSet(entries1, "Bar 1")
-        set1.color = Color.rgb(60, 220, 78)
-        set1.valueTextColor = Color.rgb(60, 220, 78)
-        set1.valueTextSize = 10f
-        set1.axisDependency = YAxis.AxisDependency.LEFT
-        val set2 = BarDataSet(entries2, "")
-        set2.stackLabels = arrayOf("Stack 1", "Stack 2")
-        set2.setColors(
-            Color.rgb(61, 165, 255),
-            Color.rgb(23, 197, 255)
-        )
-        set2.valueTextColor = Color.rgb(61, 165, 255)
-        set2.valueTextSize = 10f
-        set2.axisDependency = YAxis.AxisDependency.LEFT
-        val groupSpace = 0.06f
-        val barSpace = 0.02f // x2 dataset
-        val barWidth = 0.45f // x2 dataset
+
+        val timeLineList = appDatabase?.graphDao()?.timeLineData(curDate)?: return null
+
+        if(timeLineList != null) {
+            for(date:Long in timeLineList) {
+                calendar.timeInMillis = date
+                xValsDateLabel.add(
+                    "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
+                        Calendar.MINUTE
+                    )}"
+                )
+            }
+        }
+
+        setCombChartLayout(insulin.size, xValsDateLabel, upperLimited, lowerLimited)
+
+        val set = BarDataSet(insulinList, "사료급여")
+        set.color = Color.rgb(93, 192, 158)
+        set.valueTextColor = Color.rgb(15, 97, 142)
+        set.valueTextSize = 10f
+        set.axisDependency = YAxis.AxisDependency.LEFT
+//        val set2 = BarDataSet(entries2, "")
+//        set2.stackLabels = arrayOf("Stack 1", "Stack 2")
+//        set2.setColors(
+//            Color.rgb(61, 165, 255),
+//            Color.rgb(23, 197, 255)
+//        )
+//        set2.valueTextColor = Color.rgb(61, 165, 255)
+//        set2.valueTextSize = 10f
+//        set2.axisDependency = YAxis.AxisDependency.LEFT
+//        val groupSpace = 0.06f
+//        val barSpace = 0.02f // x2 dataset
+//        val barWidth = 0.45f // x2 dataset
         // (0.45 + 0.02) * 2 + 0.06 = 1.00 -> interval per "group"
-        val d = BarData(set1, set2)
-        d.barWidth = barWidth
+//        val d = BarData(set1, set2)
+//        val d = BarData(set)
+//        d.barWidth = barWidth
 
         // make this BarData object grouped
-        d.groupBars(0f, groupSpace, barSpace) // start at x = 0
-        return d
+//        d.groupBars(0f, groupSpace, barSpace) // start at x = 0
+        return BarData(set)
     }
 
     private fun setButtonEvent() {
@@ -414,7 +510,7 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
             textInfo.text = ""
             setDate(day.toString())
             CoroutineScope(Dispatchers.IO).launch {
-                loadData(day.toString())
+                loadGlaucoseData(day.toString())
             }
         }
 
@@ -432,7 +528,7 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
             textInfo.text = ""
             setDate(day.toString())
             CoroutineScope(Dispatchers.IO).launch {
-                loadData(day.toString())
+                loadGlaucoseData(day.toString())
             }
         }
     }

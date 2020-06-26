@@ -60,7 +60,6 @@ class FeedingActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 appDatabase?.feedingDao()?.insert(
                     Feeding(
-                        uid = 0,
                         millis = getTimeInMillis(),
                         type = isDriedMethod(),
                         brandName = getBrandName(),

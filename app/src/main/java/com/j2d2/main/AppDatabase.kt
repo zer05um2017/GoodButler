@@ -8,6 +8,7 @@ import com.j2d2.bloodglucose.BloodGlucose
 import com.j2d2.bloodglucose.BloodGlucoseDao
 import com.j2d2.feeding.Feeding
 import com.j2d2.feeding.FeedingDao
+import com.j2d2.graph.GraphDao
 import com.j2d2.insulin.Insulin
 import com.j2d2.insulin.InsulinDao
 
@@ -17,6 +18,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun insulinDao(): InsulinDao
     abstract fun feedingDao(): FeedingDao
     abstract fun bloodGlucoseDao(): BloodGlucoseDao
+    abstract fun graphDao(): GraphDao
 
     companion object {
         @Volatile private var INSTANCE: AppDatabase? = null

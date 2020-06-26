@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
+import com.j2d2.feeding.Feeding
 import com.j2d2.insulin.Insulin
 import com.j2d2.main.AppDatabase
 import kotlinx.android.synthetic.main.activity_blood_glucose.*
@@ -94,9 +95,69 @@ class BloodGlucoseActivity : AppCompatActivity() {
                 for (i in 0..19) {
                     appDatabase?.bloodGlucoseDao()?.insert(
                         BloodGlucose(
-                            uid = 0,
                             millis = dateT[i],
                             bloodSugar = bloodT[i]
+                        )
+                    )
+                }
+            }
+
+            val dateInsT = arrayListOf<Long>()
+            val amtInsDltT = arrayListOf<Float>()
+            val amtInsT = arrayListOf<Int>()
+
+            dateInsT.add(1595452500000)
+            dateInsT.add(1595495400000)
+            dateInsT.add(1595538900000)
+            dateInsT.add(1595582280000)
+
+            amtInsDltT.add(0.4f)
+            amtInsDltT.add(0.5f)
+            amtInsDltT.add(0.5f)
+            amtInsDltT.add(0.4f)
+
+            amtInsT.add(20)
+            amtInsT.add(18)
+            amtInsT.add(15)
+            amtInsT.add(19)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                for (i in 0 until 4 step 1) {
+                    appDatabase?.insulinDao()?.insert(
+                        Insulin(
+                            millis = dateInsT[i],
+                            type = 0,
+                            undiluted = amtInsDltT[i],
+                            totalCapacity = amtInsT[i],
+                            dilution = 1,
+                            remark = "정량 주사"
+                        )
+                    )
+                }
+            }
+
+            val dateFedT = arrayListOf<Long>()
+            val amtFedT = arrayListOf<Int>()
+
+            dateFedT.add(1595452200000)
+            dateFedT.add(1595495760000)
+            dateFedT.add(1595538300000)
+            dateFedT.add(1595582220000)
+
+            amtFedT.add(176)
+            amtFedT.add(175)
+            amtFedT.add(178)
+            amtFedT.add(173)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                for (i in 0 until 4 step 1) {
+                    appDatabase?.feedingDao()?.insert(
+                        Feeding(
+                            millis = dateFedT[i],
+                            type = 1,
+                            brandName = "W/D",
+                            feedingAmount = amtFedT[i],
+                            remark = "당근 48g\n오이 49g"
                         )
                     )
                 }
@@ -112,7 +173,6 @@ class BloodGlucoseActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 appDatabase?.bloodGlucoseDao()?.insert(
                     BloodGlucose(
-                        uid = 0,
                         millis = getTimeInMillis(),
                         bloodSugar = getBloodGlucose()
                     )
@@ -250,8 +310,8 @@ class BloodGlucoseActivity : AppCompatActivity() {
                 appDatabase?.bloodGlucoseDao()?.findByToday(sdf.format(cal.time).toString())
                     ?: return@launch
             for (gcs: BloodGlucose in glucose) {
-                println("${gcs.uid} => date : ${gcs.millis.toString()}")
-                println("${gcs.uid} => value : ${gcs.bloodSugar.toString()}")
+                println("date : ${gcs.millis.toString()}")
+                println("value : ${gcs.bloodSugar.toString()}")
             }
         }
     }
