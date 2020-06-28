@@ -1,5 +1,6 @@
 package com.j2d2.bloodglucose
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
+import com.j2d2.feeding.FeedParcel
 import com.j2d2.feeding.Feeding
 import com.j2d2.insulin.Insulin
 import com.j2d2.main.AppDatabase
@@ -21,11 +23,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.min
 
 
 class BloodGlucoseActivity : AppCompatActivity() {
     private var appDatabase: AppDatabase? = null
+    private var isModifyed:Boolean? = false
+    private lateinit var pacelData:BloodGlucoseParcel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,9 +38,23 @@ class BloodGlucoseActivity : AppCompatActivity() {
         appDatabase = AppDatabase.getInstance(this)
         setDataEventListener()
         setDateTimeListener()
-        setCurrentDate()
-        setCurrentTime()
-        loadData()
+
+        if (intent.hasExtra("data")) {
+            isModifyed = true
+            var data = intent.getParcelableExtra<BloodGlucoseParcel>("data")
+            pacelData = data
+            editValue?.setText(data?.bloodSugar.toString())
+
+            val calendar = GregorianCalendar.getInstance()
+            calendar.timeInMillis = data.millis
+            editTextDate.setText("%02d-%02d-%02d".format(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)))
+            editTextTime.setText("%02d:%02d".format(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)))
+        } else {
+            setCurrentDate()
+            setCurrentTime()
+        }
+
+//        loadData()
     }
 
     private fun getBloodGlucose():Int {
@@ -96,6 +113,7 @@ class BloodGlucoseActivity : AppCompatActivity() {
                     appDatabase?.bloodGlucoseDao()?.insert(
                         BloodGlucose(
                             millis = dateT[i],
+                            dataType = 2,
                             bloodSugar = bloodT[i]
                         )
                     )
@@ -126,6 +144,7 @@ class BloodGlucoseActivity : AppCompatActivity() {
                     appDatabase?.insulinDao()?.insert(
                         Insulin(
                             millis = dateInsT[i],
+                            dataType = 1,   // 데이터 타입 0:사료, 1:인슐린
                             type = 0,
                             undiluted = amtInsDltT[i],
                             totalCapacity = amtInsT[i],
@@ -154,9 +173,10 @@ class BloodGlucoseActivity : AppCompatActivity() {
                     appDatabase?.feedingDao()?.insert(
                         Feeding(
                             millis = dateFedT[i],
+                            dataType = 0,   // 데이터 타입 0:사료, 1:인슐린
                             type = 1,
                             brandName = "W/D",
-                            feedingAmount = amtFedT[i],
+                            totalCapacity = amtFedT[i],
                             remark = "당근 48g\n오이 49g"
                         )
                     )
@@ -169,11 +189,18 @@ class BloodGlucoseActivity : AppCompatActivity() {
                 Toast.makeText(this@BloodGlucoseActivity, getString(R.string.com_j2d2_bloodglucose_blood_message_input_value), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
+            val modified = this.isModifyed
             CoroutineScope(Dispatchers.IO).launch {
+                if(modified!!) {
+                    val bldsugar = BloodGlucose(pacelData.millis,
+                        pacelData.dataType,
+                        pacelData.bloodSugar)
+                    appDatabase?.bloodGlucoseDao()?.delete(bldsugar)
+                }
                 appDatabase?.bloodGlucoseDao()?.insert(
                     BloodGlucose(
                         millis = getTimeInMillis(),
+                        dataType = 2,
                         bloodSugar = getBloodGlucose()
                     )
                 )
@@ -184,6 +211,9 @@ class BloodGlucoseActivity : AppCompatActivity() {
                         getString(R.string.com_j2d2_bloodglucose_blood_message_input_complete),
                         Toast.LENGTH_LONG
                     ).show()
+                    if(modified!!) {
+                        setResult(Activity.RESULT_OK)
+                    }
                     finish()
                 }
             }
@@ -314,5 +344,10 @@ class BloodGlucoseActivity : AppCompatActivity() {
                 println("value : ${gcs.bloodSugar.toString()}")
             }
         }
+    }
+
+    override fun onBackPressed() {
+        setResult(Activity.RESULT_CANCELED)
+        finish()
     }
 }

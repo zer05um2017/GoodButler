@@ -14,3 +14,4 @@ class MainApp: Application() {
         SharedPref.init(this)
     }
 }
+

@@ -32,15 +32,34 @@
         android:layout_width="0dp"
         android:layout_height="100dp"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginLeft="10dp"
         android:background="@drawable/textview_outline"
-        android:fadeScrollbars="true"
-        android:isScrollContainer="true"
         android:scrollbars="vertical"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnModify"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnModify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="27dp"
+        android:background="@drawable/btn_rounded_red"
+        android:text="수정"
+        android:textAllCaps="true"
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textInfo"
+        app:layout_constraintTop_toBottomOf="@+id/combChart" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -79,11 +98,11 @@
             style="@style/AppTheme.RoundedCornerMaterialButton"
             android:layout_width="15dp"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:layout_weight="1"
             android:text="다음"
             android:textColor="@android:color/background_light"
             android:textSize="24sp"
-            android:layout_margin="10dp"
             android:textStyle="bold" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

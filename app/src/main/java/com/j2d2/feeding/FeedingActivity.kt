@@ -1,7 +1,9 @@
 package com.j2d2.feeding
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -11,13 +13,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
 import com.j2d2.main.AppDatabase
 import com.j2d2.main.SharedPref
-import kotlinx.android.synthetic.main.activity_blood_glucose.*
 import kotlinx.android.synthetic.main.activity_feeding.*
 import kotlinx.android.synthetic.main.activity_feeding.btnSave
 import kotlinx.android.synthetic.main.activity_feeding.editRemark
 import kotlinx.android.synthetic.main.activity_feeding.editTextDate
 import kotlinx.android.synthetic.main.activity_feeding.editTextTime
-import kotlinx.android.synthetic.main.activity_insulin.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -27,22 +27,44 @@ import java.util.*
 
 class FeedingActivity : AppCompatActivity() {
     private var appDatabase: AppDatabase? = null
+    private var isModifyed:Boolean? = false
+    private lateinit var pacelData:FeedParcel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.title = getString(R.string.com_j2d2_feeding_title)
         setContentView(R.layout.activity_feeding)
-
         appDatabase = AppDatabase.getInstance(this)
         setDataEventListener()
         setDateTimeListener()
-        setCurrentDate()
-        setCurrentTime()
+
+        if (intent.hasExtra("data")) {
+            isModifyed = true
+            var data = intent.getParcelableExtra<FeedParcel>("data")
+            pacelData = data
+            editBrand?.setText(data?.brandName)
+            editRemark?.setText(data?.remark)
+            editAmount?.setText(data?.totalCapacity.toString())
+            when(data?.type) {
+                0 -> {rdoDryMethod.isChecked = true}
+                1 -> {rdoWetMethod.isChecked = true}
+            }
+
+            val calendar = GregorianCalendar.getInstance()
+            calendar.timeInMillis = data.millis
+            editTextDate.setText("%02d-%02d-%02d".format(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)))
+            editTextTime.setText("%02d:%02d".format(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)))
+        } else {
+            setCurrentDate()
+            setCurrentTime()
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        getLatestInputDataFromPreference()
+        if(!isModifyed!!) {
+            getLatestInputDataFromPreference()
+        }
     }
 
     private fun setDataEventListener() {
@@ -57,13 +79,24 @@ class FeedingActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            val modified = this.isModifyed
             CoroutineScope(Dispatchers.IO).launch {
+                if(modified!!) {
+                    val feed = Feeding(pacelData.millis,
+                        pacelData.dataType,
+                        pacelData.type,
+                        pacelData.brandName,
+                        pacelData.totalCapacity,
+                        pacelData.remark)
+                    appDatabase?.feedingDao()?.delete(feed)
+                }
                 appDatabase?.feedingDao()?.insert(
                     Feeding(
                         millis = getTimeInMillis(),
+                        dataType = 0,   // 데이터 타입 0:사료, 1:인슐린
                         type = isDriedMethod(),
                         brandName = getBrandName(),
-                        feedingAmount = getFeedingAmount(),
+                        totalCapacity = getFeedingAmount(),
                         remark = getMemo()
                     )
                 )
@@ -75,37 +108,13 @@ class FeedingActivity : AppCompatActivity() {
                         getString(R.string.com_j2d2_feeding_feed_message_input_complete),
                         Toast.LENGTH_LONG
                     ).show()
+                    if(modified!!) {
+                        setResult(Activity.RESULT_OK)
+                    }
                     finish()
                 }
             }
         }
-
-//        btnList.setOnClickListener {
-//            CoroutineScope(Dispatchers.IO).launch {
-//                val cal = Calendar.getInstance()
-//                val myFormat = "yyyy-MM-dd" // mention the format you need
-//                val sdf = SimpleDateFormat(myFormat, Locale.US)
-//
-////                val insulins = appDatabase?.insulinDao()?.findByToday(sdf.format(cal.time).toString()) ?: return@launch
-////                for (ins: Insulin in insulins) {
-////                    println("${ins.uid} => date : ${ins.date.toString()}")
-////                    println("${ins.uid} => time : ${ins.time.toString()}")
-////                    println("${ins.uid} => type : ${if(ins.type == 0) "휴물린엔" else "캐닌슐린"}")
-////                    println("${ins.uid} => undt : ${ins.undiluted.toString()}")
-////                    println("${ins.uid} => dilt : ${if(ins.dilution == 1) "희석" else "희석X"}")
-////                    println("${ins.uid} => volm : ${ins.totalCapacity.toString()}")
-////                    println("${ins.uid} => remk : ${ins.remark.toString()}")
-////                    println("============================")
-////                    println("============================")
-////                }
-//            }
-//        }
-
-//        btnDeleteAll.setOnClickListener {
-//            CoroutineScope(Dispatchers.IO).launch {
-//                appDatabase?.insulinDao()?.deleteAll()
-//            }
-//        }
     }
 
     /**
@@ -336,18 +345,15 @@ class FeedingActivity : AppCompatActivity() {
             }
             true
         }
-
-//        editTextDate.setOnFocusChangeListener { view, hasFocus ->
-//            if(hasFocus)
-//                Toast.makeText(this@MainActivity, "focused", Toast.LENGTH_SHORT).show()
-//            else
-//                Toast.makeText(this@MainActivity, "focuse lose", Toast.LENGTH_SHORT).show()
-//
-//        }
     }
 
     override fun onDestroy() {
         AppDatabase.destroyInstance()
         super.onDestroy()
+    }
+
+    override fun onBackPressed() {
+        setResult(Activity.RESULT_CANCELED)
+        finish()
     }
 }

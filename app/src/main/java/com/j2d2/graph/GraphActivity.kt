@@ -1,17 +1,20 @@
 package com.j2d2.graph
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
+import android.os.Parcelable
+import android.text.method.ScrollingMovementMethod
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.AxisBase
-import com.github.mikephil.charting.components.LimitLine
+import com.github.mikephil.charting.charts.ScatterChart
+import com.github.mikephil.charting.components.*
+import com.github.mikephil.charting.components.Legend.LegendForm
 import com.github.mikephil.charting.components.LimitLine.LimitLabelPosition
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IFillFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
@@ -21,9 +24,17 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.Utils
 import com.j2d2.R
 import com.j2d2.bloodglucose.BloodGlucose
+import com.j2d2.bloodglucose.BloodGlucoseActivity
+import com.j2d2.bloodglucose.BloodGlucoseParcel
+import com.j2d2.feeding.FeedParcel
 import com.j2d2.feeding.Feeding
+import com.j2d2.feeding.FeedingActivity
 import com.j2d2.insulin.Insulin
+import com.j2d2.insulin.InsulinActivity
+import com.j2d2.insulin.InsulinParcel
 import com.j2d2.main.AppDatabase
+import com.j2d2.main.DataType
+import com.j2d2.main.Terry
 import kotlinx.android.synthetic.main.activity_graph.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,14 +42,17 @@ import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
-class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedListener {
+
+class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedListener, OnSelectedDataCallBack {
     private var data: ArrayList<Entry>? = null
     private var appDatabase: AppDatabase? = null
     private var gloucoseListOfDay = listOf<BloodGlucose>()
-    private var insulinListOfDay = listOf<Insulin>()
-    private var feedListOfDay = listOf<Feeding>()
+    private var timeLineOfDay = listOf<GraphTimeLine>()
     private var dayMap = mutableMapOf<Int, String>()
     private var indexOfDay: Int = 0
+    private lateinit var selectedParcel:Terry
+    private var selectedDataType: DataType = DataType.NONE
+    private var selectedDataIndex: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,8 +62,7 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         setButtonEvent()
         loadLatestData()
         lineChart.setOnChartValueSelectedListener(this)
-//        testData1()
-//        testData2()
+        textInfo.movementMethod = ScrollingMovementMethod()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -92,125 +105,142 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         val glucoseList = arrayListOf<Entry>()
         var upperLimited: Float = 0f
         var lowerLimited: Float = 0f
+        var lineData = CombinedData()
         val glucose =
             appDatabase?.bloodGlucoseDao()?.findByToday(curDate)
                 ?: return
         gloucoseListOfDay = glucose
-        var i = 0f
-        if (glucose != null) {
-            for (gcs: BloodGlucose in glucose) {
-                if(i == 0f) {
-                    upperLimited = gcs.bloodSugar.toString().toFloat()
-                    lowerLimited = gcs.bloodSugar.toString().toFloat()
-                }
-                glucoseList.add(Entry(i, gcs.bloodSugar.toString().toFloat()))
 
-                if(gcs.bloodSugar.toString().toFloat() > upperLimited) {
-                    upperLimited = gcs.bloodSugar.toString().toFloat()
-                }
+        for ((i, gcs: BloodGlucose) in glucose?.withIndex()) {
+            if(i == 0) {
+                upperLimited = gcs.bloodSugar.toString().toFloat()
+                lowerLimited = gcs.bloodSugar.toString().toFloat()
+            }
+            glucoseList.add(Entry(i.toFloat(), gcs.bloodSugar.toString().toFloat()))
 
-                if(gcs.bloodSugar.toString().toFloat() < lowerLimited) {
-                    lowerLimited = gcs.bloodSugar.toString().toFloat()
-                }
-
-                calendar.timeInMillis = gcs.millis
-                xValsDateLabel.add(
-                    "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
-                        Calendar.MINUTE
-                    )}"
-                )
-                i++
+            if(gcs.bloodSugar.toString().toFloat() > upperLimited) {
+                upperLimited = gcs.bloodSugar.toString().toFloat()
             }
 
-            setLineChartLayout(glucose.size, xValsDateLabel, upperLimited, lowerLimited)
-
-//            combChart.setDrawGridBackground(false)
-//            combChart.description.isEnabled = false
-//            lineChart.setGridBackgroundColor(0)
-            lineChart.description.isEnabled = false
-            var lineData = CombinedData()
-//            var combData = CombinedData()
-            lineData.setData(glucoseList?.let { makeLineDataSet(it) })
-//            combData.setData(generateScatterData())
-//            combData.setData(generateBarData())
-//            combChart.data = combData
-            lineChart.data = lineData
-            CoroutineScope(Dispatchers.Main).launch {
-                lineChart.animateX(500)
-//                combChart.animateX(500)
-//                invalidate(lineChart = lineChart)
+            if(gcs.bloodSugar.toString().toFloat() < lowerLimited) {
+                lowerLimited = gcs.bloodSugar.toString().toFloat()
             }
+
+            calendar.timeInMillis = gcs.millis
+            xValsDateLabel.add(
+                "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
+                    Calendar.MINUTE
+                )}"
+            )
+        }
+
+        // get the legend (only possible after setting data)
+        val l: Legend = lineChart.getLegend()
+        // modify the legend ...
+        l.form = LegendForm.CIRCLE
+        l.formSize = 10f
+        lineChart.description.isEnabled = false
+        lineData.setData(glucoseList?.let { makeLineDataSet(it) })
+        lineChart.data = lineData
+
+        setLineChartLayout(xValsDateLabel, upperLimited, lowerLimited)
+        CoroutineScope(Dispatchers.Main).launch {
+            lineChart.animateX(500)
         }
     }
 
     private fun loadCombinedData(curDate:String) {
-//        appDatabase = AppDatabase.getInstance(this)
-//        val xValsDateLabel = ArrayList<String>()
-//        val calendar = GregorianCalendar.getInstance()
-//        val insulinList = arrayListOf<BarEntry>()
-//        val feedList = arrayListOf<Entry>()
-//        var upperLimited: Float = 0f
-//        var lowerLimited: Float = 0f
-//        val insulin = appDatabase?.insulinDao()?.findByToday(curDate)?: return
-//        val feeding = appDatabase?.feedingDao()?.findByToday(curDate)?: return
-//
-//        insulinListOfDay = insulin
-//        feedListOfDay = feeding
-//
-//        var i = 0f
-//        if (insulin != null) {
-//            for (insl: Insulin in insulin) {
-//                if(i == 0f) {
-//                    upperLimited = insl.totalCapacity.toString().toFloat()
-//                    lowerLimited = insl.totalCapacity.toString().toFloat()
-//                }
-//                insulinList.add(BarEntry(i, insl.totalCapacity.toString().toFloat()))
-//
-//                if(insl.totalCapacity.toString().toFloat() > upperLimited) {
-//                    upperLimited = insl.totalCapacity.toString().toFloat()
-//                }
-//
-//                if(insl.totalCapacity.toString().toFloat() < lowerLimited) {
-//                    lowerLimited = insl.totalCapacity.toString().toFloat()
-//                }
-//
-//                calendar.timeInMillis = insl.millis
-//                xValsDateLabel.add(
-//                    "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
-//                        Calendar.MINUTE
-//                    )}"
-//                )
-//                i++
-//            }
+        var combData = CombinedData()
+        var d = ScatterData();
+        appDatabase = AppDatabase.getInstance(this)
+        val xValsDateLabel = ArrayList<String>()
+        val calendar = GregorianCalendar.getInstance()
+        var upperLimited: Float = 0f
+        var lowerLimited: Float = 0f
+        val values0 = arrayListOf<Entry>()
+        val values1 = arrayListOf<Entry>()
+        var timeLine = appDatabase?.graphDao()?.timeLineData(curDate)?: return
 
-//            setLineChartLayout(insulin.size, xValsDateLabel, upperLimited, lowerLimited)
+        timeLineOfDay = timeLine
 
-
-            combChart.setDrawGridBackground(false)
-            combChart.description.isEnabled = false
-//            lineChart.setGridBackgroundColor(0)
-//            var lineData = CombinedData()
-            var combData = CombinedData()
-//            lineData.setData(insulinList?.let { makeLineDataSet(it) })
-            combData.setData(generateBarData(curDate))
-            combData.setData(generateScatterData(curDate))
-            combChart.data = combData
-//            lineChart.data = lineData
-            CoroutineScope(Dispatchers.Main).launch {
-//                lineChart.animateX(500)
-                combChart.animateX(500)
-//                invalidate(lineChart = lineChart)
+        for ((i, day: GraphTimeLine) in timeLine?.withIndex()) {
+            if(i == 0) {
+                upperLimited = day.totalCapacity.toString().toFloat()
+                lowerLimited = day.totalCapacity.toString().toFloat()
             }
-//        }
+
+            if(day.totalCapacity.toString().toFloat() > upperLimited) {
+                upperLimited = day.totalCapacity.toString().toFloat()
+            }
+
+            if(day.totalCapacity.toString().toFloat() < lowerLimited) {
+                lowerLimited = day.totalCapacity.toString().toFloat()
+            }
+
+            when(day.dataType) {
+                0 -> {
+                    values0.add(Entry(i.toFloat(), day.totalCapacity.toString().toFloat()))
+                }
+
+                1 ->
+                {
+                    values1.add(Entry(i.toFloat(), day.totalCapacity.toString().toFloat()))
+                }
+            }
+
+            calendar.timeInMillis = day.millis
+            xValsDateLabel.add(
+                "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
+                    Calendar.MINUTE
+                )}"
+            )
+        }
+
+        // create a dataset and give it a type
+        val set1 = ScatterDataSet(values0, "사료")
+        set1.setColors(Color.rgb(245,161,27))
+        set1.setValueTextColors(arrayListOf(Color.DKGRAY))
+        set1.setScatterShape(ScatterChart.ScatterShape.SQUARE)
+        set1. scatterShapeSize = 12f
+        set1.setDrawValues(true)
+        set1.valueTextSize = 10f
+
+        val set2 = ScatterDataSet(values1, "인슐린")
+        set2.setColors(Color.rgb(236,32,8))
+        set2.setValueTextColors(arrayListOf(Color.DKGRAY))
+        set2.scatterShapeSize = 12f
+        set2.setDrawValues(true)
+//        set1.setDrawIcons(true)
+        set2.valueTextSize = 10f
+//        set2.scatterShapeHoleRadius = 4f
+
+        d.addDataSet(set1)
+        d.addDataSet(set2)
+
+        combChart.setDrawGridBackground(false)
+        combChart.description.isEnabled = false
+        combData.setData(d)
+        combChart.data = combData
+        setCombChartLayout(xValsDateLabel, upperLimited, lowerLimited)
+        combChart.setOnChartValueSelectedListener(MyScatterChartTouchListener(timeLineOfDay, textInfo, appDatabase, this))
+        combChart.isDoubleTapToZoomEnabled = false
+        combChart.setPinchZoom(false)
+
+        CoroutineScope(Dispatchers.Main).launch {
+            combChart.animateY(500)
+        }
     }
 
-    private fun setLineChartLayout(size: Int, list:ArrayList<String>, upperLimited:Float, lowerLimited: Float) {
+    private fun setLineChartLayout(list:ArrayList<String>, upperLimited:Float, lowerLimited: Float) {
         val xAxis: XAxis  = lineChart.xAxis
-        xAxis.labelCount = size - 1 ?: 0
+        xAxis.labelCount = list.size - 1 ?: 0
         xAxis.valueFormatter = list?.let { MyValueFormatter(it) }
         // vertical grid lines
         xAxis.enableGridDashedLine(10f, 10f, 0f)
         xAxis.gridColor = Color.rgb(211,214,219)
+        xAxis.axisMaximum = lineChart.xChartMax + 0.1f
+        xAxis.axisMinimum = lineChart.xChartMin - 0.3f
+
         var yAxis: YAxis
         yAxis = lineChart.getAxisLeft()
         yAxis.gridColor = Color.rgb(211,214,219)
@@ -253,51 +283,40 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         lineChart.description.isEnabled = false
     }
 
-    private fun setCombChartLayout(size: Int, list:ArrayList<String>, upperLimited:Float, lowerLimited: Float) {
+    private fun setCombChartLayout(list:ArrayList<String>, upperLimited:Float, lowerLimited: Float) {
         val xAxis: XAxis  = combChart.xAxis
-        xAxis.labelCount = size - 1 ?: 0
+        xAxis.labelCount = list.size - 1 ?: 0
         xAxis.valueFormatter = list?.let { MyValueFormatter(it) }
         // vertical grid lines
         xAxis.enableGridDashedLine(10f, 10f, 0f)
         xAxis.gridColor = Color.rgb(211,214,219)
+        xAxis.axisMaximum = combChart.xChartMax + 0.1f
+        xAxis.axisMinimum = combChart.xChartMin - 0.1f
+
         var yAxis: YAxis
         yAxis = combChart.getAxisLeft()
         yAxis.gridColor = Color.rgb(211,214,219)
+        yAxis.axisMinimum = 0f
         // disable dual axis (only use LEFT axis)
         combChart.getAxisRight().setEnabled(false)
         // horizontal grid lines
         yAxis.enableGridDashedLine(10f, 10f, 0f)
         // axis range
-        yAxis.axisMaximum = upperLimited + 20f
-        yAxis.axisMinimum = lowerLimited - 20f
+        yAxis.axisMaximum = upperLimited + 80f
+        yAxis.axisMinimum = lowerLimited - 50f
 
-//        val llXAxis = LimitLine(9f, "Index 10")
-//        llXAxis.lineWidth = 4f
-//        llXAxis.enableDashedLine(10f, 10f, 0f)
-//        llXAxis.labelPosition = LimitLabelPosition.RIGHT_BOTTOM
-//        llXAxis.textSize = 10f
-//        val ll1 = LimitLine(upperLimited, "최대")
-//        ll1.lineWidth = 1f
-//        ll1.lineColor = Color.rgb(46,190,197)
-//        ll1.enableDashedLine(10f, 10f, 0f)
-//        ll1.labelPosition = LimitLabelPosition.RIGHT_TOP
-//        ll1.textSize = 10f
-//        val ll2 = LimitLine(lowerLimited, "최저")
-//        ll2.lineWidth = 1f
-//        ll2.lineColor = Color.rgb(46,190,197)
-//        ll2.enableDashedLine(10f, 10f, 0f)
-//        ll2.labelPosition = LimitLabelPosition.RIGHT_BOTTOM
-//        ll2.textSize = 10f
-
+        val l: Legend = combChart.legend
+        l.isWordWrapEnabled = true
+        l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+//        l.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
+        l.orientation = Legend.LegendOrientation.HORIZONTAL
+        l.setDrawInside(false)
         // draw limit lines behind data instead of on top
         yAxis.setDrawLimitLinesBehindData(true)
         xAxis.setDrawLimitLinesBehindData(true)
 
         // add limit lines
         yAxis.removeAllLimitLines()
-//        yAxis.addLimitLine(ll1)
-//        yAxis.addLimitLine(ll2)
-        //xAxis.addLimitLine(llXAxis);
         combChart.setDrawGridBackground(false)
         combChart.description.isEnabled = false
     }
@@ -322,7 +341,7 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         set.setFormLineWidth(1f)
 
 //        set1.setFormLineDashEffect(DashPathEffect(floatArrayOf(10f, 5f), 0f))
-        set.setFormSize(15f)
+        set.setFormSize(10f)
         // text size of values
         set.setValueTextSize(12f)
         // draw selection line as dashed
@@ -347,152 +366,84 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
     }
 
     private fun generateScatterData(curDate:String): ScatterData? {
-
         var d = ScatterData();
-//
-//        var entries = arrayListOf<Entry>()
-//
-//        for (index in 0 until 2)
-//            entries.add(Entry(0.5f + (index * 8), ((Math.random()* 100) + 55).toFloat()));
-        appDatabase = AppDatabase.getInstance(this)
-//        val xValsDateLabel = ArrayList<String>()
-        val calendar = GregorianCalendar.getInstance()
-//        val insulinList = arrayListOf<BarEntry>()
-        val feedList = arrayListOf<Entry>()
-//        var upperLimited: Float = 0f
-//        var lowerLimited: Float = 0f
-        val feeding = appDatabase?.feedingDao()?.findByToday(curDate)?: return null
-
-//        insulinListOfDay = insulin
-        feedListOfDay = feeding
-
-        var i = 0f
-        if (feeding != null) {
-            for (fed: Feeding in feeding) {
-//                if (i == 0f) {
-//                    upperLimited = insl.totalCapacity.toString().toFloat()
-//                    lowerLimited = insl.totalCapacity.toString().toFloat()
-//                }
-                feedList.add(BarEntry(i, fed.feedingAmount.toString().toFloat()))
-
-//                if (insl.totalCapacity.toString().toFloat() > upperLimited) {
-//                    upperLimited = insl.totalCapacity.toString().toFloat()
-//                }
-//
-//                if (insl.totalCapacity.toString().toFloat() < lowerLimited) {
-//                    lowerLimited = insl.totalCapacity.toString().toFloat()
-//                }
-
-//                calendar.timeInMillis = insl.millis
-//                xValsDateLabel.add(
-//                    "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
-//                        Calendar.MINUTE
-//                    )}"
-//                )
-                i++
-            }
-        }
-
-
-        var set = ScatterDataSet(feedList, "인슐린");
-        set.setColors(Color.rgb(236,32,8))
-        set.setScatterShapeSize(10f);
-        set.setDrawValues(false);
-        set.setValueTextSize(10f);
-        d.addDataSet(set);
-
-        return d;
-    }
-
-    private fun generateBarData(curDate:String): BarData? {
-//        val entries1 = java.util.ArrayList<BarEntry>()
-////        val entries2 = java.util.ArrayList<BarEntry>()
-//        for (index in 0 until 2) {
-//            entries1.add(BarEntry(0.1f + (index * 7), ((Math.random()* 100) + 55).toFloat()))
-//
-//            // stacked
-////            entries2.add(BarEntry(0.0f, floatArrayOf(((Math.random()* 100) + 55).toFloat(), ((Math.random()* 100) + 55).toFloat())))
-//        }
         appDatabase = AppDatabase.getInstance(this)
         val xValsDateLabel = ArrayList<String>()
         val calendar = GregorianCalendar.getInstance()
-        val insulinList = arrayListOf<BarEntry>()
-//        val feedList = arrayListOf<Entry>()
         var upperLimited: Float = 0f
         var lowerLimited: Float = 0f
-        val insulin = appDatabase?.insulinDao()?.findByToday(curDate)?: return null
-//        val feeding = appDatabase?.feedingDao()?.findByToday(curDate)?: return null
+        val values0 = arrayListOf<Entry>()
+        val values1 = arrayListOf<Entry>()
+        var timeLine = appDatabase?.graphDao()?.timeLineData(curDate)?: return null
 
-        insulinListOfDay = insulin
-//        feedListOfDay = feeding
+        timeLineOfDay = timeLine
 
-        var i = 0f
-        if (insulin != null) {
-            for (insl: Insulin in insulin) {
-                if (i == 0f) {
-                    upperLimited = insl.totalCapacity.toString().toFloat()
-                    lowerLimited = insl.totalCapacity.toString().toFloat()
-                }
-                insulinList.add(BarEntry(i, insl.totalCapacity.toString().toFloat()))
-
-                if (insl.totalCapacity.toString().toFloat() > upperLimited) {
-                    upperLimited = insl.totalCapacity.toString().toFloat()
-                }
-
-                if (insl.totalCapacity.toString().toFloat() < lowerLimited) {
-                    lowerLimited = insl.totalCapacity.toString().toFloat()
-                }
-
-//                calendar.timeInMillis = insl.millis
-//                xValsDateLabel.add(
-//                    "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
-//                        Calendar.MINUTE
-//                    )}"
-//                )
-                i++
+        for ((i, day: GraphTimeLine) in timeLine?.withIndex()) {
+            if(i == 0) {
+                upperLimited = day.totalCapacity.toString().toFloat()
+                lowerLimited = day.totalCapacity.toString().toFloat()
             }
+
+            if(day.totalCapacity.toString().toFloat() > upperLimited) {
+                upperLimited = day.totalCapacity.toString().toFloat()
+            }
+
+            if(day.totalCapacity.toString().toFloat() < lowerLimited) {
+                lowerLimited = day.totalCapacity.toString().toFloat()
+            }
+
+            when(day.dataType) {
+                0 -> {
+                    values0.add(Entry(i.toFloat(), day.totalCapacity.toString().toFloat()))
+                }
+
+                1 ->
+                {
+                    values1.add(Entry(i.toFloat(), day.totalCapacity.toString().toFloat()))
+                }
+            }
+
+            calendar.timeInMillis = day.millis
+            xValsDateLabel.add(
+                "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
+                    Calendar.MINUTE
+                )}"
+            )
         }
 
-        val timeLineList = appDatabase?.graphDao()?.timeLineData(curDate)?: return null
+        setCombChartLayout(xValsDateLabel, upperLimited, lowerLimited)
 
-        if(timeLineList != null) {
-            for(date:Long in timeLineList) {
-                calendar.timeInMillis = date
-                xValsDateLabel.add(
-                    "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
-                        Calendar.MINUTE
-                    )}"
-                )
-            }
-        }
+        // create a dataset and give it a type
+        val set1 = ScatterDataSet(values0, "사료")
+        set1.setColors(Color.rgb(245,161,27))
+        set1.setValueTextColors(arrayListOf(Color.DKGRAY))
+        set1.setScatterShape(ScatterChart.ScatterShape.SQUARE)
+        set1. scatterShapeSize = 12f
+        set1.setDrawValues(true)
+//        set1.setDrawIcons(true)
+        set1.valueTextSize = 10f
+//        set1.scatterShapeHoleRadius = 4f
 
-        setCombChartLayout(insulin.size, xValsDateLabel, upperLimited, lowerLimited)
+        val set2 = ScatterDataSet(values1, "인슐린")
+        set2.setColors(Color.rgb(236,32,8))
+        set2.setValueTextColors(arrayListOf(Color.DKGRAY))
+        set2.scatterShapeSize = 12f
+        set2.setDrawValues(true)
+//        set1.setDrawIcons(true)
+        set2.valueTextSize = 10f
+//        set2.scatterShapeHoleRadius = 4f
 
-        val set = BarDataSet(insulinList, "사료급여")
-        set.color = Color.rgb(93, 192, 158)
-        set.valueTextColor = Color.rgb(15, 97, 142)
-        set.valueTextSize = 10f
-        set.axisDependency = YAxis.AxisDependency.LEFT
-//        val set2 = BarDataSet(entries2, "")
-//        set2.stackLabels = arrayOf("Stack 1", "Stack 2")
-//        set2.setColors(
-//            Color.rgb(61, 165, 255),
-//            Color.rgb(23, 197, 255)
-//        )
-//        set2.valueTextColor = Color.rgb(61, 165, 255)
-//        set2.valueTextSize = 10f
-//        set2.axisDependency = YAxis.AxisDependency.LEFT
-//        val groupSpace = 0.06f
-//        val barSpace = 0.02f // x2 dataset
-//        val barWidth = 0.45f // x2 dataset
-        // (0.45 + 0.02) * 2 + 0.06 = 1.00 -> interval per "group"
-//        val d = BarData(set1, set2)
-//        val d = BarData(set)
-//        d.barWidth = barWidth
+        d.addDataSet(set1)
+        d.addDataSet(set2)
 
-        // make this BarData object grouped
-//        d.groupBars(0f, groupSpace, barSpace) // start at x = 0
-        return BarData(set)
+        return d
+    }
+
+    private fun resetChart() {
+        lineChart.xAxis.resetAxisMaximum()
+        lineChart.xAxis.resetAxisMinimum()
+        combChart.xAxis.resetAxisMaximum()
+        combChart.xAxis.resetAxisMinimum()
     }
 
     private fun setButtonEvent() {
@@ -507,10 +458,12 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
                 indexOfDay++
                 return@setOnClickListener
             }
+            resetChart()
             textInfo.text = ""
             setDate(day.toString())
             CoroutineScope(Dispatchers.IO).launch {
                 loadGlaucoseData(day.toString())
+                loadCombinedData(day.toString())
             }
         }
 
@@ -525,11 +478,34 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
                 indexOfDay--
                 return@setOnClickListener
             }
+            resetChart()
             textInfo.text = ""
             setDate(day.toString())
             CoroutineScope(Dispatchers.IO).launch {
                 loadGlaucoseData(day.toString())
+                loadCombinedData(day.toString())
             }
+        }
+
+        btnModify.setOnClickListener {
+            if(selectedDataType == DataType.NONE) return@setOnClickListener
+            var intent: Intent? = null
+            selectedDataIndex
+            when(selectedDataType) {
+                DataType.FEEDING -> {
+                    intent = Intent(this, FeedingActivity::class.java)
+                }
+                DataType.INSULIN -> {
+                    intent = Intent(this, InsulinActivity::class.java)
+                }
+                DataType.BLOODSUGAR -> {
+                    intent = Intent(this, BloodGlucoseActivity::class.java)
+                }
+            }
+
+            intent?.putExtra("data", selectedParcel)
+            textInfo.text = ""
+            startActivityForResult(intent, 100)
         }
     }
 
@@ -558,16 +534,87 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
     override fun onNothingSelected() {}
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
-        Log.i(
-            "VAL SELECTED",
-            "Value: " + e!!.y + ", xIndex: " + e!!.x
-                    + ", DataSet index: " + h!!.dataSetIndex
-        )
+//        Log.i(
+//            "VAL SELECTED",
+//            "Value: " + e!!.y + ", xIndex: " + e!!.x
+//                    + ", DataSet index: " + h!!.dataSetIndex
+//        )
         val gloucose = gloucoseListOfDay[e!!.x.toInt()]
         val calendar = GregorianCalendar.getInstance()
         calendar.timeInMillis = gloucose.millis
-//        Log.v("#####", calendar.get(Calendar.YEAR).toString())
-
+        selectedDataType = DataType.BLOODSUGAR
+        selectedParcel = BloodGlucoseParcel(gloucose.millis, gloucose.dataType, gloucose.bloodSugar)
         textInfo.text = "시간 : %02d시%02d분\n혈당 : %d".format(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), gloucose.bloodSugar)
+    }
+
+    class MyScatterChartTouchListener(private val timeLineOfDay: List<GraphTimeLine>,
+                                      private val textInfo:TextView,
+                                      private var appDatabase: AppDatabase?,
+                                      private val callBack: OnSelectedDataCallBack) : OnChartValueSelectedListener {
+        override fun onNothingSelected() {}
+
+        override fun onValueSelected(e: Entry?, h: Highlight?) {
+            val timeline = timeLineOfDay[e!!.x.toInt()]
+            val calendar = GregorianCalendar.getInstance()
+            calendar.timeInMillis = timeline.millis
+
+            when(timeline.dataType) {
+                0 -> {
+                    var parcel:FeedParcel
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val data = appDatabase?.feedingDao()?.findByTodyWithMillis(timeline.millis)!!
+                        CoroutineScope(Dispatchers.Main).launch {
+                            textInfo.text =
+                                "시간 : %02d시%02d분\n브랜드: %s\n사료량 : %dg\n비고 : %s".format(
+                                calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE),
+                                data.brandName,
+                                data.totalCapacity,
+                                data.remark)
+                        }
+                        parcel = FeedParcel(data.millis, data.dataType,data.type,data.brandName,data.totalCapacity,data.remark)
+                        callBack.setDataType(DataType.FEEDING, parcel = parcel)
+                    }
+                }
+
+                1 -> {
+                    var parcel:InsulinParcel
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val data =
+                            appDatabase?.insulinDao()?.findByTodyWithMillis(timeline.millis)!!
+                        CoroutineScope(Dispatchers.Main).launch {
+                            textInfo.text =
+                                "시간 : %02d시%02d분\n종류 : %s\n원액양 : %1.1f iu\n주사량 : %d iu\n희석 : %s\n비고 : %s".format(
+                                    calendar.get(Calendar.HOUR_OF_DAY),
+                                    calendar.get(Calendar.MINUTE),
+                                    if (data.type == 0) "휴물린엔" else "캐닌슐린",
+                                    data.undiluted,
+                                    data.totalCapacity,
+                                    if (data.dilution == 1) "Yes" else "No",
+                                    data.remark
+                                )
+                            parcel = InsulinParcel(data.millis, data.dataType,data.type,data.undiluted,data.totalCapacity,data.dilution,data.remark)
+                            callBack.setDataType(DataType.INSULIN, parcel = parcel)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                100 -> {
+                    loadLatestData()
+                }
+            }
+        }
+    }
+
+
+    override fun setDataType(type: DataType, parcel:Terry) {
+        selectedDataType = type
+        selectedParcel = parcel
     }
 }

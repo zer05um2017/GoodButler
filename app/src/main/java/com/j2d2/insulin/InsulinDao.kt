@@ -1,6 +1,7 @@
 package com.j2d2.insulin
 
 import androidx.room.*
+import com.j2d2.feeding.Feeding
 
 @Dao
 interface InsulinDao {
@@ -12,6 +13,9 @@ interface InsulinDao {
 
     @Query("SELECT * FROM insulin WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE :today ORDER BY millis")
     fun findByToday(today: String): List<Insulin>
+
+    @Query("SELECT * FROM insulin WHERE millis LIKE :milli")
+    fun findByTodyWithMillis(milli:Long): Insulin
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg insulin: Insulin)

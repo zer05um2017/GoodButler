@@ -1,5 +1,6 @@
 package com.j2d2.insulin
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
@@ -9,9 +10,13 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
+import com.j2d2.feeding.FeedParcel
 import com.j2d2.main.AppDatabase
 import com.j2d2.main.SharedPref
+import kotlinx.android.synthetic.main.activity_feeding.*
 import kotlinx.android.synthetic.main.activity_insulin.*
+import kotlinx.android.synthetic.main.activity_insulin.btnSave
+import kotlinx.android.synthetic.main.activity_insulin.editRemark
 import kotlinx.android.synthetic.main.activity_insulin.editTextDate
 import kotlinx.android.synthetic.main.activity_insulin.editTextTime
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +28,8 @@ import java.util.*
 
 class InsulinActivity : AppCompatActivity() {
     var appDatabase: AppDatabase? = null
+    private var isModifyed:Boolean? = false
+    private lateinit var pacelData:InsulinParcel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,13 +39,35 @@ class InsulinActivity : AppCompatActivity() {
         appDatabase = AppDatabase.getInstance(this)
         setDataEventListener()
         setDateTimeListener()
-        setCurrentDate()
-        setCurrentTime()
+
+        if (intent.hasExtra("data")) {
+            isModifyed = true
+            var data = intent.getParcelableExtra<InsulinParcel>("data")
+            pacelData = data
+            editUndiluted?.setText(data?.undiluted.toString())
+
+            when(data.dilution) {
+                0 -> {chkDilution.isChecked = false}
+                1 -> {chkDilution.isChecked = true}
+            }
+            editTotalCapacity?.setText(data?.totalCapacity.toString())
+            editRemark?.setText(data?.remark)
+
+            val calendar = GregorianCalendar.getInstance()
+            calendar.timeInMillis = data.millis
+            editTextDate.setText("%02d-%02d-%02d".format(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)))
+            editTextTime.setText("%02d:%02d".format(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)))
+        } else {
+            setCurrentDate()
+            setCurrentTime()
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        getLatestInputDataFromPreference()
+        if(!isModifyed!!) {
+            getLatestInputDataFromPreference()
+        }
     }
 
     /**
@@ -147,11 +176,24 @@ class InsulinActivity : AppCompatActivity() {
                 ).show()
                 return@setOnClickListener
             }
-
+            val modified = this.isModifyed
             CoroutineScope(Dispatchers.IO).launch {
+                if(modified!!) {
+                    val data = Insulin(
+                        pacelData.millis,
+                        pacelData.dataType,
+                        pacelData.type,
+                        pacelData.undiluted,
+                        pacelData.totalCapacity,
+                        pacelData.dilution,
+                        pacelData.remark
+                    )
+                    appDatabase?.insulinDao()?.delete(data)
+                }
                 appDatabase?.insulinDao()?.insert(
                     Insulin(
                         millis = getTimeInMillis(),
+                        dataType = 1,   // 데이터 타입 0:사료, 1:인슐린
                         type = getInsulinType(),
                         undiluted = getUndilutedCapacity(),
                         totalCapacity = getTotalInjectionCapacity(),
@@ -167,6 +209,9 @@ class InsulinActivity : AppCompatActivity() {
                         getString(R.string.com_j2d2_insulin_ins_message_input_complete),
                         Toast.LENGTH_LONG
                     ).show()
+                    if(modified!!) {
+                        setResult(Activity.RESULT_OK)
+                    }
                     finish()
                 }
             }
@@ -333,5 +378,10 @@ class InsulinActivity : AppCompatActivity() {
     override fun onDestroy() {
         AppDatabase.destroyInstance()
         super.onDestroy()
+    }
+
+    override fun onBackPressed() {
+        setResult(Activity.RESULT_CANCELED)
+        finish()
     }
 }
