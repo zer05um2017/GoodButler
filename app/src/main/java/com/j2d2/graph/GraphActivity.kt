@@ -1,6 +1,7 @@
 package com.j2d2.graph
 
 import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.os.Parcelable
 import android.text.method.ScrollingMovementMethod
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
@@ -257,7 +259,7 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         llXAxis.enableDashedLine(10f, 10f, 0f)
         llXAxis.labelPosition = LimitLabelPosition.RIGHT_BOTTOM
         llXAxis.textSize = 10f
-        val ll1 = LimitLine(upperLimited, "최대")
+        val ll1 = LimitLine(upperLimited, "최고")
         ll1.lineWidth = 1f
         ll1.lineColor = Color.rgb(46,190,197)
         ll1.enableDashedLine(10f, 10f, 0f)
@@ -490,7 +492,7 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         btnModify.setOnClickListener {
             if(selectedDataType == DataType.NONE) return@setOnClickListener
             var intent: Intent? = null
-            selectedDataIndex
+
             when(selectedDataType) {
                 DataType.FEEDING -> {
                     intent = Intent(this, FeedingActivity::class.java)
@@ -506,6 +508,52 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
             intent?.putExtra("data", selectedParcel)
             textInfo.text = ""
             startActivityForResult(intent, 100)
+        }
+
+        btnDelete.setOnClickListener {
+            val alertDialog: AlertDialog? = this?.let {
+                val builder = AlertDialog.Builder(this)
+                builder.apply {
+                    setPositiveButton(R.string.ok,
+                        DialogInterface.OnClickListener { dialog, id ->
+                            // User clicked OK button
+                            if(selectedDataType == DataType.NONE) return@OnClickListener
+                            var parcel: Terry
+
+                            when(selectedDataType) {
+                                DataType.FEEDING -> {
+                                    parcel = selectedParcel as FeedParcel
+                                    val data = Feeding(parcel.millis, parcel.dataType,parcel.type,parcel.brandName,parcel.totalCapacity,parcel.remark)
+                                    appDatabase?.feedingDao()?.delete(data)
+                                }
+                                DataType.INSULIN -> {
+                                    parcel = selectedParcel as InsulinParcel
+                                    val data = Insulin(parcel.millis, parcel.dataType,parcel.type,parcel.undiluted,parcel.totalCapacity,parcel.dilution,parcel.remark)
+                                    appDatabase?.insulinDao()?.delete(data)
+                                }
+                                DataType.BLOODSUGAR -> {
+                                    parcel = selectedParcel as BloodGlucoseParcel
+                                    val data = BloodGlucose(parcel.millis, parcel.dataType, parcel.bloodSugar)
+                                    appDatabase?.bloodGlucoseDao()?.delete(data)
+                                }
+                            }
+                        })
+
+                    setNegativeButton(R.string.cancel,
+                        DialogInterface.OnClickListener { dialog, id ->
+                            // User cancelled the dialog
+                        })
+                }
+                // Set other dialog properties
+
+                builder.setMessage(getString(R.string.delete_message))
+//                builder.setIcon(R.drawable.information)
+                // Create the AlertDialog
+                builder.create()
+            }
+            alertDialog?.show()
+
+//            return@setOnClickListener
         }
     }
 

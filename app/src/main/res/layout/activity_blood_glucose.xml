@@ -72,6 +72,7 @@
         android:layout_marginEnd="16dp"
         android:ems="10"
         android:inputType="number"
+        android:singleLine="true"
         android:textAlignment="center"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"

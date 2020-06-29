@@ -42,4 +42,10 @@
     <string name="com.j2d2.graph.message_nodata">혈당 데이터가 존재하지 않습니다.</string>
     <string name="com.j2d2.graph.graph_title">혈당 그래프</string>
 
+    <!-- General-->
+    <string name="ok">확인</string>
+    <string name="cancel">취소</string>
+    <string name="delete">삭제</string>
+    <string name="delete_message">삭제하시겠습니까?</string>
+
 </resources>
