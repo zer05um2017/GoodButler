@@ -251,6 +251,7 @@ class FeedingActivity : AppCompatActivity() {
      * 입력된 Preference 가져오기
      */
     private fun getLatestInputDataFromPreference() {
+
         with(SharedPref.prefs) {
             if(contains(R.string.com_j2d2_feeding_feed_type.toString())) {
                 if (getInt(R.string.com_j2d2_feeding_feed_type.toString(), 0) == 0) {

@@ -34,9 +34,7 @@ import com.j2d2.feeding.FeedingActivity
 import com.j2d2.insulin.Insulin
 import com.j2d2.insulin.InsulinActivity
 import com.j2d2.insulin.InsulinParcel
-import com.j2d2.main.AppDatabase
-import com.j2d2.main.DataType
-import com.j2d2.main.Terry
+import com.j2d2.main.*
 import kotlinx.android.synthetic.main.activity_graph.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +43,11 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedListener, OnSelectedDataCallBack {
+class GraphActivity : AppCompatActivity(),
+    InvalidateData,
+    OnChartValueSelectedListener,
+    OnSelectedDataCallBack,
+    DialogOnClickListener {
     private var data: ArrayList<Entry>? = null
     private var appDatabase: AppDatabase? = null
     private var gloucoseListOfDay = listOf<BloodGlucose>()
@@ -511,49 +513,17 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         }
 
         btnDelete.setOnClickListener {
-            val alertDialog: AlertDialog? = this?.let {
-                val builder = AlertDialog.Builder(this)
-                builder.apply {
-                    setPositiveButton(R.string.ok,
-                        DialogInterface.OnClickListener { dialog, id ->
-                            // User clicked OK button
-                            if(selectedDataType == DataType.NONE) return@OnClickListener
-                            var parcel: Terry
-
-                            when(selectedDataType) {
-                                DataType.FEEDING -> {
-                                    parcel = selectedParcel as FeedParcel
-                                    val data = Feeding(parcel.millis, parcel.dataType,parcel.type,parcel.brandName,parcel.totalCapacity,parcel.remark)
-                                    appDatabase?.feedingDao()?.delete(data)
-                                }
-                                DataType.INSULIN -> {
-                                    parcel = selectedParcel as InsulinParcel
-                                    val data = Insulin(parcel.millis, parcel.dataType,parcel.type,parcel.undiluted,parcel.totalCapacity,parcel.dilution,parcel.remark)
-                                    appDatabase?.insulinDao()?.delete(data)
-                                }
-                                DataType.BLOODSUGAR -> {
-                                    parcel = selectedParcel as BloodGlucoseParcel
-                                    val data = BloodGlucose(parcel.millis, parcel.dataType, parcel.bloodSugar)
-                                    appDatabase?.bloodGlucoseDao()?.delete(data)
-                                }
-                            }
-                        })
-
-                    setNegativeButton(R.string.cancel,
-                        DialogInterface.OnClickListener { dialog, id ->
-                            // User cancelled the dialog
-                        })
-                }
-                // Set other dialog properties
-
-                builder.setMessage(getString(R.string.delete_message))
-//                builder.setIcon(R.drawable.information)
-                // Create the AlertDialog
-                builder.create()
+            if(selectedDataType == DataType.NONE) {
+                Toast.makeText(
+                    this@GraphActivity,
+                    getString(R.string.delete_alert_message),
+                    Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
             }
-            alertDialog?.show()
 
-//            return@setOnClickListener
+            val dlg = PopupDialog(this, this)
+            dlg.start(getString(R.string.delete_message))
         }
     }
 
@@ -660,9 +630,42 @@ class GraphActivity : AppCompatActivity(), InvalidateData, OnChartValueSelectedL
         }
     }
 
-
     override fun setDataType(type: DataType, parcel:Terry) {
         selectedDataType = type
         selectedParcel = parcel
+    }
+
+    override fun OnPositiveClick() {
+        var parcel: Terry
+
+        when(selectedDataType) {
+            DataType.FEEDING -> {
+                parcel = selectedParcel as FeedParcel
+                val data = Feeding(parcel.millis, parcel.dataType,parcel.type,parcel.brandName,parcel.totalCapacity,parcel.remark)
+                CoroutineScope(Dispatchers.IO).launch {
+                    appDatabase?.feedingDao()?.delete(data)
+                }
+            }
+            DataType.INSULIN -> {
+                parcel = selectedParcel as InsulinParcel
+                val data = Insulin(parcel.millis, parcel.dataType,parcel.type,parcel.undiluted,parcel.totalCapacity,parcel.dilution,parcel.remark)
+                CoroutineScope(Dispatchers.IO).launch {
+                    appDatabase?.insulinDao()?.delete(data)
+                }
+            }
+            DataType.BLOODSUGAR -> {
+                parcel = selectedParcel as BloodGlucoseParcel
+                val data = BloodGlucose(parcel.millis, parcel.dataType, parcel.bloodSugar)
+                CoroutineScope(Dispatchers.IO).launch {
+                    appDatabase?.bloodGlucoseDao()?.delete(data)
+                }
+            }
+        }
+
+        loadLatestData()
+    }
+
+    override fun OnNegativeClick() {
+
     }
 }
