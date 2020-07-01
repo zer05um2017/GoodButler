@@ -78,10 +78,20 @@ class GraphActivity : AppCompatActivity(),
         textDate.text = curDate
     }
 
+    private fun getToday(): String {
+        val calendar = GregorianCalendar.getInstance()
+        calendar.timeZone
+//        Log.v("#####", calendar.get(Calendar.YEAR).toString())
+//        Log.v("#####", calendar.get(Calendar.MONTH).toString())
+        return "${calendar.get(Calendar.YEAR)}${calendar.get(Calendar.MONTH)}"
+    }
+
     private fun loadLatestData() {
         appDatabase = AppDatabase.getInstance(this)
 
         CoroutineScope(Dispatchers.IO).launch {
+            val latestDay = appDatabase?.graphDao()?.getDayListOfMonth("") as Long ?: return@launch
+
             val dayOfList = appDatabase?.bloodGlucoseDao()?.getDayList()
 
             if (dayOfList != null) {
