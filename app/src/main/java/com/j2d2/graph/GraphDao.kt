@@ -21,4 +21,44 @@ interface GraphDao {
 //    @Query("SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM feeding WHERE strftime('%Y-%m', DT) LIKE :month GROUP BY DT ORDER BY DT DESC")
 //    fun dayListOfMonth(month:String):String
 
+
+    /*
+    * 1. 그래프 화면 진입 시 존재하는 데이터에서 년월 목록을 가져온다.
+2. 위 목록에서 해당 최근 월에 속하는 일자의 모든 데이터를 각 테이블로 부터 가져와서 그래프에 출력한다.
+
+SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM feeding WHERE  strftime("%Y%m",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE '202006' GROUP BY DT ORDER BY DT DESC
+
+
+SELECT strftime("%Y%m",date(date(day/1000,'unixepoch','localtime'), '-1 month'),'localtime') as DT FROM (
+SELECT MAX(millis) as day FROM feeding
+UNION
+SELECT MAX(millis) as day FROM insulin
+UNION
+SELECT MAX(millis) as day FROM bloodglucose
+) GROUP BY DT ORDER BY day DESC --LIMIT 1
+
+-- SELECT * FROM bloodglucose WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE '2020-06-23' ORDER BY millis
+
+-- SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as dt FROM bloodglucose WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') GROUP BY dt ORDER BY dt DESC
+
+--SELECT datetime(1092941466, 'unixepoch');
+
+--SELECT datetime(1092941466, 'unixepoch', 'localtime');
+
+
+-- select strftime("%Y%m",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') FROM feeding
+
+-- date(date(millis/1000,'unixepoch','localtime'), '-1 month')
+
+
+SELECT day as day from (
+SELECT strftime('%Y%d, millis FROM feeding WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE '202006'
+UNION
+SELECT millis FROM insulin  WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE '202006'
+UNION
+SELECT millis FROM bloodglucose WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE '202006'
+)
+
+
+SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM feeding WHERE strftime('%Y%d',DT) like '2020-06' GROUP BY DT*/
 }
