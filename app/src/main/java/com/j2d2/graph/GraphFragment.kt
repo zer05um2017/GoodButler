@@ -5,10 +5,14 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.charts.ScatterChart
 import com.github.mikephil.charting.components.*
@@ -36,12 +40,11 @@ import kotlinx.android.synthetic.main.activity_graph.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class GraphActivity : AppCompatActivity(),
+class GraphFragment : Fragment(),
     InvalidateData,
     OnChartValueSelectedListener,
     OnSelectedDataCallBack,
@@ -60,17 +63,33 @@ class GraphActivity : AppCompatActivity(),
 //    private lateinit var months: List<String>
 //    private lateinit var days: List<String>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        supportActionBar?.title = getString(R.string.com_j2d2_graph_title)
-        setContentView(R.layout.activity_graph)
-        supportActionBar?.hide()
-        appDatabase = AppDatabase.getInstance(this)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.activity_graph, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        appDatabase = AppDatabase.getInstance(requireContext())
         setButtonEvent()
         loadData()
         lineChart.setOnChartValueSelectedListener(this)
         textInfo.movementMethod = ScrollingMovementMethod()
+//        (activity as AppCompatActivity?)?.supportActionBar?.hide()
     }
+
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        supportActionBar?.title = getString(R.string.com_j2d2_graph_title)
+//        setContentView(R.layout.activity_graph)
+//        supportActionBar?.hide()
+//        appDatabase = AppDatabase.getInstance(this)
+//        setButtonEvent()
+//        loadData()
+//        lineChart.setOnChartValueSelectedListener(this)
+//        textInfo.movementMethod = ScrollingMovementMethod()
+//    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putSerializable("chart", this.data)
@@ -113,7 +132,7 @@ class GraphActivity : AppCompatActivity(),
     }
 
     private fun loadGlaucoseData(curDate:String) {
-        appDatabase = AppDatabase.getInstance(this)
+        appDatabase = AppDatabase.getInstance(requireContext())
         val xValsDateLabel = ArrayList<String>()
         val calendar = GregorianCalendar.getInstance()
         val glucoseList = arrayListOf<Entry>()
@@ -166,7 +185,7 @@ class GraphActivity : AppCompatActivity(),
     private fun loadCombinedData(curDate:String) {
         var combData = CombinedData()
         var d = ScatterData();
-        appDatabase = AppDatabase.getInstance(this)
+        appDatabase = AppDatabase.getInstance(requireContext())
         val xValsDateLabel = ArrayList<String>()
         val calendar = GregorianCalendar.getInstance()
         var upperLimited: Float = 0f
@@ -368,7 +387,7 @@ class GraphActivity : AppCompatActivity(),
         // set color of filled area
         if (Utils.getSDKInt() >= 18) {
             // drawables only supported on api level 18 and above
-            val drawable = ContextCompat.getDrawable(this, R.drawable.fade_red)
+            val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.fade_red)
             set.setFillDrawable(drawable)
         } else {
             set.setFillColor(Color.BLACK)
@@ -381,7 +400,7 @@ class GraphActivity : AppCompatActivity(),
 
     private fun generateScatterData(curDate:String): ScatterData? {
         var d = ScatterData();
-        appDatabase = AppDatabase.getInstance(this)
+        appDatabase = AppDatabase.getInstance(requireContext())
         val xValsDateLabel = ArrayList<String>()
         val calendar = GregorianCalendar.getInstance()
         var upperLimited: Float = 0f
@@ -472,7 +491,7 @@ class GraphActivity : AppCompatActivity(),
                     prevDayOfMon = daysOfMonthMap[--indexOfMonth][indexOfDay]
                 } catch (e: Exception) {
                     Toast.makeText(
-                        this@GraphActivity,
+                        requireContext(),
                         getString(R.string.com_j2d2_graph_message_last),
                         Toast.LENGTH_SHORT
                     ).show()
@@ -503,7 +522,7 @@ class GraphActivity : AppCompatActivity(),
                     prevDayOfMon = daysOfMonthMap[++indexOfMonth][indexOfDay]
                 } catch (e: IndexOutOfBoundsException) {
                     Toast.makeText(
-                        this@GraphActivity,
+                        requireContext(),
                         getString(R.string.com_j2d2_graph_message_last),
                         Toast.LENGTH_SHORT
                     ).show()
@@ -529,13 +548,13 @@ class GraphActivity : AppCompatActivity(),
 
             when(selectedDataType) {
                 DataType.FEEDING -> {
-                    intent = Intent(this, FeedingActivity::class.java)
+                    intent = Intent(requireContext(), FeedingActivity::class.java)
                 }
                 DataType.INSULIN -> {
-                    intent = Intent(this, InsulinActivity::class.java)
+                    intent = Intent(requireContext(), InsulinActivity::class.java)
                 }
                 DataType.BLOODSUGAR -> {
-                    intent = Intent(this, BloodGlucoseActivity::class.java)
+                    intent = Intent(requireContext(), BloodGlucoseActivity::class.java)
                 }
             }
 
@@ -547,14 +566,14 @@ class GraphActivity : AppCompatActivity(),
         btnDelete.setOnClickListener {
             if(selectedDataType == DataType.NONE) {
                 Toast.makeText(
-                    this@GraphActivity,
+                    requireContext(),
                     getString(R.string.delete_alert_message),
                     Toast.LENGTH_LONG
                 ).show()
                 return@setOnClickListener
             }
 
-            val dlg = PopupDialog(this, this)
+            val dlg = PopupDialog(requireContext(), this)
             dlg.start(getString(R.string.delete_message))
         }
     }

@@ -48,5 +48,8 @@
     <string name="delete">삭제</string>
     <string name="delete_message">삭제하시겠습니까?</string>
     <string name="delete_alert_message">그래프에서 삭제할 데이터를 선택하세요.</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
 
 </resources>

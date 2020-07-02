@@ -1,44 +1,27 @@
 package com.j2d2.main
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import com.j2d2.R
-import com.j2d2.bloodglucose.BloodGlucoseActivity
-import com.j2d2.feeding.FeedingActivity
-import com.j2d2.graph.GraphActivity
-import com.j2d2.insulin.InsulinActivity
-import com.j2d2.pedometer.PedometerActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import com.j2d2.main.ui.main.SectionsPagerAdapter
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        btnGraph.setOnClickListener {
-            val intent = Intent(this@MainActivity, GraphActivity::class.java)
-            startActivity(intent)
-        }
-
-        btnInsulin.setOnClickListener {
-            val intent = Intent(this@MainActivity, InsulinActivity::class.java)
-            startActivity(intent)
-        }
-
-        btnPedometer.setOnClickListener {
-            val intent = Intent(this@MainActivity, PedometerActivity::class.java)
-            startActivity(intent)
-        }
-
-        btnFeeding.setOnClickListener {
-            val intent = Intent(this@MainActivity, FeedingActivity::class.java)
-            startActivity(intent)
-        }
-
-        btnBloodGlucose.setOnClickListener {
-            val intent = Intent(this@MainActivity, BloodGlucoseActivity::class.java)
-            startActivity(intent)
-        }
+        val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
+        val viewPager: ViewPager = findViewById(R.id.view_pager)
+        viewPager.adapter = sectionsPagerAdapter
+        val tabs: TabLayout = findViewById(R.id.tabs)
+        tabs.setupWithViewPager(viewPager)
+        supportActionBar?.hide()
+//        val fab: FloatingActionButton = findViewById(R.id.fab)
+//        fab.setOnClickListener { view ->
+//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                .setAction("Action", null).show()
+//        }
     }
 }
