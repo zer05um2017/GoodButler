@@ -6,17 +6,42 @@ import androidx.room.Query
 @Dao
 interface GraphDao {
 
-    @Query("SELECT data_type, millis, total_capacity FROM insulin WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE :today\n" +
+    /**
+     * 인슐린 & 사료급여 데이터만 조회(Only for Scatter Graph)
+     * @param date (ex. 2020-06-23)
+     * @return List<GraphTimeLine>
+     * */
+    @Query("SELECT * FROM (\n" +
+            "SELECT data_type, millis, total_capacity FROM insulin WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE :today\n" +
             "UNION\n" +
             "SELECT data_type, millis, total_capacity FROM feeding WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE :today\n" +
-            "ORDER BY millis")
+            ")ORDER BY millis ASC")
     fun timeLineData(today:String):List<GraphTimeLine>
 
-    @Query("")
-    fun getLatestDay():Long
-
-    @Query("SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM feeding WHERE strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month GROUP BY DT ORDER BY DT DESC")
+    /** 입력받은 년월을 기준으로 해당 월에 대한 저장된 데이터의 일자 목록 조회
+     * @param 202006
+     * @return [2020-06-24, 2020-06-23] 해당포맷이 코드에서 날짜 변환하기에 편함
+     * */
+    @Query("SELECT DT FROM (\n" +
+            "SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM feeding WHERE strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month\n" +
+            "UNION\n" +
+            "SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM feeding WHERE  strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month\n" +
+            "UNION\n" +
+            "SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM feeding WHERE  strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month\n" +
+            ") ORDER BY DT DESC")
     fun getDayListOfMonth(month:String):List<String>
+
+    /** 각 테이블에 저장된 데이터에서 년월 목록을 내림차순으로 모두 가져온다.
+     * @return [202007, 202006] */
+    @Query("\n" +
+            "SELECT strftime(\"%Y%m\",date(date(day/1000,'unixepoch','localtime'), '-1 month'),'localtime') as DT FROM (\n" +
+            "SELECT millis as day FROM feeding\n" +
+            "UNION\n" +
+            "SELECT millis as day FROM insulin\n" +
+            "UNION\n" +
+            "SELECT millis as day FROM bloodglucose\n" +
+            ") GROUP BY DT ORDER BY day DESC ")
+    fun getAllMonthsList():List<String>
 
 //    @Query("SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM feeding WHERE strftime('%Y-%m', DT) LIKE :month GROUP BY DT ORDER BY DT DESC")
 //    fun dayListOfMonth(month:String):String

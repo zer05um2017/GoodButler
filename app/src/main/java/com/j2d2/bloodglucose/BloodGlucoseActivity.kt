@@ -331,20 +331,20 @@ class BloodGlucoseActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadData() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val cal = Calendar.getInstance()
-            val myFormat = "yyyy-MM-dd" // mention the format you need
-            val sdf = SimpleDateFormat(myFormat, Locale.US)
-            val glucose =
-                appDatabase?.bloodGlucoseDao()?.findByToday(sdf.format(cal.time).toString())
-                    ?: return@launch
-            for (gcs: BloodGlucose in glucose) {
-                println("date : ${gcs.millis.toString()}")
-                println("value : ${gcs.bloodSugar.toString()}")
-            }
-        }
-    }
+//    private fun loadData() {
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val cal = Calendar.getInstance()
+//            val myFormat = "yyyy-MM-dd" // mention the format you need
+//            val sdf = SimpleDateFormat(myFormat, Locale.US)
+//            val glucose =
+//                appDatabase?.bloodGlucoseDao()?.findByToday(sdf.format(cal.time).toString())
+//                    ?: return@launch
+//            for (gcs: BloodGlucose in glucose) {
+//                println("date : ${gcs.millis.toString()}")
+//                println("value : ${gcs.bloodSugar.toString()}")
+//            }
+//        }
+//    }
 
     override fun onBackPressed() {
         setResult(Activity.RESULT_CANCELED)

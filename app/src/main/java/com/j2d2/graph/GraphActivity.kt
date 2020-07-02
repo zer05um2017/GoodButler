@@ -1,15 +1,12 @@
 package com.j2d2.graph
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Parcelable
 import android.text.method.ScrollingMovementMethod
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
@@ -39,6 +36,7 @@ import kotlinx.android.synthetic.main.activity_graph.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -52,19 +50,24 @@ class GraphActivity : AppCompatActivity(),
     private var appDatabase: AppDatabase? = null
     private var gloucoseListOfDay = listOf<BloodGlucose>()
     private var timeLineOfDay = listOf<GraphTimeLine>()
-    private var dayMap = mutableMapOf<Int, String>()
+//    private var dayMap = mutableMapOf<Int, String>()
+    private var daysOfMonthMap = arrayListOf<ArrayList<String>>()
+    private var indexOfMonth: Int = 0
     private var indexOfDay: Int = 0
     private lateinit var selectedParcel:Terry
     private var selectedDataType: DataType = DataType.NONE
-    private var selectedDataIndex: Int = -1
+
+//    private lateinit var months: List<String>
+//    private lateinit var days: List<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.title = getString(R.string.com_j2d2_graph_title)
         setContentView(R.layout.activity_graph)
         supportActionBar?.hide()
+        appDatabase = AppDatabase.getInstance(this)
         setButtonEvent()
-        loadLatestData()
+        loadData()
         lineChart.setOnChartValueSelectedListener(this)
         textInfo.movementMethod = ScrollingMovementMethod()
     }
@@ -75,7 +78,9 @@ class GraphActivity : AppCompatActivity(),
     }
 
     private fun setDate(curDate: String) {
-        textDate.text = curDate
+        CoroutineScope(Dispatchers.Main).launch {
+            textDate.text = curDate
+        }
     }
 
     private fun getToday(): String {
@@ -86,29 +91,24 @@ class GraphActivity : AppCompatActivity(),
         return "${calendar.get(Calendar.YEAR)}${calendar.get(Calendar.MONTH)}"
     }
 
-    private fun loadLatestData() {
-        appDatabase = AppDatabase.getInstance(this)
-
+    private fun loadData() {
         CoroutineScope(Dispatchers.IO).launch {
-            val latestDay = appDatabase?.graphDao()?.getDayListOfMonth("") as Long ?: return@launch
+            // load all months in the existent data
+            val months = appDatabase?.graphDao()?.getAllMonthsList()!!
 
-            val dayOfList = appDatabase?.bloodGlucoseDao()?.getDayList()
-
-            if (dayOfList != null) {
-                for ((i, day: String) in dayOfList.withIndex()) {
-                    dayMap?.put(i, day)
+            for(i in months.indices) {
+                val days = appDatabase?.graphDao()?.getDayListOfMonth(month = months[i])!!
+                var temp = ArrayList<String>()
+                for ((j, day: String) in days.withIndex()) {
+                    temp.add(day)
                 }
-                val curDate = dayMap[indexOfDay]
-                loadGlaucoseData(curDate.toString())
-                loadCombinedData(curDate.toString())
-            } else {
-                Toast.makeText(
-                    this@GraphActivity,
-                    getString(R.string.com_j2d2_graph_message_nodata),
-                    Toast.LENGTH_LONG
-                ).show()
-                return@launch
+                daysOfMonthMap.add(temp)
             }
+
+            val curDate = daysOfMonthMap[indexOfMonth][indexOfDay]
+            setDate(curDate)
+            loadGlaucoseData(curDate)
+            loadCombinedData(curDate)
         }
     }
 
@@ -462,16 +462,26 @@ class GraphActivity : AppCompatActivity(),
 
     private fun setButtonEvent() {
         btnNext.setOnClickListener {
-            var day = dayMap[--indexOfDay]
-            if(day.isNullOrBlank()) {
-                Toast.makeText(
-                    this@GraphActivity,
-                    getString(R.string.com_j2d2_graph_message_last),
-                    Toast.LENGTH_SHORT
-                ).show()
-                indexOfDay++
-                return@setOnClickListener
+            var day = ""
+            try {
+                day = daysOfMonthMap[indexOfMonth][--indexOfDay]
+            } catch (e: Exception) {
+                indexOfDay = 0
+                var prevDayOfMon = ""
+                try {
+                    prevDayOfMon = daysOfMonthMap[--indexOfMonth][indexOfDay]
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        this@GraphActivity,
+                        getString(R.string.com_j2d2_graph_message_last),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    indexOfDay++
+                    return@setOnClickListener
+                }
+                day = prevDayOfMon
             }
+
             resetChart()
             textInfo.text = ""
             setDate(day.toString())
@@ -482,16 +492,27 @@ class GraphActivity : AppCompatActivity(),
         }
 
         btnPrev.setOnClickListener {
-            var day = dayMap[++indexOfDay]
-            if(day.isNullOrBlank()) {
-                Toast.makeText(
-                    this@GraphActivity,
-                    getString(R.string.com_j2d2_graph_message_last),
-                    Toast.LENGTH_SHORT
-                ).show()
-                indexOfDay--
-                return@setOnClickListener
+            var day = ""
+            try {
+                day = daysOfMonthMap[indexOfMonth][++indexOfDay]
+            } catch (e: IndexOutOfBoundsException) {
+                indexOfDay = 0
+                var prevDayOfMon = ""
+
+                try {
+                    prevDayOfMon = daysOfMonthMap[++indexOfMonth][indexOfDay]
+                } catch (e: IndexOutOfBoundsException) {
+                    Toast.makeText(
+                        this@GraphActivity,
+                        getString(R.string.com_j2d2_graph_message_last),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    indexOfDay--
+                    return@setOnClickListener
+                }
+                day = prevDayOfMon
             }
+
             resetChart()
             textInfo.text = ""
             setDate(day.toString())
@@ -499,6 +520,7 @@ class GraphActivity : AppCompatActivity(),
                 loadGlaucoseData(day.toString())
                 loadCombinedData(day.toString())
             }
+
         }
 
         btnModify.setOnClickListener {
@@ -634,7 +656,7 @@ class GraphActivity : AppCompatActivity(),
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 100 -> {
-                    loadLatestData()
+                    loadData()
                 }
             }
         }
@@ -672,7 +694,7 @@ class GraphActivity : AppCompatActivity(),
             }
         }
 
-        loadLatestData()
+        loadData()
     }
 
     override fun OnNegativeClick() {
