@@ -6,10 +6,11 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.j2d2.R
 import com.j2d2.graph.GraphFragment
+import com.j2d2.main.MainCareFragment
 
 private val TAB_TITLES = arrayOf(
-    R.string.tab_text_1,
-    R.string.tab_text_2
+    R.string.com_j2d2_graph_graph,
+    R.string.main_management
 )
 
 /**
@@ -24,7 +25,7 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
         // Return a PlaceholderFragment (defined as a static inner class below).
         return when (position) {
             0 -> {GraphFragment()}
-            else -> {GraphFragment()}
+            else -> {MainCareFragment()}
 //            PlaceholderFragment.newInstance(position + 1)
         }
     }
@@ -35,6 +36,6 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
 
     override fun getCount(): Int {
         // Show 2 total pages.
-        return 1
+        return 2
     }
 }

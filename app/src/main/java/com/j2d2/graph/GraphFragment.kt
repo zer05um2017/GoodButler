@@ -73,10 +73,14 @@ class GraphFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         appDatabase = AppDatabase.getInstance(requireContext())
         setButtonEvent()
-        loadData()
         lineChart.setOnChartValueSelectedListener(this)
         textInfo.movementMethod = ScrollingMovementMethod()
 //        (activity as AppCompatActivity?)?.supportActionBar?.hide()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadData()
     }
 
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -123,11 +127,14 @@ class GraphFragment : Fragment(),
                 }
                 daysOfMonthMap.add(temp)
             }
-
-            val curDate = daysOfMonthMap[indexOfMonth][indexOfDay]
-            setDate(curDate)
-            loadGlaucoseData(curDate)
-            loadCombinedData(curDate)
+            try{
+                val curDate = daysOfMonthMap[indexOfMonth][indexOfDay]
+                setDate(curDate)
+                loadGlaucoseData(curDate)
+                loadCombinedData(curDate)
+            } catch (e: IndexOutOfBoundsException) {
+                return@launch
+            }
         }
     }
 
