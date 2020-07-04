@@ -35,11 +35,11 @@ interface GraphDao {
      * @return [202007, 202006] */
     @Query("\n" +
             "SELECT strftime(\"%Y%m\",date(date(day/1000,'unixepoch','localtime'), '-1 month'),'localtime') as DT FROM (\n" +
-            "SELECT millis as day FROM feeding\n" +
-            "UNION\n" +
-            "SELECT millis as day FROM insulin\n" +
-            "UNION\n" +
-            "SELECT millis as day FROM bloodglucose\n" +
+                "SELECT millis as day FROM feeding\n" +
+                "UNION\n" +
+                "SELECT millis as day FROM insulin\n" +
+                "UNION\n" +
+                "SELECT millis as day FROM bloodglucose\n" +
             ") GROUP BY DT ORDER BY day DESC ")
     fun getAllMonthsList():List<String>
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:backgroundTint="@android:color/darker_gray"
-    tools:context="com.j2d2.main.MainCareFragment">
+    tools:context="com.j2d2.main.MainCareActivity">
 
     <Button
         android:id="@+id/btnGraph"
