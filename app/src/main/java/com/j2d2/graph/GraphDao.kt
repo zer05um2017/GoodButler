@@ -25,9 +25,9 @@ interface GraphDao {
     @Query("SELECT DT FROM (\n" +
             "SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM feeding WHERE strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month\n" +
             "UNION\n" +
-            "SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM feeding WHERE  strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month\n" +
+            "SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM insulin WHERE  strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month\n" +
             "UNION\n" +
-            "SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM feeding WHERE  strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month\n" +
+            "SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM bloodglucose WHERE  strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month\n" +
             ") ORDER BY DT DESC")
     fun getDayListOfMonth(month:String):List<String>
 

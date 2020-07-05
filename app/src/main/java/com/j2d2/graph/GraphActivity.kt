@@ -56,26 +56,6 @@ class GraphActivity : AppCompatActivity(),
     private lateinit var selectedParcel:Terry
     private var selectedDataType: DataType = DataType.NONE
 
-//    private lateinit var months: List<String>
-//    private lateinit var days: List<String>
-
-//    override fun onCreateView(
-//        inflater: LayoutInflater, container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View? {
-//        return inflater.inflate(R.layout.activity_graph, container, false)
-//    }
-//
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//
-////        (activity as AppCompatActivity?)?.supportActionBar?.hide()
-//    }
-//
-//    override fun onResume() {
-//        super.onResume()
-//        loadData()
-//    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.title = getString(R.string.com_j2d2_graph_title)
@@ -108,6 +88,8 @@ class GraphActivity : AppCompatActivity(),
     }
 
     private fun loadData() {
+        lineChart.invalidate()
+        combChart.invalidate()
         CoroutineScope(Dispatchers.IO).launch {
             // load all months in the existent data
             val months = appDatabase?.graphDao()?.getAllMonthsList()!!
@@ -121,6 +103,10 @@ class GraphActivity : AppCompatActivity(),
                 daysOfMonthMap.add(temp)
             }
             try{
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    lineChart.invalidate()
+//                    combChart.invalidate()
+//                }
                 val curDate = daysOfMonthMap[indexOfMonth][indexOfDay]
                 setDate(curDate)
                 loadGlaucoseData(curDate)
@@ -177,8 +163,9 @@ class GraphActivity : AppCompatActivity(),
         lineChart.data = lineData
 
         setLineChartLayout(xValsDateLabel, upperLimited, lowerLimited)
+        var millis = (1000 * (glucoseList.size * 0.1f)).toInt()
         CoroutineScope(Dispatchers.Main).launch {
-            lineChart.animateX(500)
+            lineChart.animateX(if(millis > 500) 500 else millis)
         }
     }
 
@@ -250,7 +237,7 @@ class GraphActivity : AppCompatActivity(),
         d.addDataSet(set1)
         d.addDataSet(set2)
 
-        combChart.setDrawGridBackground(false)
+        combChart.setDrawGridBackground(true)
         combChart.description.isEnabled = false
         combData.setData(d)
         combChart.data = combData
@@ -266,19 +253,49 @@ class GraphActivity : AppCompatActivity(),
 
     private fun setLineChartLayout(list:ArrayList<String>, upperLimited:Float, lowerLimited: Float) {
         val xAxis: XAxis  = lineChart.xAxis
-        xAxis.labelCount = list.size - 1 ?: 0
+        xAxis.resetAxisMaximum()
+        xAxis.resetAxisMinimum()
+//        xAxis.labelCount = list.size - 1 ?: 0
+
+        when(list.size) {
+            1 -> {
+                xAxis.labelCount = list.size
+                xAxis.axisMaximum = lineChart.xChartMax + 0.1f
+                xAxis.axisMinimum = lineChart.xChartMin - 0.1f
+            }
+            2 -> {
+                xAxis.setLabelCount(list.size, true)
+                xAxis.axisMaximum = lineChart.xChartMax + 0.02f
+                xAxis.axisMinimum = lineChart.xChartMin - 0.02f
+            }
+            else -> {
+                xAxis.labelCount = list.size - 1
+                xAxis.axisMaximum = lineChart.xChartMax + 0.1f
+                xAxis.axisMinimum = lineChart.xChartMin - 0.1f
+            }
+        }
+//        if(list.size > 1) {
+////            xAxis.labelCount = if(list.size == 1) list.size else list.size - 1
+//            xAxis.labelCount = list.size - 1
+//        } else {
+////            xAxis.setLabelCount(list.size, true)
+//            xAxis.labelCount = list.size
+//        }
+//        xAxis.setAvoidFirstLastClipping(true)
         xAxis.valueFormatter = list?.let { MyValueFormatter(it) }
+//        xAxis.spaceMin = 0.1f
+//        xAxis.spaceMax = 0.1f
         // vertical grid lines
+//        xAxis.mAxisRange = list.size.toFloat() - 1f
         xAxis.enableGridDashedLine(10f, 10f, 0f)
         xAxis.gridColor = Color.rgb(211,214,219)
-        xAxis.axisMaximum = lineChart.xChartMax + 0.1f
-        xAxis.axisMinimum = lineChart.xChartMin - 0.3f
+//        xAxis.axisMaximum = lineChart.xChartMax + 0.1f
+//        xAxis.axisMinimum = lineChart.xChartMin - 0.1f
 
-        var yAxis: YAxis
-        yAxis = lineChart.getAxisLeft()
+        val yAxis: YAxis = lineChart.axisLeft
         yAxis.gridColor = Color.rgb(211,214,219)
         // disable dual axis (only use LEFT axis)
-        lineChart.getAxisRight().setEnabled(false)
+        lineChart.axisRight.isEnabled = false
         // horizontal grid lines
         yAxis.enableGridDashedLine(10f, 10f, 0f)
         // axis range
@@ -312,26 +329,53 @@ class GraphActivity : AppCompatActivity(),
         yAxis.addLimitLine(ll1)
         yAxis.addLimitLine(ll2)
         //xAxis.addLimitLine(llXAxis);
-        lineChart.setDrawGridBackground(false)
+        lineChart.setDrawGridBackground(true)
         lineChart.description.isEnabled = false
     }
 
     private fun setCombChartLayout(list:ArrayList<String>, upperLimited:Float, lowerLimited: Float) {
         val xAxis: XAxis  = combChart.xAxis
-        xAxis.labelCount = list.size - 1 ?: 0
-        xAxis.valueFormatter = list?.let { MyValueFormatter(it) }
+        xAxis.resetAxisMaximum()
+        xAxis.resetAxisMinimum()
+//        xAxis.setLabelCount(list.size, true)
+//        xAxis.mAxisRange = list.size.toFloat()
+//        if(list.size > 1) {
+//            xAxis.labelCount = list.size - 1
+//        } else {
+////            xAxis.setLabelCount(list.size, true)
+//            xAxis.labelCount = list.size
+//        }
+        when(list.size) {
+            1 -> {
+                xAxis.labelCount = list.size
+                xAxis.axisMaximum = combChart.xChartMax + 0.1f
+                xAxis.axisMinimum = combChart.xChartMin - 0.1f
+            }
+            2 -> {
+                xAxis.setLabelCount(list.size, true)
+                xAxis.axisMaximum = combChart.xChartMax + 0.02f
+                xAxis.axisMinimum = combChart.xChartMin - 0.02f
+            }
+            else -> {
+                xAxis.labelCount = list.size - 1
+                xAxis.axisMaximum = combChart.xChartMax + 0.1f
+                xAxis.axisMinimum = combChart.xChartMin - 0.1f
+            }
+        }
+        xAxis.valueFormatter = MyValueFormatter(list)
         // vertical grid lines
         xAxis.enableGridDashedLine(10f, 10f, 0f)
         xAxis.gridColor = Color.rgb(211,214,219)
-        xAxis.axisMaximum = combChart.xChartMax + 0.1f
-        xAxis.axisMinimum = combChart.xChartMin - 0.1f
 
-        var yAxis: YAxis
-        yAxis = combChart.getAxisLeft()
+//        xAxis.spaceMin = 0.1f
+//        xAxis.spaceMax = 0.1f
+//        xAxis.setAvoidFirstLastClipping(true)
+
+        val yAxis: YAxis = combChart.axisLeft
         yAxis.gridColor = Color.rgb(211,214,219)
         yAxis.axisMinimum = 0f
         // disable dual axis (only use LEFT axis)
-        combChart.getAxisRight().setEnabled(false)
+        combChart.axisRight.isEnabled = false
         // horizontal grid lines
         yAxis.enableGridDashedLine(10f, 10f, 0f)
         // axis range
@@ -399,7 +443,7 @@ class GraphActivity : AppCompatActivity(),
     }
 
     private fun generateScatterData(curDate:String): ScatterData? {
-        var d = ScatterData();
+        var d = ScatterData()
         appDatabase = AppDatabase.getInstance(this)
         val xValsDateLabel = ArrayList<String>()
         val calendar = GregorianCalendar.getInstance()
@@ -485,28 +529,33 @@ class GraphActivity : AppCompatActivity(),
             try {
                 day = daysOfMonthMap[indexOfMonth][--indexOfDay]
             } catch (e: Exception) {
-                indexOfDay = 0
                 var prevDayOfMon = ""
                 try {
-                    prevDayOfMon = daysOfMonthMap[--indexOfMonth][indexOfDay]
+                    prevDayOfMon = daysOfMonthMap[--indexOfMonth][0]
+                    indexOfDay = 0
                 } catch (e: Exception) {
                     Toast.makeText(
                         this,
                         getString(R.string.com_j2d2_graph_message_last),
                         Toast.LENGTH_SHORT
                     ).show()
+                    indexOfMonth++
                     indexOfDay++
+//                    indexOfDay++
                     return@setOnClickListener
                 }
+
                 day = prevDayOfMon
             }
 
-            resetChart()
-            textInfo.text = ""
-            setDate(day.toString())
-            CoroutineScope(Dispatchers.IO).launch {
-                loadGlaucoseData(day.toString())
-                loadCombinedData(day.toString())
+            if(!day.isNullOrBlank()) {
+                resetChart()
+                textInfo.text = ""
+                setDate(day)
+                CoroutineScope(Dispatchers.IO).launch {
+                    loadGlaucoseData(day)
+                    loadCombinedData(day)
+                }
             }
         }
 
@@ -515,11 +564,11 @@ class GraphActivity : AppCompatActivity(),
             try {
                 day = daysOfMonthMap[indexOfMonth][++indexOfDay]
             } catch (e: IndexOutOfBoundsException) {
-                indexOfDay = 0
                 var prevDayOfMon = ""
 
                 try {
-                    prevDayOfMon = daysOfMonthMap[++indexOfMonth][indexOfDay]
+                    prevDayOfMon = daysOfMonthMap[++indexOfMonth][0]
+                    indexOfDay = 0
                 } catch (e: IndexOutOfBoundsException) {
                     Toast.makeText(
                         this,
@@ -527,19 +576,22 @@ class GraphActivity : AppCompatActivity(),
                         Toast.LENGTH_SHORT
                     ).show()
                     indexOfDay--
+                    indexOfMonth--
+//                    indexOfDay--
                     return@setOnClickListener
                 }
                 day = prevDayOfMon
             }
 
-            resetChart()
-            textInfo.text = ""
-            setDate(day.toString())
-            CoroutineScope(Dispatchers.IO).launch {
-                loadGlaucoseData(day.toString())
-                loadCombinedData(day.toString())
+            if(!day.isNullOrBlank()) {
+                resetChart()
+                textInfo.text = ""
+                setDate(day)
+                CoroutineScope(Dispatchers.IO).launch {
+                    loadGlaucoseData(day)
+                    loadCombinedData(day)
+                }
             }
-
         }
 
         btnModify.setOnClickListener {
@@ -579,6 +631,9 @@ class GraphActivity : AppCompatActivity(),
     }
 
     class MyValueFormatter(private val xValsDateLabel: ArrayList<String>) : ValueFormatter() {
+//        companion object {
+//
+//        }
 
         override fun getFormattedValue(value: Float): String {
             return value.toString()
@@ -713,7 +768,13 @@ class GraphActivity : AppCompatActivity(),
             }
         }
 
-        loadData()
+        CoroutineScope(Dispatchers.Main).launch {
+            lineChart.notifyDataSetChanged()
+            lineChart.data.notifyDataChanged()
+            combChart.notifyDataSetChanged()
+            combChart.data.notifyDataChanged()
+            loadData()
+        }
     }
 
     override fun OnNegativeClick() {
