@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "184536146753",
+    "firebase_url": "https://goodbutler-e0f08.firebaseio.com",
+    "project_id": "goodbutler-e0f08",
+    "storage_bucket": "goodbutler-e0f08.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:184536146753:android:75ff4b5bcfccd34eb477c0",
+        "android_client_info": {
+          "package_name": "com.j2d2.goodbutler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "184536146753-9jfrm8olaq00d917e3c1en19729o9fon.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.j2d2.goodbutler",
+            "certificate_hash": "489b9b1e1b3002d9b5e162023fa6ab2313e3087d"
+          }
+        },
+        {
+          "client_id": "184536146753-7tftu01k3g63o3tsr5t9qlte68qdlraq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-5Yqf5hospKQ6UW7zy6tRRmVevi72DL8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "184536146753-7tftu01k3g63o3tsr5t9qlte68qdlraq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
