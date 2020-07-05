@@ -6,7 +6,7 @@
     <string name="preference_file_key">EncrypedInfo</string>
 
     <!-- Insulin Activity -->
-    <string name="com.j2d2.insulin.title">주사 콕~</string>
+    <string name="com.j2d2.insulin.title">인슐린</string>
     <string name="com.j2d2.insulin.ins_type">ins_type</string>
     <string name="com.j2d2.insulin.ins_undiluted_capacity">ins_undiluted_capacity</string>
     <string name="com.j2d2.insulin.ins_total_capacity">ins_total_capacity</string>
@@ -17,7 +17,7 @@
     <string name="com.j2d2.insulin.ins_message.input_complete">입력이 완료 되었습니다.</string>
 
     <!-- Feeding Activity -->
-    <string name="com.j2d2.feeding.title">맘마묵짜~</string>
+    <string name="com.j2d2.feeding.title">맘마</string>
     <string name="com.j2d2.feeding.feed_type">feed_type</string>
     <string name="com.j2d2.feeding.feed_brand_name">feed_brand_name</string>
     <string name="com.j2d2.feeding.feed_amount">feed_amount</string>
@@ -27,12 +27,12 @@
     <string name="com.j2d2.feeding.feed_message.input_complete">입력이 완료 되었습니다.</string>
 
     <!-- BloodGlucoseAcitivity -->
-    <string name="com.j2d2.bloodglucose.title">혈당 확인하쟈~</string>
+    <string name="com.j2d2.bloodglucose.title">혈당</string>
     <string name="com.j2d2.bloodglucose.blood_message.input_complete">입력이 완료 되었습니다.</string>
     <string name="com.j2d2.bloodglucose.blood_message.input_value">혈당값을 입력하세요.</string>
 
     <!-- PedometerActivity -->
-    <string name="com.j2d2.pedometer.title">산책가쟈~</string>
+    <string name="com.j2d2.pedometer.title">산책</string>
     <string name="com.j2d2.pedometer.pedometer_message.unsupported_pedometer">해당 기능을 지원하지 않습니다.</string>
 
 
@@ -49,7 +49,7 @@
     <string name="delete">삭제</string>
     <string name="delete_message">삭제하시겠습니까?</string>
     <string name="delete_alert_message">그래프에서 삭제할 데이터를 선택하세요.</string>
-    <string name="title_activity_main">굿집사 for 당뇨</string>
+    <string name="title_activity_main">굿집사</string>
     <string name="main_management">관리</string>
 
 </resources>

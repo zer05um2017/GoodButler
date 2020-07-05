@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="ActionBar.Solid.Ribbit.TitleTextStyle"
+        parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+    </style>
+</resources>
+
+<!--<resources>-->
+<!--    &lt;!&ndash; the theme applied to the application or activity &ndash;&gt;-->
+<!--    <style name="CustomActionBarTheme" parent="@style/Theme.AppCompat.Light">-->
+<!--        <item name="android:actionBarStyle">@style/MyActionBar</item>-->
+<!--        &lt;!&ndash; Support library compatibility &ndash;&gt;-->
+<!--        <item name="actionBarStyle">@style/MyActionBar</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; ActionBar styles &ndash;&gt;-->
+<!--    <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">-->
+<!--        <item name="android:background">#F7665D</item> &lt;!&ndash; 색상 및 이미지로 액션바 배경색 지정 &ndash;&gt;-->
+<!--    </style>-->
+
+<!--</resources>-->

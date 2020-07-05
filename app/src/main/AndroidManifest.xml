@@ -14,25 +14,27 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".main.SettingActivity" />
-        <activity
-            android:name=".bloodglucose.BloodGlucoseActivity"
-            android:windowSoftInputMode="stateAlwaysVisible" />
         <activity android:name=".main.MainCareActivity"
-            android:label="@string/title_activity_main">
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".graph.GraphActivity" />
+
+        <activity android:name=".graph.GraphActivity"/>
         <activity
             android:name=".insulin.InsulinActivity"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity android:name=".pedometer.PedometerActivity" />
         <activity
             android:name=".feeding.FeedingActivity"
+            android:windowSoftInputMode="stateAlwaysVisible" />
+        <activity android:name=".main.SettingActivity" />
+        <activity
+            android:name=".bloodglucose.BloodGlucoseActivity"
             android:windowSoftInputMode="stateAlwaysVisible" />
     </application>
 

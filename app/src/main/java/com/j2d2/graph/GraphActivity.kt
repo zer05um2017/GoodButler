@@ -157,6 +157,7 @@ class GraphActivity : AppCompatActivity(),
         val l: Legend = lineChart.getLegend()
         // modify the legend ...
         l.form = LegendForm.CIRCLE
+        l.setDrawInside(true)
         l.formSize = 15f
         l.textSize = 15f
         lineChart.description.isEnabled = false
