@@ -253,8 +253,8 @@ class GraphActivity : AppCompatActivity(),
 
     private fun setLineChartLayout(list:ArrayList<String>, upperLimited:Float, lowerLimited: Float) {
         val xAxis: XAxis  = lineChart.xAxis
-        xAxis.resetAxisMaximum()
-        xAxis.resetAxisMinimum()
+//        xAxis.resetAxisMaximum()
+//        xAxis.resetAxisMinimum()
 //        xAxis.labelCount = list.size - 1 ?: 0
 
         when(list.size) {
@@ -335,8 +335,8 @@ class GraphActivity : AppCompatActivity(),
 
     private fun setCombChartLayout(list:ArrayList<String>, upperLimited:Float, lowerLimited: Float) {
         val xAxis: XAxis  = combChart.xAxis
-        xAxis.resetAxisMaximum()
-        xAxis.resetAxisMinimum()
+//        xAxis.resetAxisMaximum()
+//        xAxis.resetAxisMinimum()
 //        xAxis.setLabelCount(list.size, true)
 //        xAxis.mAxisRange = list.size.toFloat()
 //        if(list.size > 1) {
@@ -767,12 +767,15 @@ class GraphActivity : AppCompatActivity(),
                 }
             }
         }
+        selectedDataType = DataType.NONE
+        textInfo.text = ""
 
         CoroutineScope(Dispatchers.Main).launch {
             lineChart.notifyDataSetChanged()
             lineChart.data.notifyDataChanged()
             combChart.notifyDataSetChanged()
             combChart.data.notifyDataChanged()
+            resetChart()
             loadData()
         }
     }
