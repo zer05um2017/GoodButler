@@ -26,7 +26,8 @@
         android:id="@+id/textView"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="17dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="22dp"
         android:editable="true"
         android:text="처방시간"
@@ -145,16 +146,19 @@
 
     <EditText
         android:id="@+id/editUndiluted"
-        android:layout_width="80dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="18dp"
+        android:layout_marginEnd="110dp"
+        android:layout_marginRight="110dp"
         android:ems="10"
         android:focusable="auto"
         android:inputType="numberDecimal"
         android:singleLine="true"
         android:textAlignment="textEnd"
         android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView8"
         app:layout_constraintTop_toBottomOf="@+id/rdoInsulinType" />
 
@@ -172,31 +176,37 @@
 
     <EditText
         android:id="@+id/editTotalCapacity"
-        android:layout_width="80dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="15dp"
+        android:layout_marginEnd="110dp"
+        android:layout_marginRight="110dp"
         android:ems="10"
         android:focusable="auto"
         android:inputType="numberDecimal"
         android:singleLine="true"
         android:textAlignment="textEnd"
         android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView11"
         app:layout_constraintTop_toBottomOf="@+id/editUndiluted" />
 
     <EditText
         android:id="@+id/editRemark"
-        android:layout_width="250dp"
+        android:layout_width="0dp"
         android:layout_height="115dp"
         android:layout_marginStart="30dp"
         android:layout_marginTop="15dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:background="@drawable/border"
         android:ems="10"
         android:focusable="auto"
         android:gravity="start|top"
         android:inputType="textMultiLine"
         android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView12"
         app:layout_constraintTop_toBottomOf="@+id/editTotalCapacity" />
 

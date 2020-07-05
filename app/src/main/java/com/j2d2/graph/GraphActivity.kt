@@ -157,7 +157,8 @@ class GraphActivity : AppCompatActivity(),
         val l: Legend = lineChart.getLegend()
         // modify the legend ...
         l.form = LegendForm.CIRCLE
-        l.formSize = 10f
+        l.formSize = 15f
+        l.textSize = 15f
         lineChart.description.isEnabled = false
         lineData.setData(glucoseList?.let { makeLineDataSet(it) })
         lineChart.data = lineData
@@ -221,17 +222,17 @@ class GraphActivity : AppCompatActivity(),
         set1.setColors(Color.rgb(245,161,27))
         set1.setValueTextColors(arrayListOf(Color.DKGRAY))
         set1.setScatterShape(ScatterChart.ScatterShape.SQUARE)
-        set1. scatterShapeSize = 12f
+        set1. scatterShapeSize = 15f
         set1.setDrawValues(true)
-        set1.valueTextSize = 10f
+        set1.valueTextSize = 15f
 
         val set2 = ScatterDataSet(values1, "인슐린")
         set2.setColors(Color.rgb(236,32,8))
         set2.setValueTextColors(arrayListOf(Color.DKGRAY))
-        set2.scatterShapeSize = 12f
+        set2.scatterShapeSize = 15f
         set2.setDrawValues(true)
 //        set1.setDrawIcons(true)
-        set2.valueTextSize = 10f
+        set2.valueTextSize = 15f
 //        set2.scatterShapeHoleRadius = 4f
 
         d.addDataSet(set1)
@@ -306,19 +307,19 @@ class GraphActivity : AppCompatActivity(),
         llXAxis.lineWidth = 4f
         llXAxis.enableDashedLine(10f, 10f, 0f)
         llXAxis.labelPosition = LimitLabelPosition.RIGHT_BOTTOM
-        llXAxis.textSize = 10f
+        llXAxis.textSize = 12f
         val ll1 = LimitLine(upperLimited, "최고")
         ll1.lineWidth = 1f
         ll1.lineColor = Color.rgb(46,190,197)
         ll1.enableDashedLine(10f, 10f, 0f)
         ll1.labelPosition = LimitLabelPosition.RIGHT_TOP
-        ll1.textSize = 10f
+        ll1.textSize = 12f
         val ll2 = LimitLine(lowerLimited, "최저")
         ll2.lineWidth = 1f
         ll2.lineColor = Color.rgb(46,190,197)
         ll2.enableDashedLine(10f, 10f, 0f)
         ll2.labelPosition = LimitLabelPosition.RIGHT_BOTTOM
-        ll2.textSize = 10f
+        ll2.textSize = 12f
 
         // draw limit lines behind data instead of on top
         yAxis.setDrawLimitLinesBehindData(true)
@@ -383,18 +384,20 @@ class GraphActivity : AppCompatActivity(),
         yAxis.axisMinimum = lowerLimited - 50f
 
         val l: Legend = combChart.legend
-        l.isWordWrapEnabled = true
+        l.formSize = 15f
+        l.textSize = 15f
+        l.isWordWrapEnabled = false
         l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
 //        l.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
         l.orientation = Legend.LegendOrientation.HORIZONTAL
-        l.setDrawInside(false)
+        l.setDrawInside(true)
         // draw limit lines behind data instead of on top
         yAxis.setDrawLimitLinesBehindData(true)
         xAxis.setDrawLimitLinesBehindData(true)
 
         // add limit lines
         yAxis.removeAllLimitLines()
-        combChart.setDrawGridBackground(false)
+        combChart.setDrawGridBackground(true)
         combChart.description.isEnabled = false
     }
 
@@ -418,9 +421,9 @@ class GraphActivity : AppCompatActivity(),
         set.setFormLineWidth(1f)
 
 //        set1.setFormLineDashEffect(DashPathEffect(floatArrayOf(10f, 5f), 0f))
-        set.setFormSize(10f)
+        set.setFormSize(15f)
         // text size of values
-        set.setValueTextSize(12f)
+        set.setValueTextSize(15f)
         // draw selection line as dashed
 //        set1.enableDashedHighlightLine(10f, 5f, 0f)
         // set the filled area
@@ -495,19 +498,19 @@ class GraphActivity : AppCompatActivity(),
         set1.setColors(Color.rgb(245,161,27))
         set1.setValueTextColors(arrayListOf(Color.DKGRAY))
         set1.setScatterShape(ScatterChart.ScatterShape.SQUARE)
-        set1. scatterShapeSize = 12f
+        set1. scatterShapeSize = 15f
         set1.setDrawValues(true)
 //        set1.setDrawIcons(true)
-        set1.valueTextSize = 10f
+        set1.valueTextSize = 15f
 //        set1.scatterShapeHoleRadius = 4f
 
         val set2 = ScatterDataSet(values1, "인슐린")
         set2.setColors(Color.rgb(236,32,8))
         set2.setValueTextColors(arrayListOf(Color.DKGRAY))
-        set2.scatterShapeSize = 12f
+        set2.scatterShapeSize = 15f
         set2.setDrawValues(true)
 //        set1.setDrawIcons(true)
-        set2.valueTextSize = 10f
+        set2.valueTextSize = 15f
 //        set2.scatterShapeHoleRadius = 4f
 
         d.addDataSet(set1)
@@ -595,7 +598,15 @@ class GraphActivity : AppCompatActivity(),
         }
 
         btnModify.setOnClickListener {
-            if(selectedDataType == DataType.NONE) return@setOnClickListener
+            if(selectedDataType == DataType.NONE) {
+                Toast.makeText(
+                    this,
+                    getString(R.string.delete_alert_message),
+                    Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
+            }
+
             var intent: Intent? = null
 
             when(selectedDataType) {
