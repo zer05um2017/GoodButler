@@ -82,14 +82,13 @@ class GraphActivity : AppCompatActivity(),
     private fun getToday(): String {
         val calendar = GregorianCalendar.getInstance()
         calendar.timeZone
-//        Log.v("#####", calendar.get(Calendar.YEAR).toString())
-//        Log.v("#####", calendar.get(Calendar.MONTH).toString())
         return "${calendar.get(Calendar.YEAR)}${calendar.get(Calendar.MONTH)}"
     }
 
     private fun loadData() {
         lineChart.invalidate()
         combChart.invalidate()
+        daysOfMonthMap.clear()
         CoroutineScope(Dispatchers.IO).launch {
             // load all months in the existent data
             val months = appDatabase?.graphDao()?.getAllMonthsList()!!
@@ -103,10 +102,6 @@ class GraphActivity : AppCompatActivity(),
                 daysOfMonthMap.add(temp)
             }
             try{
-//                CoroutineScope(Dispatchers.Main).launch {
-//                    lineChart.invalidate()
-//                    combChart.invalidate()
-//                }
                 val curDate = daysOfMonthMap[indexOfMonth][indexOfDay]
                 setDate(curDate)
                 loadGlaucoseData(curDate)
@@ -742,6 +737,11 @@ class GraphActivity : AppCompatActivity(),
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 100 -> {
+                    lineChart.notifyDataSetChanged()
+                    lineChart.data.notifyDataChanged()
+                    combChart.notifyDataSetChanged()
+                    combChart.data.notifyDataChanged()
+                    resetChart()
                     loadData()
                 }
             }
