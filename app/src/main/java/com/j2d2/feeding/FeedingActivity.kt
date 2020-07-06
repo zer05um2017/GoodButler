@@ -299,11 +299,21 @@ class FeedingActivity : AppCompatActivity() {
         editTextDate.setOnTouchListener { _: View, event: MotionEvent ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-//                    Toast.makeText(this@MainActivity, "focused", Toast.LENGTH_SHORT).show()
-                    val cal = Calendar.getInstance()
-                    val y = cal.get(Calendar.YEAR)
-                    val m = cal.get(Calendar.MONTH)
-                    val d = cal.get(Calendar.DAY_OF_MONTH)
+                    var y:Int
+                    var m:Int
+                    var d:Int
+                    val cal = GregorianCalendar.getInstance()
+                    if(this!!.isModifyed!!) {
+                        cal.timeInMillis = pacelData.millis
+                        y = cal.get(Calendar.YEAR)
+                        m = cal.get(Calendar.MONTH)
+                        d = cal.get(Calendar.DAY_OF_MONTH)
+                    } else {
+                        y = cal.get(Calendar.YEAR)
+                        m = cal.get(Calendar.MONTH)
+                        d = cal.get(Calendar.DAY_OF_MONTH)
+                    }
+
                     val datepickerdialog: DatePickerDialog = DatePickerDialog(
                         this@FeedingActivity,
                         DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
@@ -328,16 +338,26 @@ class FeedingActivity : AppCompatActivity() {
         editTextTime.setOnTouchListener { _: View, event: MotionEvent ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    val c: Calendar = Calendar.getInstance()
-                    val hh = c.get(Calendar.HOUR_OF_DAY)
-                    val mm = c.get(Calendar.MINUTE)
+                    var hh:Int
+                    var mm:Int
+                    val cal = GregorianCalendar.getInstance()
+
+                    if(this!!.isModifyed!!) {
+                        cal.timeInMillis = pacelData.millis
+                        hh = cal.get(Calendar.HOUR_OF_DAY)
+                        mm = cal.get(Calendar.MINUTE)
+                    } else {
+                        hh = cal.get(Calendar.HOUR_OF_DAY)
+                        mm = cal.get(Calendar.MINUTE)
+                    }
+
                     val timePickerDialog: TimePickerDialog = TimePickerDialog(
                         this@FeedingActivity,
                         TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                             val sdf = SimpleDateFormat("HH:mm")
-                            c.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                            c.set(Calendar.MINUTE, minute)
-                            editTextTime!!.setText(sdf.format(c.time))
+                            cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                            cal.set(Calendar.MINUTE, minute)
+                            editTextTime!!.setText(sdf.format(cal.time))
                         }, hh, mm, false
                     )
                     timePickerDialog.show()
