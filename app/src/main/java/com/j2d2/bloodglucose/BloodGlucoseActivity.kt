@@ -182,6 +182,7 @@ class BloodGlucoseActivity : AppCompatActivity() {
                     )
                 }
             }
+            Toast.makeText(this@BloodGlucoseActivity, "데이터 생성 완료", Toast.LENGTH_SHORT).show()
         }
 
         btnInput.setOnClickListener {

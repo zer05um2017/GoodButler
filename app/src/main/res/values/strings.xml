@@ -33,7 +33,7 @@
 
     <!-- PedometerActivity -->
     <string name="com.j2d2.pedometer.title">산책</string>
-    <string name="com.j2d2.pedometer.pedometer_message.unsupported_pedometer">해당 기능을 지원하지 않습니다.</string>
+    <string name="com.j2d2.pedometer.pedometer_message.unsupported_pedometer">해당 기능을 지원하지 않는 기기입니다.</string>
 
 
     <!-- Graph -->
