@@ -47,8 +47,8 @@ class GraphActivity : AppCompatActivity(),
     DialogOnClickListener {
     private var data: ArrayList<Entry>? = null
     private var appDatabase: AppDatabase? = null
-    private var gloucoseListOfDay = listOf<BloodGlucose>()
-    private var timeLineOfDay = listOf<GraphTimeLine>()
+    private var glucoseListOfDay = mutableListOf<BloodGlucose>()
+    private var timeLineOfDay = mutableListOf<GraphTimeLine>()
 //    private var dayMap = mutableMapOf<Int, String>()
     private var daysOfMonthMap = arrayListOf<ArrayList<String>>()
     private var indexOfMonth: Int = 0
@@ -88,7 +88,7 @@ class GraphActivity : AppCompatActivity(),
     private fun loadData() {
         lineChart.invalidate()
         combChart.invalidate()
-        daysOfMonthMap.clear()
+
         CoroutineScope(Dispatchers.IO).launch {
             // load all months in the existent data
             val months = appDatabase?.graphDao()?.getAllMonthsList()!!
@@ -123,7 +123,7 @@ class GraphActivity : AppCompatActivity(),
         val glucose =
             appDatabase?.bloodGlucoseDao()?.findByToday(curDate)
                 ?: return
-        gloucoseListOfDay = glucose
+        glucoseListOfDay = glucose
 
         for ((i, gcs: BloodGlucose) in glucose?.withIndex()) {
             if(i == 0) {
@@ -522,6 +522,14 @@ class GraphActivity : AppCompatActivity(),
         combChart.xAxis.resetAxisMinimum()
     }
 
+    private fun resetData() {
+        daysOfMonthMap.clear()
+        glucoseListOfDay.clear()
+        timeLineOfDay.clear()
+        indexOfMonth = 0
+        indexOfDay = 0
+    }
+
     private fun setButtonEvent() {
         btnNext.setOnClickListener {
             var day = ""
@@ -530,17 +538,16 @@ class GraphActivity : AppCompatActivity(),
             } catch (e: Exception) {
                 var prevDayOfMon = ""
                 try {
-                    prevDayOfMon = daysOfMonthMap[--indexOfMonth][0]
-                    indexOfDay = 0
+                    prevDayOfMon = daysOfMonthMap[indexOfMonth - 1][daysOfMonthMap[indexOfMonth - 1].size - 1]
+                    indexOfDay = daysOfMonthMap[--indexOfMonth].size - 1
                 } catch (e: Exception) {
                     Toast.makeText(
                         this,
                         getString(R.string.com_j2d2_graph_message_last),
                         Toast.LENGTH_SHORT
                     ).show()
-                    indexOfMonth++
+//                    indexOfMonth++
                     indexOfDay++
-//                    indexOfDay++
                     return@setOnClickListener
                 }
 
@@ -576,7 +583,6 @@ class GraphActivity : AppCompatActivity(),
                     ).show()
                     indexOfDay--
                     indexOfMonth--
-//                    indexOfDay--
                     return@setOnClickListener
                 }
                 day = prevDayOfMon
@@ -670,7 +676,7 @@ class GraphActivity : AppCompatActivity(),
 //            "Value: " + e!!.y + ", xIndex: " + e!!.x
 //                    + ", DataSet index: " + h!!.dataSetIndex
 //        )
-        val gloucose = gloucoseListOfDay[e!!.x.toInt()]
+        val gloucose = glucoseListOfDay[e!!.x.toInt()]
         val calendar = GregorianCalendar.getInstance()
         calendar.timeInMillis = gloucose.millis
         selectedDataType = DataType.BLOODSUGAR
@@ -742,6 +748,7 @@ class GraphActivity : AppCompatActivity(),
                     combChart.notifyDataSetChanged()
                     combChart.data.notifyDataChanged()
                     resetChart()
+                    resetData()
                     loadData()
                 }
             }
@@ -788,6 +795,7 @@ class GraphActivity : AppCompatActivity(),
             combChart.notifyDataSetChanged()
             combChart.data.notifyDataChanged()
             resetChart()
+            resetData()
             loadData()
         }
     }

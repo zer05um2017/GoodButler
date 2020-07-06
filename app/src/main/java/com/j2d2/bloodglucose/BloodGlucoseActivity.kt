@@ -290,7 +290,7 @@ class BloodGlucoseActivity : AppCompatActivity() {
                     if(this!!.isModifyed!!) {
                         cal.timeInMillis = pacelData.millis
                         y = cal.get(Calendar.YEAR)
-                        m = cal.get(Calendar.MONTH)
+                        m = cal.get(Calendar.MONTH) - 1
                         d = cal.get(Calendar.DAY_OF_MONTH)
                     } else {
                         y = cal.get(Calendar.YEAR)

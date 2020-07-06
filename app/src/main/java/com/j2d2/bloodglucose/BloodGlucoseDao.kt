@@ -10,7 +10,7 @@ interface BloodGlucoseDao {
                 "WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') " +
                 "LIKE :today " +
                 "ORDER BY millis")
-    fun findByToday(today: String): List<BloodGlucose>
+    fun findByToday(today: String): MutableList<BloodGlucose>
 
     @Query("SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as chkdate " +
                 "FROM bloodglucose " +

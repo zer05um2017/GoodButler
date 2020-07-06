@@ -16,7 +16,7 @@ interface GraphDao {
             "UNION\n" +
             "SELECT data_type, millis, total_capacity FROM feeding WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE :today\n" +
             ")ORDER BY millis ASC")
-    fun timeLineData(today:String):List<GraphTimeLine>
+    fun timeLineData(today:String):MutableList<GraphTimeLine>
 
     /** 입력받은 년월을 기준으로 해당 월에 대한 저장된 데이터의 일자 목록 조회
      * @param 202006
