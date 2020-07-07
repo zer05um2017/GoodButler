@@ -3,14 +3,18 @@ package com.j2d2.main.login
 //import com.google.firebase.ktx.Firebase
 
 import android.R.attr
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -25,6 +29,7 @@ class LoginActivity : AppCompatActivity() {
 //    private lateinit var binding: ActivityGoogleBinding
     private var googleSignInClient: GoogleSignInClient? = null
     private val RC_SIGN_IN = 9001
+    private val TAG = "TEST"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +60,9 @@ class LoginActivity : AppCompatActivity() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
+//        val account = GoogleSignIn.getLastSignedInAccount(this)
         updateUI(currentUser)
+//        updateUI(currentUser)
     }
 
     private fun signIn() {
@@ -65,6 +72,14 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+//        if (requestCode === RC_SIGN_IN) {
+//            // The Task returned from this call is always completed, no need to attach
+//            // a listener.
+//            val task =
+//                GoogleSignIn.getSignedInAccountFromIntent(data)
+//            handleSignInResult(task)
+//        }
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode === RC_SIGN_IN) {
@@ -92,6 +107,21 @@ class LoginActivity : AppCompatActivity() {
 //            }
 //        }
     }
+
+//    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+//        try {
+//            val account =
+//                completedTask.getResult(ApiException::class.java)
+//
+//            // Signed in successfully, show authenticated UI.
+//            updateUI(account)
+//        } catch (e: ApiException) {
+//            // The ApiException status code indicates the detailed failure reason.
+//            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+//            Log.w(TAG, "signInResult:failed code=" + e.statusCode)
+//            updateUI(null)
+//        }
+//    }
 
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)

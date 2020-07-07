@@ -52,7 +52,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/lhelp"
+            android:id="@+id/lsetting"
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_marginLeft="10dp"
@@ -65,10 +65,10 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
-                app:srcCompat="@drawable/veterinarian_1" />
+                app:srcCompat="@drawable/comb" />
 
             <Button
-                android:id="@+id/btnHelp"
+                android:id="@+id/btnSetting"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_marginLeft="10dp"
@@ -76,7 +76,7 @@
                 android:layout_marginBottom="15dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_rounded_theme_2"
-                android:text="도움말"
+                android:text="설정"
                 android:textColor="@android:color/background_light"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -237,5 +237,12 @@
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
-
+<!--    <android.support.design.widget.FloatingActionButton-->
+<!--        android:id="@+id/fab"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="end|bottom"-->
+<!--        android:src="@drawable/ic_my_icon"-->
+<!--        android:contentDescription="@string/submit"-->
+<!--        android:layout_margin="16dp" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

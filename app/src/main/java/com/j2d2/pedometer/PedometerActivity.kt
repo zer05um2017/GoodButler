@@ -32,19 +32,14 @@ class PedometerActivity : AppCompatActivity(), SensorEventListener {
             return
         }
 
-//        if (sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
-//            //Toast.makeText(this,"Success! There's a pressure sensor.", Toast.LENGTH_LONG)
-//        } else {
-//            Toast.makeText(this,"Failure! No pressure sensor.", Toast.LENGTH_LONG)
-//            return
-//        }
-
         btnStart.setOnClickListener {
             sensorManager.registerListener(this, stepCountSensor, SensorManager.SENSOR_DELAY_FASTEST)
+            Toast.makeText(this, getString(R.string.com_j2d2_pedometer_start_message), Toast.LENGTH_LONG).show()
         }
 
         btnFinish.setOnClickListener {
             sensorManager.unregisterListener(this)
+            Toast.makeText(this, getString(R.string.com_j2d2_pedometer_stop_message), Toast.LENGTH_SHORT).show()
         }
     }
 

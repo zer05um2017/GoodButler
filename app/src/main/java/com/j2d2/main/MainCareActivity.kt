@@ -38,6 +38,10 @@ class MainCareActivity : AppCompatActivity() {
             startBloodGlucoseActivity()
         }
 
+        lsetting.setOnClickListener {
+            startSettingActivity()
+        }
+
         btnGraph.setOnClickListener {
             startGraphActivity()
         }
@@ -56,6 +60,10 @@ class MainCareActivity : AppCompatActivity() {
 
         btnBloodGlucose.setOnClickListener {
             startBloodGlucoseActivity()
+        }
+
+        btnSetting.setOnClickListener {
+            startSettingActivity()
         }
     }
 
@@ -79,7 +87,8 @@ class MainCareActivity : AppCompatActivity() {
         val intent = Intent(this, BloodGlucoseActivity::class.java)
         startActivity(intent)
     }
-    private fun startHelpActivity() {
-
+    private fun startSettingActivity() {
+        val intent = Intent(this, SettingActivity::class.java)
+        startActivity(intent)
     }
 }

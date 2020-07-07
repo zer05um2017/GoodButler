@@ -34,7 +34,8 @@
     <!-- PedometerActivity -->
     <string name="com.j2d2.pedometer.title">산책</string>
     <string name="com.j2d2.pedometer.pedometer_message.unsupported_pedometer">해당 기능을 지원하지 않는 기기입니다.</string>
-
+    <string name="com.j2d2.pedometer.start_message">산책을 시작합니다.\n이동을 계속 하셔야 걸음수가 올라갑니다.</string>
+    <string name="com.j2d2.pedometer.stop_message">산책을 종료합니다.</string>
 
     <!-- Graph -->
     <string name="com.j2d2.graph.title">잘 이겨내고 있지~</string>
