@@ -9,7 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import com.j2d2.R
 
-class PopupDialog(context : Context, listener: DialogOnClickListener) {
+class PopupMessageDialog(context : Context, listener: DialogOnClickListener) {
     private val dlg = Dialog(context)   //부모 액티비티의 context 가 들어감
     private lateinit var lblDesc : TextView
     private lateinit var btnOK : Button

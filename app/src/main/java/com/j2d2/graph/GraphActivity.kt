@@ -638,7 +638,7 @@ class GraphActivity : AppCompatActivity(),
                 return@setOnClickListener
             }
 
-            val dlg = PopupDialog(this, this)
+            val dlg = PopupMessageDialog(this, this)
             dlg.start(getString(R.string.delete_message))
         }
     }

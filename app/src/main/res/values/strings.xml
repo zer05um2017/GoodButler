@@ -44,6 +44,9 @@
     <string name="com.j2d2.graph.graph_title">혈당 그래프</string>
     <string name="com.j2d2.graph.graph">그래프</string>
 
+    <!-- SettingAcitivity -->
+    <string name="com.j2d2.main.setting_title">설정</string>
+
     <!-- General-->
     <string name="ok">확인</string>
     <string name="cancel">취소</string>

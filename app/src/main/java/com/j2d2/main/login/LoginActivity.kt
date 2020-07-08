@@ -91,6 +91,7 @@ class LoginActivity : AppCompatActivity() {
                     task.getResult(ApiException::class.java)
                 firebaseAuthWithGoogle(account!!)
             } catch (e: ApiException) {
+                Log.w(TAG, "Google sign in failed", e)
             }
         }
 //        if (requestCode == RC_SIGN_IN) {

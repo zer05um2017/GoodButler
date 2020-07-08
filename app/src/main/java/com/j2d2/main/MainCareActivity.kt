@@ -10,6 +10,7 @@ import com.j2d2.feeding.FeedingActivity
 import com.j2d2.graph.GraphActivity
 import com.j2d2.insulin.InsulinActivity
 import com.j2d2.pedometer.PedometerActivity
+import com.j2d2.setting.SettingActivity
 import kotlinx.android.synthetic.main.activity_maincare.*
 
 class MainCareActivity : AppCompatActivity() {
