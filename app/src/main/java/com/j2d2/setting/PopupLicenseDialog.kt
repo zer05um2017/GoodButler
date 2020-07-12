@@ -23,8 +23,6 @@ class PopupLicenseDialog (context : Context){
         dlg.setCancelable(false)    //다이얼로그의 바깥 화면을 눌렀을 때 다이얼로그가 닫히지 않도록 함
         dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-//        lblLicense = dlg.findViewById(R.id.content)
-//        lblLicense.text = content
         wv = dlg.findViewById(R.id.webView)
         wv.loadUrl("file:///android_asset/icon_license.htm")
         btnOK = dlg.findViewById(R.id.ok)

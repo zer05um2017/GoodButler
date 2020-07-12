@@ -234,7 +234,7 @@ class GraphActivity : AppCompatActivity(),
         d.addDataSet(set1)
         d.addDataSet(set2)
 
-        combChart.setDrawGridBackground(true)
+        combChart.setDrawGridBackground(false)
         combChart.description.isEnabled = false
         combData.setData(d)
         combChart.data = combData

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp"
+    android:background="@drawable/dialog_bg"
+    android:orientation="vertical">
+
+    <!--    <androidx.cardview.widget.CardView-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        card_view:cardCornerRadius="20dp"-->
+    <!--        card_view:cardUseCompatPadding="true">-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/breedRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--        <ListView-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent"-->
+    <!--            android:divider="@null"-->
+    <!--            android:dividerHeight="10dp"-->
+    <!--            android:id="@+id/breed_list"/>-->
+    <!--    <LinearLayout-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_margin="20dp"-->
+    <!--        android:orientation="vertical">-->
+
+    <!--        -->
+
+    <!--    </LinearLayout>-->
+    <!--    </androidx.cardview.widget.CardView>-->
+</LinearLayout>

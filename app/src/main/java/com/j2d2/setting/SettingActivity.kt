@@ -36,8 +36,8 @@ class SettingActivity : AppCompatActivity() {
 
     private fun setListData() {
         with(itemLists) {
-            add(ItemList(0, "강아지 정보"))
-            add(ItemList(1, "라이센스"))
+            add(ItemList(0, getString(R.string.com_j2d2_setting_list_petinfo)))
+            add(ItemList(1, getString(R.string.com_j2d2_setting_list_license)))
         }
     }
 
