@@ -56,4 +56,7 @@
     <string name="title_activity_main">굿집사</string>
     <string name="main_management">관리</string>
 
+    <!-- MyPetActivity -->
+    <string name="com.j2d2.setting.my_pat_title">강아지 정보</string>
+
 </resources>

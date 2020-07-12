@@ -30,6 +30,7 @@ dependencies {
     implementation 'androidx.security:security-crypto:1.1.0-alpha01'
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
     def lifecycle_version = "2.2.0"
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -54,6 +55,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.4.3'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.shobhitpuri.custombuttons:google-signin:1.0.0'
+//    implementation 'com.android.support:design:28.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
