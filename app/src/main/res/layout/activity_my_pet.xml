@@ -65,24 +65,31 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="37dp"
-        android:text="합  병  증"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
-
-    <TextView
-        android:id="@+id/textView13"
-        android:layout_width="70dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="90dp"
         android:text="기타정보"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+        app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
+    <EditText
+        android:id="@+id/editComplication"
+        android:layout_width="279dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/border"
+        android:ems="10"
+        android:focusable="auto"
+        android:gravity="start|top"
+        android:hint="기타증상 및 합병증"
+        android:inputType="textMultiLine"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView7"
+        app:layout_constraintTop_toBottomOf="@+id/rdoSex" />
 
     <EditText
         android:id="@+id/textBornDate"
@@ -92,9 +99,10 @@
         android:layout_marginLeft="30dp"
         android:layout_marginTop="10dp"
         android:ems="10"
+        android:focusable="false"
         android:gravity="center"
-        android:hint="06/07/2020"
-        android:inputType="textPersonName"
+        android:hint="05/15/2017"
+        android:inputType="date|textPersonName"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textBorn"
         app:layout_constraintTop_toTopOf="parent" />
@@ -107,9 +115,10 @@
         android:layout_marginLeft="30dp"
         android:layout_marginTop="25dp"
         android:ems="10"
+        android:focusable="false"
         android:gravity="center"
-        android:hint="06/07/2020"
-        android:inputType="textPersonName"
+        android:hint="03/07/2020"
+        android:inputType="date|textPersonName"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/textBorn" />
@@ -154,40 +163,69 @@
         app:layout_constraintBottom_toBottomOf="@+id/editTextTextPersonName"
         app:layout_constraintStart_toEndOf="@+id/editTextTextPersonName" />
 
-    <EditText
-        android:id="@+id/editComplication"
+
+    <RadioGroup
+        android:id="@+id/rdoSex"
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="22dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:background="@drawable/border"
-        android:ems="10"
-        android:focusable="auto"
-        android:gravity="start|top"
-        android:inputType="textMultiLine"
-        android:textSize="20sp"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView7"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
-
-    <EditText
-        android:id="@+id/editRemark"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/border"
-        android:ems="10"
-        android:focusable="auto"
-        android:gravity="start|top"
-        android:inputType="textMultiLine"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@+id/editComplication"
         app:layout_constraintStart_toEndOf="@+id/textView13"
-        app:layout_constraintTop_toBottomOf="@+id/editComplication" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName">
 
+        <RadioButton
+            android:id="@+id/rdoFemale"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:focusable="auto"
+            android:selectAllOnFocus="true"
+            android:text="여"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/rdoMale"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="false"
+            android:focusable="auto"
+            android:text="남"
+            android:textSize="18sp" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="37dp"
+        android:text="성       별"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="17dp"
+        android:background="@drawable/btn_rounded_darkgreen"
+        android:text="입       력"
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
