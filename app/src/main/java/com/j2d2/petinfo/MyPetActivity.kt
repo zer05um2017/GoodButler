@@ -51,6 +51,10 @@ class MyPetActivity : AppCompatActivity(), OnListClickListener {
                 CoroutineScope(Dispatchers.IO).launch {
                     appDatabase?.breedDao()?.insert(itemLists)
                 }
+                with(edit()) {
+                    putBoolean(R.string.com_j2d2_petinfo_is_breed_saved.toString(), true)
+                    commit()
+                }
             }
 
             if(contains(R.string.com_j2d2_petinfo_is_petinfo_saved.toString())) {
