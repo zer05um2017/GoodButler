@@ -1,4 +1,4 @@
-package com.j2d2.setting
+package com.j2d2.petinfo
 
 import android.app.Dialog
 import android.content.Context
@@ -19,7 +19,7 @@ class PopupBreedSelectionDialog(context : Context, private val listener: OnListC
     private val dlg = Dialog(context, R.style.AppBaseTheme)   //부모 액티비티의 context 가 들어감
 
     fun start() {
-        val itemLists: MutableList<ItemList> = mutableListOf()
+        val breedLists: MutableList<BreedList> = mutableListOf()
         dlg.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dlg.setContentView(R.layout.popup_breedlist_dialog)
         dlg.setCancelable(false)
@@ -32,14 +32,14 @@ class PopupBreedSelectionDialog(context : Context, private val listener: OnListC
 
         val strList = fileInString.split("\n")
         for((index, line) in strList.withIndex()) {
-            itemLists.add(ItemList(index, line))
+            breedLists.add(BreedList(index, line))
         }
 
         val layoutManager = LinearLayoutManager(dlg.context)
         layoutManager.reverseLayout = false
         layoutManager.stackFromEnd = false
         dlg.breedRecyclerView.layoutManager = layoutManager
-        dlg.breedRecyclerView.adapter = MyAdapter(dlg.context, itemLists, dlg)
+        dlg.breedRecyclerView.adapter = MyAdapter(dlg.context, breedLists, dlg)
         dlg.show()
     }
 
@@ -48,7 +48,7 @@ class PopupBreedSelectionDialog(context : Context, private val listener: OnListC
     }
 
     inner class MyAdapter(val context: Context,
-                          private val itemLists: MutableList<ItemList>,
+                          private val breedLists: MutableList<BreedList>,
                           val dialog:Dialog) : RecyclerView.Adapter<MyViewHodler>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHodler {
             return MyViewHodler(
@@ -58,12 +58,12 @@ class PopupBreedSelectionDialog(context : Context, private val listener: OnListC
         }
 
         override fun getItemCount(): Int {
-            return itemLists.size
+            return breedLists.size
         }
 
         override fun onBindViewHolder(holder: MyViewHodler, position: Int) {
-            val item = itemLists[position]
-            holder.textTitle.text = item.titleName
+            val item = breedLists[position]
+            holder.textTitle.text = item.breedName
             holder.itemView.setOnClickListener {
                 listener.onSelected(item)
                 dialog.dismiss()

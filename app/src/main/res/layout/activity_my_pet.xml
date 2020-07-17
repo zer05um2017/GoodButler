@@ -4,7 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.j2d2.setting.MyPetActivity">
+    tools:context="com.j2d2.petinfo.MyPetActivity">
+
+    <EditText
+        android:id="@+id/editName"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:gravity="center_horizontal"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toEndOf="@+id/textName"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textBorn"
@@ -12,12 +25,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="37dp"
+        android:gravity="right"
         android:text="생년월일"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textName" />
 
     <TextView
         android:id="@+id/textView2"
@@ -26,6 +40,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="37dp"
+        android:gravity="right"
         android:text="발병일자"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -39,7 +54,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="37dp"
-        android:text="품       종"
+        android:gravity="right"
+        android:text="품        종"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,6 +68,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="37dp"
+        android:gravity="right"
         android:text="몸  무  게"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -65,6 +82,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="37dp"
+        android:gravity="right"
         android:text="기타정보"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -72,43 +90,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
     <EditText
-        android:id="@+id/editComplication"
-        android:layout_width="279dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="22dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/border"
-        android:ems="10"
-        android:focusable="auto"
-        android:gravity="start|top"
-        android:hint="기타증상 및 합병증"
-        android:inputType="textMultiLine"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView7"
-        app:layout_constraintTop_toBottomOf="@+id/rdoSex" />
-
-    <EditText
-        android:id="@+id/textBornDate"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="10dp"
-        android:ems="10"
-        android:focusable="false"
-        android:gravity="center"
-        android:hint="05/15/2017"
-        android:inputType="date|textPersonName"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/textBorn"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/textGotSickDate"
+        android:id="@+id/textBirthDate"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -117,7 +99,23 @@
         android:ems="10"
         android:focusable="false"
         android:gravity="center"
-        android:hint="03/07/2020"
+        android:hint="2017-05-15"
+        android:inputType="date|textPersonName"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/textBorn"
+        app:layout_constraintTop_toBottomOf="@+id/textName" />
+
+    <EditText
+        android:id="@+id/textOccuredDate"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="25dp"
+        android:ems="10"
+        android:focusable="false"
+        android:gravity="center"
+        android:hint="2020-03-07"
         android:inputType="date|textPersonName"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView2"
@@ -134,14 +132,15 @@
         android:layout_marginRight="16dp"
         android:background="@drawable/border"
         android:gravity="center_vertical"
+        android:paddingLeft="10dp"
         android:text="선택"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView4"
-        app:layout_constraintTop_toBottomOf="@+id/textGotSickDate" />
+        app:layout_constraintTop_toBottomOf="@+id/textOccuredDate" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/editWeight"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -149,7 +148,7 @@
         android:layout_marginTop="25dp"
         android:ems="10"
         android:gravity="right"
-        android:inputType="textPersonName"
+        android:inputType="number|numberDecimal"
         app:layout_constraintStart_toEndOf="@+id/textView5"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
@@ -160,8 +159,8 @@
         android:layout_marginBottom="7dp"
         android:text="kg"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextTextPersonName"
-        app:layout_constraintStart_toEndOf="@+id/editTextTextPersonName" />
+        app:layout_constraintBottom_toBottomOf="@+id/editWeight"
+        app:layout_constraintStart_toEndOf="@+id/editWeight" />
 
 
     <RadioGroup
@@ -176,7 +175,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView13"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName">
+        app:layout_constraintTop_toBottomOf="@+id/editWeight">
 
         <RadioButton
             android:id="@+id/rdoFemale"
@@ -207,11 +206,32 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="37dp"
-        android:text="성       별"
+        android:gravity="right"
+        android:text="성        별"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <EditText
+        android:id="@+id/editComplication"
+        android:layout_width="279dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/border"
+        android:ems="10"
+        android:focusable="auto"
+        android:gravity="start|top"
+        android:hint="기타증상 및 합병증"
+        android:inputType="textMultiLine"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView7"
+        app:layout_constraintTop_toBottomOf="@+id/rdoSex" />
 
     <Button
         android:id="@+id/btnSave"
@@ -221,11 +241,26 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="17dp"
         android:background="@drawable/btn_rounded_darkgreen"
-        android:text="입       력"
+        android:text="저       장"
         android:textColor="@android:color/background_light"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textName"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="22dp"
+        android:gravity="right"
+        android:text="이        름"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

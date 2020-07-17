@@ -10,11 +10,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.j2d2.R
+import com.j2d2.petinfo.BreedList
+import com.j2d2.petinfo.MyPetActivity
 import kotlinx.android.synthetic.main.activity_setting.*
 import kotlinx.android.synthetic.main.list_inflater.view.*
 
 class SettingActivity : AppCompatActivity() {
-    val itemLists: MutableList<ItemList> = mutableListOf()
+    val breedLists: MutableList<BreedList> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +29,7 @@ class SettingActivity : AppCompatActivity() {
         // 리사이클려뷰의 아이템을 쌓는 순서를 끝부터 쌓게 함
         layoutManager.stackFromEnd = false
         recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = MyAdapter(itemLists)
+        recyclerView.adapter = MyAdapter(breedLists)
         // image license
         // <div>아이콘 제작자
         // 아이콘 제작자 <a href="https://www.flaticon.com/kr/authors/freepik" title="Freepik">Freepik</a>
@@ -35,9 +37,19 @@ class SettingActivity : AppCompatActivity() {
     }
 
     private fun setListData() {
-        with(itemLists) {
-            add(ItemList(0, getString(R.string.com_j2d2_setting_list_petinfo)))
-            add(ItemList(1, getString(R.string.com_j2d2_setting_list_license)))
+        with(breedLists) {
+            add(
+                BreedList(
+                    0,
+                    getString(R.string.com_j2d2_petinfo_list_petinfo)
+                )
+            )
+            add(
+                BreedList(
+                    1,
+                    getString(R.string.com_j2d2_setting_list_license)
+                )
+            )
         }
     }
 
@@ -47,7 +59,7 @@ class SettingActivity : AppCompatActivity() {
     }
 
     // RecyclerView 의 어댑터 클래스
-    inner class MyAdapter(itemLists: MutableList<ItemList>) : RecyclerView.Adapter<MyViewHodler>() {
+    inner class MyAdapter(breedLists: MutableList<BreedList>) : RecyclerView.Adapter<MyViewHodler>() {
         // RecyclerView 에서 각 Row(행)에서 그릴 ViewHolder 를 생성할때 불리는 메소드
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHodler {
             return MyViewHodler(
@@ -57,12 +69,12 @@ class SettingActivity : AppCompatActivity() {
 
         // RecyclerView 에서 몇개의 행을 그릴지 기준이 되는 메소드
         override fun getItemCount(): Int {
-            return itemLists.size
+            return breedLists.size
         }
 
         // 각 행의 포지션에서 그려야할 ViewHolder UI 에 데이터를 적용하는 메소드
         override fun onBindViewHolder(holder: MyViewHodler, position: Int) {
-            val item = itemLists[position]
+            val item = breedLists[position]
 //            // 배경 이미지 설정
 //            Picasso.get().load(Uri.parse(post.bgUri)).fit().centerCrop().into(holder.imageView)
 //            // 카드에 글을 세팅
@@ -71,16 +83,16 @@ class SettingActivity : AppCompatActivity() {
 //            holder.timeTextView.text = getDiffTimeText(post.writeTime as Long)
 //            // 댓글 개수는 현재 상태에서는 0 으로 일단 세팅
 //            holder.commentCountText.text = "0"
-            holder.textTitle.text = item.titleName
+            holder.textTitle.text = item.breedName
 
             // 카드가 클릭되는 경우 DetailActivity 를 실행한다.
-            when(item.listId) {
+            when(item.breedCode) {
                 0-> {
                     holder.itemView.setOnClickListener {
                         // 상세화면을 호출할 Intent 를 생성한다.
                         val intent = Intent(this@SettingActivity, MyPetActivity::class.java)
                         // 선택된 카드의 ID 정보를 intent 에 추가한다.
-                        intent.putExtra("listId", item.listId)
+                        intent.putExtra("listId", item.breedCode)
                         // intent 로 상세화면을 시작한다.
                         startActivity(intent)
                     }

@@ -3,7 +3,6 @@ package com.j2d2.feeding
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View

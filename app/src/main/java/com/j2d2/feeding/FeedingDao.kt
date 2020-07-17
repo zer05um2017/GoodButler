@@ -1,7 +1,6 @@
 package com.j2d2.feeding
 
 import androidx.room.*
-import com.j2d2.insulin.Insulin
 
 @Dao
 interface FeedingDao {

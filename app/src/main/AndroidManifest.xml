@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".setting.MyPetActivity"></activity>
+        <activity android:name=".petinfo.MyPetActivity"></activity>
         <activity
             android:name=".main.login.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
