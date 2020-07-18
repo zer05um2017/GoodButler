@@ -2,8 +2,10 @@ package com.j2d2.setting
 
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.view.KeyEvent
 import android.view.Window
 import android.webkit.WebView
 import android.widget.Button
@@ -29,6 +31,17 @@ class PopupLicenseDialog (context : Context){
         btnOK.setOnClickListener {
             dlg.dismiss()
         }
+
+        dlg?.setOnKeyListener(object : DialogInterface.OnKeyListener {
+            override fun onKey(dialog: DialogInterface?, keyCode: Int, event: KeyEvent?): Boolean {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    dialog?.dismiss()
+                    return true
+                }
+                return false
+            }
+
+        })
 
         dlg.show()
     }

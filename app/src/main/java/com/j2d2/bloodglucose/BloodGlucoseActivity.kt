@@ -9,14 +9,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
-import com.j2d2.feeding.FeedParcel
 import com.j2d2.feeding.Feeding
 import com.j2d2.insulin.Insulin
 import com.j2d2.main.AppDatabase
+import com.j2d2.main.MainApp
 import kotlinx.android.synthetic.main.activity_blood_glucose.*
 import kotlinx.android.synthetic.main.activity_blood_glucose.editTextDate
 import kotlinx.android.synthetic.main.activity_blood_glucose.editTextTime
-import kotlinx.android.synthetic.main.activity_feeding.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -28,7 +27,7 @@ import java.util.*
 class BloodGlucoseActivity : AppCompatActivity() {
     private var appDatabase: AppDatabase? = null
     private var isModifyed:Boolean? = false
-    private lateinit var pacelData:BloodGlucoseParcel
+    private lateinit var parcelData:BloodGlucoseParcel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +41,7 @@ class BloodGlucoseActivity : AppCompatActivity() {
         if (intent.hasExtra("data")) {
             isModifyed = true
             var data = intent.getParcelableExtra<BloodGlucoseParcel>("data")
-            pacelData = data
+            parcelData = data
             editValue?.setText(data?.bloodSugar.toString())
 
             val calendar = GregorianCalendar.getInstance()
@@ -114,7 +113,8 @@ class BloodGlucoseActivity : AppCompatActivity() {
                         BloodGlucose(
                             millis = dateT[i],
                             dataType = 2,
-                            bloodSugar = bloodT[i]
+                            bloodSugar = bloodT[i],
+                            petId = MainApp.getSelectedPetId()
                         )
                     )
                 }
@@ -149,7 +149,8 @@ class BloodGlucoseActivity : AppCompatActivity() {
                             undiluted = amtInsDltT[i],
                             totalCapacity = amtInsT[i],
                             dilution = 1,
-                            remark = "정량 주사"
+                            remark = "정량 주사",
+                            petId = MainApp.getSelectedPetId()
                         )
                     )
                 }
@@ -177,7 +178,8 @@ class BloodGlucoseActivity : AppCompatActivity() {
                             type = 1,
                             brandName = "W/D",
                             totalCapacity = amtFedT[i],
-                            remark = "당근 48g\n오이 49g"
+                            remark = "당근 48g\n오이 49g",
+                            petId = MainApp.getSelectedPetId()
                         )
                     )
                 }
@@ -193,16 +195,18 @@ class BloodGlucoseActivity : AppCompatActivity() {
             val modified = this.isModifyed
             CoroutineScope(Dispatchers.IO).launch {
                 if(modified!!) {
-                    val bldsugar = BloodGlucose(pacelData.millis,
-                        pacelData.dataType,
-                        pacelData.bloodSugar)
+                    val bldsugar = BloodGlucose(parcelData.millis,
+                        parcelData.dataType,
+                        parcelData.bloodSugar,
+                        parcelData.petId)
                     appDatabase?.bloodGlucoseDao()?.delete(bldsugar)
                 }
                 appDatabase?.bloodGlucoseDao()?.insert(
                     BloodGlucose(
                         millis = getTimeInMillis(),
                         dataType = 2,
-                        bloodSugar = getBloodGlucose()
+                        bloodSugar = getBloodGlucose(),
+                        petId = MainApp.getSelectedPetId()
                     )
                 )
 
@@ -288,7 +292,7 @@ class BloodGlucoseActivity : AppCompatActivity() {
                     var d:Int
                     val cal = GregorianCalendar.getInstance()
                     if(this!!.isModifyed!!) {
-                        cal.timeInMillis = pacelData.millis
+                        cal.timeInMillis = parcelData.millis
                         y = cal.get(Calendar.YEAR)
                         m = cal.get(Calendar.MONTH) - 1
                         d = cal.get(Calendar.DAY_OF_MONTH)
@@ -327,7 +331,7 @@ class BloodGlucoseActivity : AppCompatActivity() {
                     val cal = GregorianCalendar.getInstance()
 
                     if(this!!.isModifyed!!) {
-                        cal.timeInMillis = pacelData.millis
+                        cal.timeInMillis = parcelData.millis
                         hh = cal.get(Calendar.HOUR_OF_DAY)
                         mm = cal.get(Calendar.MINUTE)
                     } else {

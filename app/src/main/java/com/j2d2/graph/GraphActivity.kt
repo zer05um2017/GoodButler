@@ -91,10 +91,10 @@ class GraphActivity : AppCompatActivity(),
 
         CoroutineScope(Dispatchers.IO).launch {
             // load all months in the existent data
-            val months = appDatabase?.graphDao()?.getAllMonthsList()!!
+            val months = appDatabase?.graphDao()?.getAllMonthsList(MainApp.getSelectedPetId())!!
 
             for(i in months.indices) {
-                val days = appDatabase?.graphDao()?.getDayListOfMonth(month = months[i])!!
+                val days = appDatabase?.graphDao()?.getDayListOfMonth(petId = MainApp.getSelectedPetId(), month = months[i])!!
                 var temp = ArrayList<String>()
                 for ((j, day: String) in days.withIndex()) {
                     temp.add(day)
@@ -176,7 +176,7 @@ class GraphActivity : AppCompatActivity(),
         var lowerLimited: Float = 0f
         val values0 = arrayListOf<Entry>()
         val values1 = arrayListOf<Entry>()
-        var timeLine = appDatabase?.graphDao()?.timeLineData(curDate)?: return
+        var timeLine = appDatabase?.graphDao()?.timeLineData(petId = MainApp.getSelectedPetId(), today = curDate)?: return
 
         timeLineOfDay = timeLine
 
@@ -450,7 +450,7 @@ class GraphActivity : AppCompatActivity(),
         var lowerLimited: Float = 0f
         val values0 = arrayListOf<Entry>()
         val values1 = arrayListOf<Entry>()
-        var timeLine = appDatabase?.graphDao()?.timeLineData(curDate)?: return null
+        var timeLine = appDatabase?.graphDao()?.timeLineData(petId = MainApp.getSelectedPetId(), today = curDate)?: return null
 
         timeLineOfDay = timeLine
 
@@ -680,7 +680,7 @@ class GraphActivity : AppCompatActivity(),
         val calendar = GregorianCalendar.getInstance()
         calendar.timeInMillis = gloucose.millis
         selectedDataType = DataType.BLOODSUGAR
-        selectedParcel = BloodGlucoseParcel(gloucose.millis, gloucose.dataType, gloucose.bloodSugar)
+        selectedParcel = BloodGlucoseParcel(gloucose.millis, gloucose.dataType, gloucose.bloodSugar, gloucose.petId)
         textInfo.text = "시간 : %02d시%02d분\n혈당 : %d".format(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), gloucose.bloodSugar)
     }
 
@@ -708,7 +708,7 @@ class GraphActivity : AppCompatActivity(),
                                 data.totalCapacity,
                                 data.remark)
                         }
-                        parcel = FeedParcel(data.millis, data.dataType,data.type,data.brandName,data.totalCapacity,data.remark)
+                        parcel = FeedParcel(data.millis, data.dataType,data.type,data.brandName,data.totalCapacity,data.remark,data.petId)
                         callBack.setDataType(DataType.FEEDING, parcel = parcel)
                     }
                 }
@@ -729,7 +729,7 @@ class GraphActivity : AppCompatActivity(),
                                     if (data.dilution == 1) "Yes" else "No",
                                     data.remark
                                 )
-                            parcel = InsulinParcel(data.millis, data.dataType,data.type,data.undiluted,data.totalCapacity,data.dilution,data.remark)
+                            parcel = InsulinParcel(data.millis, data.dataType,data.type,data.undiluted,data.totalCapacity,data.dilution,data.remark, data.petId)
                             callBack.setDataType(DataType.INSULIN, parcel = parcel)
                         }
                     }
@@ -766,21 +766,21 @@ class GraphActivity : AppCompatActivity(),
         when(selectedDataType) {
             DataType.FEEDING -> {
                 parcel = selectedParcel as FeedParcel
-                val data = Feeding(parcel.millis, parcel.dataType,parcel.type,parcel.brandName,parcel.totalCapacity,parcel.remark)
+                val data = Feeding(parcel.millis, parcel.dataType,parcel.type,parcel.brandName,parcel.totalCapacity,parcel.remark, parcel.petId)
                 CoroutineScope(Dispatchers.IO).launch {
                     appDatabase?.feedingDao()?.delete(data)
                 }
             }
             DataType.INSULIN -> {
                 parcel = selectedParcel as InsulinParcel
-                val data = Insulin(parcel.millis, parcel.dataType,parcel.type,parcel.undiluted,parcel.totalCapacity,parcel.dilution,parcel.remark)
+                val data = Insulin(parcel.millis, parcel.dataType,parcel.type,parcel.undiluted,parcel.totalCapacity,parcel.dilution,parcel.remark, parcel.petId)
                 CoroutineScope(Dispatchers.IO).launch {
                     appDatabase?.insulinDao()?.delete(data)
                 }
             }
             DataType.BLOODSUGAR -> {
                 parcel = selectedParcel as BloodGlucoseParcel
-                val data = BloodGlucose(parcel.millis, parcel.dataType, parcel.bloodSugar)
+                val data = BloodGlucose(parcel.millis, parcel.dataType, parcel.bloodSugar, parcel.petId)
                 CoroutineScope(Dispatchers.IO).launch {
                     appDatabase?.bloodGlucoseDao()?.delete(data)
                 }

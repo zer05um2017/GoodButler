@@ -9,7 +9,8 @@ class FeedParcel(var millis:Long,
                 var type:Int,
                 var brandName: String?,
                 var totalCapacity:Int,
-                var remark: String?
+                var remark: String?,
+                 var petId: Long
 ) : Terry {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
@@ -17,7 +18,8 @@ class FeedParcel(var millis:Long,
         parcel.readInt(),
         parcel.readString(),
         parcel.readInt(),
-        parcel.readString()) {
+        parcel.readString(),
+        parcel.readLong()) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -27,6 +29,7 @@ class FeedParcel(var millis:Long,
         parcel.writeString(brandName)
         parcel.writeInt(totalCapacity)
         parcel.writeString(remark)
+        parcel.writeLong(petId)
     }
 
     override fun describeContents(): Int {

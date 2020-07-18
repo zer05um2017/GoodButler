@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
 import com.j2d2.main.AppDatabase
+import com.j2d2.main.MainApp
 import com.j2d2.main.SharedPref
 import kotlinx.android.synthetic.main.activity_feeding.*
 import kotlinx.android.synthetic.main.activity_feeding.btnSave
@@ -27,7 +28,7 @@ import java.util.*
 class FeedingActivity : AppCompatActivity() {
     private var appDatabase: AppDatabase? = null
     private var isModifyed:Boolean? = false
-    private lateinit var pacelData:FeedParcel
+    private lateinit var parcelData:FeedParcel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +41,7 @@ class FeedingActivity : AppCompatActivity() {
         if (intent.hasExtra("data")) {
             isModifyed = true
             var data = intent.getParcelableExtra<FeedParcel>("data")
-            pacelData = data
+            parcelData = data
             editBrand?.setText(data?.brandName)
             editRemark?.setText(data?.remark)
             editAmount?.setText(data?.totalCapacity.toString())
@@ -81,12 +82,13 @@ class FeedingActivity : AppCompatActivity() {
             val modified = this.isModifyed
             CoroutineScope(Dispatchers.IO).launch {
                 if(modified!!) {
-                    val feed = Feeding(pacelData.millis,
-                        pacelData.dataType,
-                        pacelData.type,
-                        pacelData.brandName,
-                        pacelData.totalCapacity,
-                        pacelData.remark)
+                    val feed = Feeding(parcelData.millis,
+                        parcelData.dataType,
+                        parcelData.type,
+                        parcelData.brandName,
+                        parcelData.totalCapacity,
+                        parcelData.remark,
+                        parcelData.petId)
                     appDatabase?.feedingDao()?.delete(feed)
                 }
                 appDatabase?.feedingDao()?.insert(
@@ -96,7 +98,8 @@ class FeedingActivity : AppCompatActivity() {
                         type = isDriedMethod(),
                         brandName = getBrandName(),
                         totalCapacity = getFeedingAmount(),
-                        remark = getMemo()
+                        remark = getMemo(),
+                        petId = MainApp.getSelectedPetId()
                     )
                 )
 
@@ -303,7 +306,7 @@ class FeedingActivity : AppCompatActivity() {
                     var d:Int
                     val cal = GregorianCalendar.getInstance()
                     if(this!!.isModifyed!!) {
-                        cal.timeInMillis = pacelData.millis
+                        cal.timeInMillis = parcelData.millis
                         y = cal.get(Calendar.YEAR)
                         m = cal.get(Calendar.MONTH) - 1
                         d = cal.get(Calendar.DAY_OF_MONTH)
@@ -342,7 +345,7 @@ class FeedingActivity : AppCompatActivity() {
                     val cal = GregorianCalendar.getInstance()
 
                     if(this!!.isModifyed!!) {
-                        cal.timeInMillis = pacelData.millis
+                        cal.timeInMillis = parcelData.millis
                         hh = cal.get(Calendar.HOUR_OF_DAY)
                         mm = cal.get(Calendar.MINUTE)
                     } else {

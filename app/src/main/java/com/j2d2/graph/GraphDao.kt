@@ -12,36 +12,36 @@ interface GraphDao {
      * @return List<GraphTimeLine>
      * */
     @Query("SELECT * FROM (\n" +
-            "SELECT data_type, millis, total_capacity FROM insulin WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE :today\n" +
+            "SELECT data_type, millis, total_capacity FROM insulin WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE :today AND pet_id LIKE :petId\n" +
             "UNION\n" +
-            "SELECT data_type, millis, total_capacity FROM feeding WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE :today\n" +
+            "SELECT data_type, millis, total_capacity FROM feeding WHERE date(date(millis/1000,'unixepoch','localtime'), '-1 month') LIKE :today AND pet_id LIKE :petId\n" +
             ")ORDER BY millis ASC")
-    fun timeLineData(today:String):MutableList<GraphTimeLine>
+    fun timeLineData(petId:Long, today:String):MutableList<GraphTimeLine>
 
     /** 입력받은 년월을 기준으로 해당 월에 대한 저장된 데이터의 일자 목록 조회
      * @param 202006
      * @return [2020-06-24, 2020-06-23] 해당포맷이 코드에서 날짜 변환하기에 편함
      * */
     @Query("SELECT DT FROM (\n" +
-            "SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM feeding WHERE strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month\n" +
+            "SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM feeding WHERE strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month AND pet_id LIKE :petId\n" +
             "UNION\n" +
-            "SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM insulin WHERE  strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month\n" +
+            "SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM insulin WHERE  strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month AND pet_id LIKE :petId\n" +
             "UNION\n" +
-            "SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM bloodglucose WHERE  strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month\n" +
+            "SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM bloodglucose WHERE  strftime(\"%Y%m\",date(date(millis/1000,'unixepoch','localtime'), '-1 month'),'localtime') LIKE :month AND pet_id LIKE :petId\n" +
             ") ORDER BY DT DESC")
-    fun getDayListOfMonth(month:String):List<String>
+    fun getDayListOfMonth(petId:Long, month:String):List<String>
 
     /** 각 테이블에 저장된 데이터에서 년월 목록을 내림차순으로 모두 가져온다.
      * @return [202007, 202006] */
     @Query("\n" +
             "SELECT strftime(\"%Y%m\",date(date(day/1000,'unixepoch','localtime'), '-1 month'),'localtime') as DT FROM (\n" +
-                "SELECT millis as day FROM feeding\n" +
+                "SELECT millis as day FROM feeding WHERE pet_id LIKE :petId\n" +
                 "UNION\n" +
-                "SELECT millis as day FROM insulin\n" +
+                "SELECT millis as day FROM insulin WHERE pet_id LIKE :petId\n" +
                 "UNION\n" +
-                "SELECT millis as day FROM bloodglucose\n" +
+                "SELECT millis as day FROM bloodglucose WHERE pet_id LIKE :petId\n" +
             ") GROUP BY DT ORDER BY day DESC ")
-    fun getAllMonthsList():List<String>
+    fun getAllMonthsList(petId:Long):List<String>
 
 //    @Query("SELECT date(date(millis/1000,'unixepoch','localtime'), '-1 month') as DT FROM feeding WHERE strftime('%Y-%m', DT) LIKE :month GROUP BY DT ORDER BY DT DESC")
 //    fun dayListOfMonth(month:String):String

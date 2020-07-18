@@ -10,26 +10,22 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
-import com.j2d2.feeding.FeedParcel
 import com.j2d2.main.AppDatabase
+import com.j2d2.main.MainApp
 import com.j2d2.main.SharedPref
-import kotlinx.android.synthetic.main.activity_feeding.*
 import kotlinx.android.synthetic.main.activity_insulin.*
 import kotlinx.android.synthetic.main.activity_insulin.btnSave
 import kotlinx.android.synthetic.main.activity_insulin.editRemark
 import kotlinx.android.synthetic.main.activity_insulin.editTextDate
 import kotlinx.android.synthetic.main.activity_insulin.editTextTime
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class InsulinActivity : AppCompatActivity() {
     var appDatabase: AppDatabase? = null
     private var isModifyed:Boolean? = false
-    private lateinit var pacelData:InsulinParcel
+    private lateinit var parcelData:InsulinParcel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +39,7 @@ class InsulinActivity : AppCompatActivity() {
         if (intent.hasExtra("data")) {
             isModifyed = true
             var data = intent.getParcelableExtra<InsulinParcel>("data")
-            pacelData = data
+            parcelData = data
             editUndiluted?.setText(data?.undiluted.toString())
 
             when(data.dilution) {
@@ -180,13 +176,14 @@ class InsulinActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 if(modified!!) {
                     val data = Insulin(
-                        pacelData.millis,
-                        pacelData.dataType,
-                        pacelData.type,
-                        pacelData.undiluted,
-                        pacelData.totalCapacity,
-                        pacelData.dilution,
-                        pacelData.remark
+                        parcelData.millis,
+                        parcelData.dataType,
+                        parcelData.type,
+                        parcelData.undiluted,
+                        parcelData.totalCapacity,
+                        parcelData.dilution,
+                        parcelData.remark,
+                        parcelData.petId
                     )
                     appDatabase?.insulinDao()?.delete(data)
                 }
@@ -198,7 +195,8 @@ class InsulinActivity : AppCompatActivity() {
                         undiluted = getUndilutedCapacity(),
                         totalCapacity = getTotalInjectionCapacity(),
                         dilution = isDiluted(),
-                        remark = getMemo()
+                        remark = getMemo(),
+                        petId = MainApp.getSelectedPetId()
                     )
                 )
 
@@ -332,7 +330,7 @@ class InsulinActivity : AppCompatActivity() {
                     var d:Int
                     val cal = GregorianCalendar.getInstance()
                     if(this!!.isModifyed!!) {
-                        cal.timeInMillis = pacelData.millis
+                        cal.timeInMillis = parcelData.millis
                         y = cal.get(Calendar.YEAR)
                         m = cal.get(Calendar.MONTH) - 1
                         d = cal.get(Calendar.DAY_OF_MONTH)
@@ -371,7 +369,7 @@ class InsulinActivity : AppCompatActivity() {
                     val cal = GregorianCalendar.getInstance()
 
                     if(this!!.isModifyed!!) {
-                        cal.timeInMillis = pacelData.millis
+                        cal.timeInMillis = parcelData.millis
                         hh = cal.get(Calendar.HOUR_OF_DAY)
                         mm = cal.get(Calendar.MINUTE)
                     } else {

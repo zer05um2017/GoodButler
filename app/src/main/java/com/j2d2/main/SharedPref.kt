@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.j2d2.R
@@ -19,6 +20,7 @@ object SharedPref {
         return false
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     fun init(context: Context) {
         if(isOverMashmellow()) {
             val sharedEnPreferences: SharedPreferences by lazy {

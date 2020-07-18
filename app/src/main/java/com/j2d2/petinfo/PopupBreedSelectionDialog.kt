@@ -2,18 +2,17 @@ package com.j2d2.petinfo
 
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.view.*
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.j2d2.R
 import kotlinx.android.synthetic.main.breed_row.view.*
 import kotlinx.android.synthetic.main.popup_breedlist_dialog.*
+
 
 class PopupBreedSelectionDialog(context : Context, private val listener: OnListClickListener) {
     private val dlg = Dialog(context, R.style.AppBaseTheme)   //부모 액티비티의 context 가 들어감
@@ -40,6 +39,15 @@ class PopupBreedSelectionDialog(context : Context, private val listener: OnListC
         layoutManager.stackFromEnd = false
         dlg.breedRecyclerView.layoutManager = layoutManager
         dlg.breedRecyclerView.adapter = MyAdapter(dlg.context, breedLists, dlg)
+        dlg?.setOnKeyListener(object : DialogInterface.OnKeyListener {
+            override fun onKey(dialog: DialogInterface?, keyCode: Int, event: KeyEvent?): Boolean {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    dialog?.dismiss()
+                    return true
+                }
+                return false
+            }
+        })
         dlg.show()
     }
 

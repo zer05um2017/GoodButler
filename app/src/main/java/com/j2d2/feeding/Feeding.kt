@@ -11,5 +11,6 @@ data class Feeding(
     @ColumnInfo(name = "feed_type") val type: Int,                 // 0:건식, 1:습식
     @ColumnInfo(name = "brand_name") val brandName: String?,         // 사료 브랜드
     @ColumnInfo(name = "total_capacity") val totalCapacity: Int,   // 총 급여량
-    @ColumnInfo(name = "remark") val remark: String?                // 메모
+    @ColumnInfo(name = "remark") val remark: String?,                // 메모
+    @ColumnInfo(name = "pet_id") val petId:Long              // 강아지 ID
 )

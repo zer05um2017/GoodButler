@@ -52,6 +52,12 @@
     <string name="com.j2d2.petinfo.pet_selected_id">pet_selected</string>
     <string name="com.j2d2.petinfo.is_breed_saved">breed_saved</string>
     <string name="com.j2d2.petinfo.ins_message.input_complete">저장 되었습니다.</string>
+    <string name="com.j2d2.petinfo.ins_message.not_saved">설정->강아지 정보입력을 해주세요.</string>
+    <string name="com.j2d2.petinfo.input_error_message.petname">강아지 이름을 입력해주세요.</string>
+    <string name="com.j2d2.petinfo.input_error_message.birth">생년월일을 선택해주세요.</string>
+    <string name="com.j2d2.petinfo.input_error_message.occur">발병일자를 선택해주세요.</string>
+    <string name="com.j2d2.petinfo.input_error_message.breed">견종을 선택해주세요.</string>
+    <string name="com.j2d2.petinfo.input_error_message.weight">몸무게를 입력해주세요.</string>
 
     <!-- SettingActivity -->
     <string name="com.j2d2.setting.list_license">라이센스</string>

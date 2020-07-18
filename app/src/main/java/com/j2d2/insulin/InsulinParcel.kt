@@ -13,7 +13,8 @@ data class InsulinParcel(var millis:Long,
                     var undiluted: Float,
                     var totalCapacity:Int,
                     var dilution:Int,
-                    var remark: String?) : Terry {
+                    var remark: String?,
+                    var petId: Long) : Terry {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readInt(),
@@ -21,7 +22,8 @@ data class InsulinParcel(var millis:Long,
         parcel.readFloat(),
         parcel.readInt(),
         parcel.readInt(),
-        parcel.readString()
+        parcel.readString(),
+        parcel.readLong()
     ) {}
 
     companion object : Parceler<InsulinParcel> {
@@ -34,6 +36,7 @@ data class InsulinParcel(var millis:Long,
             parcel.writeInt(totalCapacity)
             parcel.writeInt(dilution)
             parcel.writeString(remark)
+            parcel.writeLong(petId)
         }
 
         override fun create(parcel: Parcel): InsulinParcel {

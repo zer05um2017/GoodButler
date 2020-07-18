@@ -9,11 +9,13 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class BloodGlucoseParcel(var millis: Long,
                          var dataType: Int,
-                         var bloodSugar: Int) : Terry {
+                         var bloodSugar: Int,
+                        var petId: Long) : Terry {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readInt(),
-        parcel.readInt()){}
+        parcel.readInt(),
+        parcel.readLong()){}
 
     companion object : Parceler<BloodGlucoseParcel> {
 
@@ -21,6 +23,7 @@ data class BloodGlucoseParcel(var millis: Long,
             parcel.writeLong(millis)
             parcel.writeInt(dataType)
             parcel.writeInt(bloodSugar)
+            parcel.writeLong(petId)
         }
 
         override fun create(parcel: Parcel): BloodGlucoseParcel {

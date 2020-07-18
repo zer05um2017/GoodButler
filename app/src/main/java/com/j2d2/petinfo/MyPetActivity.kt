@@ -10,6 +10,7 @@ import com.j2d2.R
 import com.j2d2.main.AppDatabase
 import com.j2d2.main.MainApp
 import com.j2d2.main.SharedPref
+import kotlinx.android.synthetic.main.activity_feeding.*
 import kotlinx.android.synthetic.main.activity_my_pet.*
 import kotlinx.android.synthetic.main.activity_my_pet.btnSave
 import kotlinx.coroutines.CoroutineScope
@@ -106,6 +107,27 @@ class MyPetActivity : AppCompatActivity(), OnListClickListener {
         }
 
         btnSave.setOnClickListener {
+            if (editName.text.trim().isEmpty()) {
+                Toast.makeText(this@MyPetActivity, getString(R.string.com_j2d2_petinfo_input_error_message_petname), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (textBirthDate.text.trim().isEmpty()) {
+                Toast.makeText(this@MyPetActivity, getString(R.string.com_j2d2_petinfo_input_error_message_birth), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (textOccuredDate.text.trim().isEmpty()) {
+                Toast.makeText(this@MyPetActivity, getString(R.string.com_j2d2_petinfo_input_error_message_occur), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (textBreedSelection.text.trim().isEmpty()) {
+                Toast.makeText(this@MyPetActivity, getString(R.string.com_j2d2_petinfo_input_error_message_breed), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (editWeight.text.trim().isEmpty()) {
+                Toast.makeText(this@MyPetActivity, getString(R.string.com_j2d2_petinfo_input_error_message_weight), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             CoroutineScope(Dispatchers.IO).launch {
                 var id:Long = 0
                 if(MainApp.getSelectedPetId() > 0) {
