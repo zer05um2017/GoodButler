@@ -216,7 +216,7 @@
     <EditText
         android:id="@+id/editComplication"
         android:layout_width="279dp"
-        android:layout_height="100dp"
+        android:layout_height="50dp"
         android:layout_marginStart="30dp"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="30dp"

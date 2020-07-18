@@ -19,13 +19,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class MyPetActivity : AppCompatActivity(), OnListClickListener {
-    lateinit var selectedBreed: BreedList
+    var selectedBreed: BreedList? = null
     private var appDatabase: AppDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.title = getString(R.string.com_j2d2_petinfo_my_pat_title)
         setContentView(R.layout.activity_my_pet)
+        selectedBreed = BreedList(-1, "")
         appDatabase = AppDatabase.getInstance(this)
         textBreedSelection.setOnClickListener {
             val dlg = PopupBreedSelectionDialog(
@@ -58,25 +59,32 @@ class MyPetActivity : AppCompatActivity(), OnListClickListener {
             }
 
             if(contains(R.string.com_j2d2_petinfo_is_petinfo_saved.toString())) {
+                val selectedPetId = MainApp.getSelectedPetId()
+                val birth = GregorianCalendar.getInstance()
+                val occur = GregorianCalendar.getInstance()
                 CoroutineScope(Dispatchers.IO).launch {
-                    val selectedPetId = MainApp.getSelectedPetId()
                     val pet = appDatabase?.petDao()?.findPetById(selectedPetId)
-//                    CoroutineScope(Dispatchers.Main).launch {
-                        val calendar = GregorianCalendar.getInstance()
-                        calendar.timeInMillis = pet?.birth!!
+                    selectedBreed?.breedCode = pet?.breedType!!
+                    selectedBreed?.breedName = pet?.breedName!!
+                    birth.timeInMillis = pet?.birth!!
+                    occur.timeInMillis = pet?.occurDate!!
+                    CoroutineScope(Dispatchers.Main).launch {
+                        editName.setText(pet.name)
                         textBirthDate.setText(
                             "%02d-%02d-%02d".format(
-                                calendar.get(Calendar.YEAR),
-                                calendar.get(Calendar.MONTH),
-                                calendar.get(Calendar.DAY_OF_MONTH)
+                                birth.get(Calendar.YEAR),
+                                birth.get(Calendar.MONTH),
+                                birth.get(Calendar.DAY_OF_MONTH)
                             )
                         )
-                        calendar.timeInMillis = pet?.occurDate!!
+                    }
+
+                    CoroutineScope(Dispatchers.Main).launch {
                         textOccuredDate.setText(
                             "%02d-%02d-%02d".format(
-                                calendar.get(Calendar.YEAR),
-                                calendar.get(Calendar.MONTH),
-                                calendar.get(Calendar.DAY_OF_MONTH)
+                                occur.get(Calendar.YEAR),
+                                occur.get(Calendar.MONTH),
+                                occur.get(Calendar.DAY_OF_MONTH)
                             )
                         )
                         editWeight.setText(pet?.weight.toString())
@@ -89,10 +97,10 @@ class MyPetActivity : AppCompatActivity(), OnListClickListener {
                             }
                         }
                         textBreedSelection.text = pet.breedName
-                        selectedBreed.breedCode = pet.breedType
-                        selectedBreed.breedName = pet.breedName
+                        selectedBreed?.breedCode = pet.breedType
+                        selectedBreed?.breedName = pet.breedName
                         editComplication.setText(pet?.remark.toString())
-//                    }
+                    }
                 }
             }
         }
@@ -105,11 +113,11 @@ class MyPetActivity : AppCompatActivity(), OnListClickListener {
                     appDatabase?.petDao()?.update(
                         Pet(
                             id = id,
-                            name = textName.text.toString(),
+                            name = editName.text.toString(),
                             birth = getBirthDate(),
                             occurDate = getOccuredDate(),
-                            breedType = selectedBreed.breedCode,
-                            breedName = selectedBreed.breedName,
+                            breedType = selectedBreed?.breedCode!!,
+                            breedName = selectedBreed?.breedName!!,
                             weight = editWeight.text.toString().toFloat(),
                             sex = isFemale(),
                             remark = editComplication.text.toString()
@@ -120,11 +128,11 @@ class MyPetActivity : AppCompatActivity(), OnListClickListener {
                     appDatabase?.petDao()?.insert(
                         Pet(
                             id = id,
-                            name = textName.text.toString(),
+                            name = editName.text.toString(),
                             birth = getBirthDate(),
                             occurDate = getOccuredDate(),
-                            breedType = selectedBreed.breedCode,
-                            breedName = selectedBreed.breedName,
+                            breedType = selectedBreed?.breedCode!!,
+                            breedName = selectedBreed?.breedName!!,
                             weight = editWeight.text.toString().toFloat(),
                             sex = isFemale(),
                             remark = editComplication.text.toString()
@@ -134,7 +142,8 @@ class MyPetActivity : AppCompatActivity(), OnListClickListener {
                 }
 
                 with(SharedPref.prefs.edit()) {
-                    putLong(R.string.com_j2d2_petinfo_is_petinfo_saved.toString(), id)
+                    putBoolean(R.string.com_j2d2_petinfo_is_petinfo_saved.toString(), true)
+                    putLong(R.string.com_j2d2_petinfo_pet_selected_id .toString(), id)
                     commit()
                 }
                 CoroutineScope(Dispatchers.Main).launch {

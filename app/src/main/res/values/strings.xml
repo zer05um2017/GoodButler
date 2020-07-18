@@ -49,7 +49,7 @@
     <string name="com.j2d2.petinfo.my_pat_title">강아지 정보</string>
     <string name="com.j2d2.petinfo.list_petinfo">강아지 정보입력</string>
     <string name="com.j2d2.petinfo.is_petinfo_saved">petinfo_saved</string>
-    <string name="com.j2d2.petinfo.pet_selected">pet_selected</string>
+    <string name="com.j2d2.petinfo.pet_selected_id">pet_selected</string>
     <string name="com.j2d2.petinfo.is_breed_saved">breed_saved</string>
     <string name="com.j2d2.petinfo.ins_message.input_complete">저장 되었습니다.</string>
 

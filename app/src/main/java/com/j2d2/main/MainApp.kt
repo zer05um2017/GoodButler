@@ -31,8 +31,8 @@ class MainApp: Application() {
         SharedPref.init(this)
 
         with(SharedPref.prefs) {
-            if (contains(R.string.com_j2d2_petinfo_is_petinfo_saved.toString())) {
-                selectedPetId = getLong(R.string.com_j2d2_petinfo_pet_selected.toString(), 0)
+            if (contains(R.string.com_j2d2_petinfo_pet_selected_id.toString())) {
+                selectedPetId = getLong(R.string.com_j2d2_petinfo_pet_selected_id.toString(), 0)
             }
         }
     }
