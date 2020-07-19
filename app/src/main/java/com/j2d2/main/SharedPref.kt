@@ -20,8 +20,9 @@ object SharedPref {
         return false
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    fun init(context: Context) {
+//    @RequiresApi(Build.VERSION_CODES.M)
+@RequiresApi(Build.VERSION_CODES.M)
+fun init(context: Context) {
         if(isOverMashmellow()) {
             val sharedEnPreferences: SharedPreferences by lazy {
                 val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC

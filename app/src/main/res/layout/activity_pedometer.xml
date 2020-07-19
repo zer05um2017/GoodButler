@@ -7,7 +7,7 @@
     tools:context="com.j2d2.pedometer.PedometerActivity">
 
     <TextView
-        android:id="@+id/txtStepCount"
+        android:id="@+id/textStepCount"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"

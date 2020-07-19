@@ -10,7 +10,6 @@ import com.j2d2.R
 import com.j2d2.main.AppDatabase
 import com.j2d2.main.MainApp
 import com.j2d2.main.SharedPref
-import kotlinx.android.synthetic.main.activity_feeding.*
 import kotlinx.android.synthetic.main.activity_my_pet.*
 import kotlinx.android.synthetic.main.activity_my_pet.btnSave
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +18,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MyPetActivity : AppCompatActivity(), OnListClickListener {
+class MyPetActivity : AppCompatActivity(), OnBreedListClickListener {
     var selectedBreed: BreedList? = null
     private var appDatabase: AppDatabase? = null
 
@@ -47,7 +46,7 @@ class MyPetActivity : AppCompatActivity(), OnListClickListener {
                 val strList = fileInString.split("\n")
 
                 for((index, name) in strList.withIndex()) {
-                    itemLists.add(Breed(id = index, type = name ))
+                    itemLists.add(Breed(id = index, name = name ))
                 }
 
                 CoroutineScope(Dispatchers.IO).launch {

@@ -44,7 +44,8 @@ class GraphActivity : AppCompatActivity(),
     InvalidateData,
     OnChartValueSelectedListener,
     OnSelectedDataCallBack,
-    DialogOnClickListener {
+    DialogOnClickListener,
+    OnDayClickListener {
     private var data: ArrayList<Entry>? = null
     private var appDatabase: AppDatabase? = null
     private var glucoseListOfDay = mutableListOf<BloodGlucose>()
@@ -244,6 +245,7 @@ class GraphActivity : AppCompatActivity(),
         combChart.setPinchZoom(false)
 
         CoroutineScope(Dispatchers.Main).launch {
+            combChart.invalidate()
             combChart.animateY(500)
         }
     }
@@ -441,79 +443,79 @@ class GraphActivity : AppCompatActivity(),
         return LineData(dataSets)
     }
 
-    private fun generateScatterData(curDate:String): ScatterData? {
-        var d = ScatterData()
-        appDatabase = AppDatabase.getInstance(this)
-        val xValsDateLabel = ArrayList<String>()
-        val calendar = GregorianCalendar.getInstance()
-        var upperLimited: Float = 0f
-        var lowerLimited: Float = 0f
-        val values0 = arrayListOf<Entry>()
-        val values1 = arrayListOf<Entry>()
-        var timeLine = appDatabase?.graphDao()?.timeLineData(petId = MainApp.getSelectedPetId(), today = curDate)?: return null
-
-        timeLineOfDay = timeLine
-
-        for ((i, day: GraphTimeLine) in timeLine?.withIndex()) {
-            if(i == 0) {
-                upperLimited = day.totalCapacity.toString().toFloat()
-                lowerLimited = day.totalCapacity.toString().toFloat()
-            }
-
-            if(day.totalCapacity.toString().toFloat() > upperLimited) {
-                upperLimited = day.totalCapacity.toString().toFloat()
-            }
-
-            if(day.totalCapacity.toString().toFloat() < lowerLimited) {
-                lowerLimited = day.totalCapacity.toString().toFloat()
-            }
-
-            when(day.dataType) {
-                0 -> {
-                    values0.add(Entry(i.toFloat(), day.totalCapacity.toString().toFloat()))
-                }
-
-                1 ->
-                {
-                    values1.add(Entry(i.toFloat(), day.totalCapacity.toString().toFloat()))
-                }
-            }
-
-            calendar.timeInMillis = day.millis
-            xValsDateLabel.add(
-                "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
-                    Calendar.MINUTE
-                )}"
-            )
-        }
-
-        setCombChartLayout(xValsDateLabel, upperLimited, lowerLimited)
-
-        // create a dataset and give it a type
-        val set1 = ScatterDataSet(values0, "사료")
-        set1.setColors(Color.rgb(245,161,27))
-        set1.setValueTextColors(arrayListOf(Color.DKGRAY))
-        set1.setScatterShape(ScatterChart.ScatterShape.SQUARE)
-        set1. scatterShapeSize = 15f
-        set1.setDrawValues(true)
-//        set1.setDrawIcons(true)
-        set1.valueTextSize = 15f
-//        set1.scatterShapeHoleRadius = 4f
-
-        val set2 = ScatterDataSet(values1, "인슐린")
-        set2.setColors(Color.rgb(236,32,8))
-        set2.setValueTextColors(arrayListOf(Color.DKGRAY))
-        set2.scatterShapeSize = 15f
-        set2.setDrawValues(true)
-//        set1.setDrawIcons(true)
-        set2.valueTextSize = 15f
-//        set2.scatterShapeHoleRadius = 4f
-
-        d.addDataSet(set1)
-        d.addDataSet(set2)
-
-        return d
-    }
+//    private fun generateScatterData(curDate:String): ScatterData? {
+//        var d = ScatterData()
+//        appDatabase = AppDatabase.getInstance(this)
+//        val xValsDateLabel = ArrayList<String>()
+//        val calendar = GregorianCalendar.getInstance()
+//        var upperLimited: Float = 0f
+//        var lowerLimited: Float = 0f
+//        val values0 = arrayListOf<Entry>()
+//        val values1 = arrayListOf<Entry>()
+//        var timeLine = appDatabase?.graphDao()?.timeLineData(petId = MainApp.getSelectedPetId(), today = curDate)?: return null
+//
+//        timeLineOfDay = timeLine
+//
+//        for ((i, day: GraphTimeLine) in timeLine?.withIndex()) {
+//            if(i == 0) {
+//                upperLimited = day.totalCapacity.toString().toFloat()
+//                lowerLimited = day.totalCapacity.toString().toFloat()
+//            }
+//
+//            if(day.totalCapacity.toString().toFloat() > upperLimited) {
+//                upperLimited = day.totalCapacity.toString().toFloat()
+//            }
+//
+//            if(day.totalCapacity.toString().toFloat() < lowerLimited) {
+//                lowerLimited = day.totalCapacity.toString().toFloat()
+//            }
+//
+//            when(day.dataType) {
+//                0 -> {
+//                    values0.add(Entry(i.toFloat(), day.totalCapacity.toString().toFloat()))
+//                }
+//
+//                1 ->
+//                {
+//                    values1.add(Entry(i.toFloat(), day.totalCapacity.toString().toFloat()))
+//                }
+//            }
+//
+//            calendar.timeInMillis = day.millis
+//            xValsDateLabel.add(
+//                "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(
+//                    Calendar.MINUTE
+//                )}"
+//            )
+//        }
+//
+//        setCombChartLayout(xValsDateLabel, upperLimited, lowerLimited)
+//
+//        // create a dataset and give it a type
+//        val set1 = ScatterDataSet(values0, "사료")
+//        set1.setColors(Color.rgb(245,161,27))
+//        set1.setValueTextColors(arrayListOf(Color.DKGRAY))
+//        set1.setScatterShape(ScatterChart.ScatterShape.SQUARE)
+//        set1. scatterShapeSize = 15f
+//        set1.setDrawValues(true)
+////        set1.setDrawIcons(true)
+//        set1.valueTextSize = 15f
+////        set1.scatterShapeHoleRadius = 4f
+//
+//        val set2 = ScatterDataSet(values1, "인슐린")
+//        set2.setColors(Color.rgb(236,32,8))
+//        set2.setValueTextColors(arrayListOf(Color.DKGRAY))
+//        set2.scatterShapeSize = 15f
+//        set2.setDrawValues(true)
+////        set1.setDrawIcons(true)
+//        set2.valueTextSize = 15f
+////        set2.scatterShapeHoleRadius = 4f
+//
+//        d.addDataSet(set1)
+//        d.addDataSet(set2)
+//
+//        return d
+//    }
 
     private fun resetChart() {
         lineChart.xAxis.resetAxisMaximum()
@@ -640,6 +642,13 @@ class GraphActivity : AppCompatActivity(),
 
             val dlg = PopupMessageDialog(this, this)
             dlg.start(getString(R.string.delete_message))
+        }
+
+        textDate.setOnClickListener {
+            if(daysOfMonthMap.isNullOrEmpty() || daysOfMonthMap.size <= 0) return@setOnClickListener
+
+            val dlg = DateListDialog(this, this, daysOfMonthMap)
+            dlg.start()
         }
     }
 
@@ -802,5 +811,45 @@ class GraphActivity : AppCompatActivity(),
 
     override fun OnNegativeClick() {
 
+    }
+
+    override fun onSelected(selectedDay: String) {
+        val temp = selectedDay.substring(0, 7)
+        val ymd = selectedDay.split("-")
+        var monthIndex:Int = 0
+        var dayIndex:Int = 0
+
+        for (month in daysOfMonthMap) {
+            if(!month[0].startsWith(temp)) {
+                monthIndex++
+            }
+
+            if(month[0].startsWith(temp)) {
+               break
+            }
+        }
+
+        for( day in daysOfMonthMap[monthIndex]) {
+            if(!day.startsWith(selectedDay)) {
+                dayIndex++
+            }
+
+            if(day.startsWith(selectedDay)) {
+                break
+            }
+        }
+
+        indexOfMonth = monthIndex
+        indexOfDay = dayIndex
+
+        if(!selectedDay.isNullOrBlank()) {
+            resetChart()
+            textInfo.text = ""
+            setDate(selectedDay)
+            CoroutineScope(Dispatchers.IO).launch {
+                loadGlaucoseData(selectedDay)
+                loadCombinedData(selectedDay)
+            }
+        }
     }
 }

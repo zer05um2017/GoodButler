@@ -1,4 +1,4 @@
-package com.j2d2.petinfo
+package com.j2d2.graph
 
 import android.app.Dialog
 import android.content.Context
@@ -10,26 +10,23 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.j2d2.R
-import com.j2d2.main.AppDatabase
+import com.j2d2.petinfo.OnBreedListClickListener
 import kotlinx.android.synthetic.main.breed_row.view.*
 import kotlinx.android.synthetic.main.popup_breedlist_dialog.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-
-class PopupBreedSelectionDialog(context : Context, private val listenerBreed: OnBreedListClickListener) {
+class DateListDialog (context : Context, private val listener: OnDayClickListener, dateList : ArrayList<ArrayList<String>>) {
     private val dlg = Dialog(context, R.style.AppBaseTheme)   //부모 액티비티의 context 가 들어감
+    private var dateList = dateList
 
     fun start() {
-        val breedLists: MutableList<BreedList> = mutableListOf()
+        val dayList: MutableList<String> = mutableListOf()
         dlg.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dlg.setContentView(R.layout.popup_breedlist_dialog)
         dlg.setCancelable(false)
         dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        val context = dlg.context
-        val appDatabase = AppDatabase.getInstance(context)
+//        val context = dlg.context
+//        val appDatabase = AppDatabase.getInstance(context)
 //        val filename = "breed.txt"
 //        val fileInString: String =
 //            context.applicationContext.assets.open(filename).bufferedReader().use { it.readText() }
@@ -39,10 +36,15 @@ class PopupBreedSelectionDialog(context : Context, private val listenerBreed: On
 //            breedLists.add(BreedList(index, line))
 //        }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val list = appDatabase?.breedDao()?.getBreedList()
-            for(breed in list) {
-                breedLists.add(BreedList(breed.id, breed.name))
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val list = appDatabase?.breedDao()?.getBreedList()
+//            for(breed in list) {
+//                breedLists.add(BreedList(breed.id, breed.name))
+//            }
+//        }
+        for(days in dateList) {
+            for(day in days) {
+                dayList.add(day)
             }
         }
 
@@ -50,7 +52,7 @@ class PopupBreedSelectionDialog(context : Context, private val listenerBreed: On
         layoutManager.reverseLayout = false
         layoutManager.stackFromEnd = false
         dlg.breedRecyclerView.layoutManager = layoutManager
-        dlg.breedRecyclerView.adapter = MyAdapter(dlg.context, breedLists, dlg)
+        dlg.breedRecyclerView.adapter = MyAdapter(dlg.context, dayList, dlg)
         dlg?.setOnKeyListener(object : DialogInterface.OnKeyListener {
             override fun onKey(dialog: DialogInterface?, keyCode: Int, event: KeyEvent?): Boolean {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -68,24 +70,26 @@ class PopupBreedSelectionDialog(context : Context, private val listenerBreed: On
     }
 
     inner class MyAdapter(val context: Context,
-                          private val breedLists: MutableList<BreedList>,
-                          val dialog:Dialog) : RecyclerView.Adapter<MyViewHodler>() {
+                          private val dayList: MutableList<String>,
+                          val dialog: Dialog
+    ) : RecyclerView.Adapter<MyViewHodler>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHodler {
             return MyViewHodler(
 
-                LayoutInflater.from(context).inflate(R.layout.breed_row,
+                LayoutInflater.from(context).inflate(
+                    R.layout.breed_row,
                     parent, false))
         }
 
         override fun getItemCount(): Int {
-            return breedLists.size
+            return dayList.size
         }
 
         override fun onBindViewHolder(holder: MyViewHodler, position: Int) {
-            val item = breedLists[position]
-            holder.textTitle.text = item.breedName
+            val item = dayList[position]
+            holder.textTitle.text = item
             holder.itemView.setOnClickListener {
-                listenerBreed.onSelected(item)
+                listener.onSelected(item)
                 dialog.dismiss()
             }
         }

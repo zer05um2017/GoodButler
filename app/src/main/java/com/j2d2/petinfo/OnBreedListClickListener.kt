@@ -1,5 +1,5 @@
 package com.j2d2.petinfo
 
-interface OnListClickListener {
+interface OnBreedListClickListener {
     fun onSelected(selected: BreedList)
 }

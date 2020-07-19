@@ -11,13 +11,22 @@ import com.j2d2.feeding.FeedingDao
 import com.j2d2.graph.GraphDao
 import com.j2d2.insulin.Insulin
 import com.j2d2.insulin.InsulinDao
+import com.j2d2.pedometer.Pedometer
+import com.j2d2.pedometer.PedometerDao
 import com.j2d2.petinfo.Breed
 import com.j2d2.petinfo.BreedDao
 import com.j2d2.petinfo.Pet
 import com.j2d2.petinfo.PetDao
+import com.j2d2.DatabaseMigrationsExample.Song
 
 //@Database(entities = arrayOf(InsulinDao::class), version = 1)
-@Database(entities = [Insulin::class, Feeding::class, BloodGlucose::class, Breed::class, Pet::class], version = 1, exportSchema = false)
+@Database(entities = [Insulin::class,
+    Feeding::class,
+    BloodGlucose::class,
+    Breed::class,
+    Pet::class,
+    Pedometer::class,
+    Song::class], version = 1, exportSchema = false) // the version has to be changed when you modified the database
 abstract class AppDatabase : RoomDatabase() {
     abstract fun insulinDao(): InsulinDao
     abstract fun feedingDao(): FeedingDao
@@ -25,6 +34,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun graphDao(): GraphDao
     abstract fun petDao(): PetDao
     abstract fun breedDao(): BreedDao
+    abstract fun pedometerDao(): PedometerDao
 
     companion object {
         @Volatile private var INSTANCE: AppDatabase? = null
@@ -38,6 +48,12 @@ abstract class AppDatabase : RoomDatabase() {
             Room.databaseBuilder(context.applicationContext,
                 AppDatabase::class.java, "terry.db")
                 .build()
+
+        /* This is for the code to migrate the database
+        private fun buildDatabase(context: Context) =
+            Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "terry.db")
+            .addMigrations(MIGRATION_1_2).build()
+         */
 
         fun destroyInstance() {
             INSTANCE = null
