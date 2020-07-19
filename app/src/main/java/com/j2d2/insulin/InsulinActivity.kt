@@ -10,7 +10,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
-import com.j2d2.main.AppDatabase
+import com.j2d2.main.database.AppDatabase
 import com.j2d2.main.MainApp
 import com.j2d2.main.SharedPref
 import kotlinx.android.synthetic.main.activity_insulin.*

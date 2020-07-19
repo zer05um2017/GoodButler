@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.j2d2.R
-import com.j2d2.main.AppDatabase
+import com.j2d2.main.database.AppDatabase
 import kotlinx.android.synthetic.main.breed_row.view.*
 import kotlinx.android.synthetic.main.popup_breedlist_dialog.*
 import kotlinx.coroutines.CoroutineScope

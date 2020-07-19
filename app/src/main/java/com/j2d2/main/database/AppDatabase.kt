@@ -1,4 +1,4 @@
-package com.j2d2.main
+package com.j2d2.main.database
 
 import android.content.Context
 import androidx.room.Database
@@ -41,7 +41,11 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): AppDatabase =
             INSTANCE ?: synchronized(this) {
-                INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
+                INSTANCE
+                    ?: buildDatabase(
+                        context
+                    )
+                        .also { INSTANCE = it }
             }
 
         private fun buildDatabase(context: Context) =

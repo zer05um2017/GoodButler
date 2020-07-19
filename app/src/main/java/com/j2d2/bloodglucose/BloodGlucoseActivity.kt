@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
 import com.j2d2.feeding.Feeding
 import com.j2d2.insulin.Insulin
-import com.j2d2.main.AppDatabase
+import com.j2d2.main.database.AppDatabase
 import com.j2d2.main.MainApp
 import kotlinx.android.synthetic.main.activity_blood_glucose.*
 import kotlinx.android.synthetic.main.activity_blood_glucose.editTextDate

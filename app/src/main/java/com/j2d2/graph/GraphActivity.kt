@@ -32,6 +32,7 @@ import com.j2d2.insulin.Insulin
 import com.j2d2.insulin.InsulinActivity
 import com.j2d2.insulin.InsulinParcel
 import com.j2d2.main.*
+import com.j2d2.main.database.AppDatabase
 import kotlinx.android.synthetic.main.activity_graph.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
