@@ -20,23 +20,23 @@ object SharedPref {
         return false
     }
 
-//    @RequiresApi(Build.VERSION_CODES.M)
-@RequiresApi(Build.VERSION_CODES.M)
-fun init(context: Context) {
-        if(isOverMashmellow()) {
-            val sharedEnPreferences: SharedPreferences by lazy {
-                val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
-                val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
+    fun init(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(isOverMashmellow()) {
+                val sharedEnPreferences: SharedPreferences by lazy {
+                    val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
+                    val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
 
-                EncryptedSharedPreferences.create(
-                    PREPERANCE_FILE,
-                    masterKeyAlias,
-                    context,
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-                )
+                    EncryptedSharedPreferences.create(
+                        PREPERANCE_FILE,
+                        masterKeyAlias,
+                        context,
+                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                    )
+                }
+                prefs = sharedEnPreferences
             }
-            prefs = sharedEnPreferences
         } else {
             val sharedPreferences: SharedPreferences by lazy {
                 context.getSharedPreferences(
