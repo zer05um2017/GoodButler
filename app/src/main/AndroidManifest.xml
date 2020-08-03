@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".petinfo.MyPetActivity"></activity>
         <activity
-            android:name=".main.login.LoginActivity"
+            android:name=".main.MainCareActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,17 +22,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".main.MainCareActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+<!--        <activity-->
+<!--            android:name=".main.MainCareActivity"-->
+<!--            android:theme="@style/AppTheme.NoActionBar">-->
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
+<!--            &lt;!&ndash; <intent-filter> &ndash;&gt;-->
+<!--            &lt;!&ndash; <action android:name="android.intent.action.MAIN" /> &ndash;&gt;-->
 
 
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+<!--            &lt;!&ndash; <category android:name="android.intent.category.LAUNCHER" /> &ndash;&gt;-->
+<!--            &lt;!&ndash; </intent-filter> &ndash;&gt;-->
+<!--        </activity>-->
         <activity android:name=".graph.GraphActivity" />
         <activity
             android:name=".insulin.InsulinActivity"

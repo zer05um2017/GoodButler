@@ -35,25 +35,25 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        auth = FirebaseAuth.getInstance()
-        // signInButton
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
-
-        if (auth!!.currentUser != null) {
-            val intent = Intent(application, MainCareActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-        auth = FirebaseAuth.getInstance()
-
-        btnLogin.setOnClickListener {
-            signIn()
-        }
+//        auth = FirebaseAuth.getInstance()
+//        // signInButton
+//        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//            .requestIdToken(getString(R.string.default_web_client_id))
+//            .requestEmail()
+//            .build()
+//        googleSignInClient = GoogleSignIn.getClient(this, gso)
+//
+//        if (auth!!.currentUser != null) {
+//            val intent = Intent(application, MainCareActivity::class.java)
+//            startActivity(intent)
+//            finish()
+//        }
+//
+//        auth = FirebaseAuth.getInstance()
+//
+//        btnLogin.setOnClickListener {
+//            signIn()
+//        }
     }
 
     override fun onStart() {
