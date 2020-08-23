@@ -16,6 +16,7 @@ import com.j2d2.main.MainApp
 import kotlinx.android.synthetic.main.activity_blood_glucose.*
 import kotlinx.android.synthetic.main.activity_blood_glucose.editTextDate
 import kotlinx.android.synthetic.main.activity_blood_glucose.editTextTime
+import kotlinx.android.synthetic.main.activity_feeding.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -41,11 +42,15 @@ class BloodGlucoseActivity : AppCompatActivity() {
         if (intent.hasExtra("data")) {
             isModifyed = true
             var data = intent.getParcelableExtra<BloodGlucoseParcel>("data")
-            parcelData = data
+            if (data != null) {
+                parcelData = data
+            }
             editValue?.setText(data?.bloodSugar.toString())
 
             val calendar = GregorianCalendar.getInstance()
-            calendar.timeInMillis = data.millis
+            if (data != null) {
+                calendar.timeInMillis = data.millis
+            }
             editTextDate.setText("%02d-%02d-%02d".format(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)))
             editTextTime.setText("%02d:%02d".format(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)))
         } else {
@@ -192,6 +197,17 @@ class BloodGlucoseActivity : AppCompatActivity() {
                 Toast.makeText(this@BloodGlucoseActivity, getString(R.string.com_j2d2_bloodglucose_blood_message_input_value), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            if (editValue.text.trim().toString().contains(".")) {
+                Toast.makeText(
+                    this@BloodGlucoseActivity,
+                    getString(R.string.com_j2d2_bloodglucose_blood_message_input_value_wrong),
+                    Toast.LENGTH_SHORT
+                ).show()
+                editValue.requestFocus()
+                return@setOnClickListener
+            }
+
             val modified = this.isModifyed
             CoroutineScope(Dispatchers.IO).launch {
                 if(modified!!) {

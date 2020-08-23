@@ -47,6 +47,12 @@ class SettingActivity : AppCompatActivity() {
             add(
                 BreedList(
                     1,
+                    getString(R.string.guide_title)
+                )
+            )
+            add(
+                BreedList(
+                    2,
                     getString(R.string.com_j2d2_setting_list_license)
                 )
             )
@@ -99,6 +105,17 @@ class SettingActivity : AppCompatActivity() {
                 }
 
                 1-> {
+                    holder.itemView.setOnClickListener {
+                        // 상세화면을 호출할 Intent 를 생성한다.
+                        val intent = Intent(this@SettingActivity, GuideActivity::class.java)
+                        // 선택된 카드의 ID 정보를 intent 에 추가한다.
+                        intent.putExtra("listId", item.breedCode)
+                        // intent 로 상세화면을 시작한다.
+                        startActivity(intent)
+                    }
+                }
+
+                2-> {
                     holder.itemView.setOnClickListener {
                         val dlg = PopupLicenseDialog(this@SettingActivity)
                         dlg.start(getString(R.string.delete_message))

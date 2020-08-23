@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.j2d2.R
@@ -36,21 +37,85 @@ class InsulinActivity : AppCompatActivity() {
         setDataEventListener()
         setDateTimeListener()
 
+        insulinType.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+//                when(position) {
+//                    0 -> {
+//
+//                    }
+//                    1 -> {
+//
+//                    }
+//                    2 -> {
+//
+//                    }
+//                    3 -> {
+//
+//                    }
+//                    4 -> {
+//
+//                    }
+//                    5 -> {
+//
+//                    }
+//                    6 -> {
+//
+//                    }
+//                    7 -> {
+//
+//                    }
+//                    8 -> {
+//
+//                    }
+//                    9 -> {
+//
+//                    }
+//                    10 -> {
+//
+//                    }
+//                }
+//                when (insulinType.getItemAtPosition(position)) {
+//                    "Android Dev Summit" -> {
+//                        updateAndroidSubmit()
+//                    }
+//                    "Android I/O" -> {
+//                        updateGoogleIO()
+//                    }
+//                    else -> {
+//                        updateAndroidSubmit()
+//                    }
+//                }
+            }
+        }
+
         if (intent.hasExtra("data")) {
             isModifyed = true
             var data = intent.getParcelableExtra<InsulinParcel>("data")
-            parcelData = data
+            if (data != null) {
+                parcelData = data
+            }
+            if (data != null) {
+                insulinType.setSelection(data.type)
+            }
             editUndiluted?.setText(data?.undiluted.toString())
 
-            when(data.dilution) {
-                0 -> {chkDilution.isChecked = false}
-                1 -> {chkDilution.isChecked = true}
+            if (data != null) {
+                when(data.dilution) {
+                    0 -> {chkDilution.isChecked = false}
+                    1 -> {chkDilution.isChecked = true}
+                }
             }
             editTotalCapacity?.setText(data?.totalCapacity.toString())
             editRemark?.setText(data?.remark)
 
             val calendar = GregorianCalendar.getInstance()
-            calendar.timeInMillis = data.millis
+            if (data != null) {
+                calendar.timeInMillis = data.millis
+            }
             editTextDate.setText("%02d-%02d-%02d".format(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)))
             editTextTime.setText("%02d:%02d".format(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)))
         } else {
@@ -113,10 +178,21 @@ class InsulinActivity : AppCompatActivity() {
      * 인슐린 타입
      * @since 2020.06.17
      * @author perry912
-     * @return 0:휴물린엔, 1:캐닌슐린
+     * @return
+        휴물린		0
+        캐닌슐린		1
+        노보린		2
+        란투스		3
+        이노렛		4
+        애피드라		5
+        노보래피드	    6
+        레버미어		7
+        휴마로그		8
+        휴마로그믹스	9
+        노보믹스		10
      */
     private fun getInsulinType(): Int {
-        return if (rdoHumulinN.isChecked) 0 else 1
+        return insulinType.selectedItemPosition
     }
 
     /**
@@ -164,12 +240,23 @@ class InsulinActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            if (editTotalCapacity.text.trim().toString().contains(".")) {
+                Toast.makeText(
+                    this@InsulinActivity,
+                    getString(R.string.com_j2d2_insulin_ins_message_total_insulin_type_wrong),
+                    Toast.LENGTH_SHORT
+                ).show()
+                editTotalCapacity.requestFocus()
+                return@setOnClickListener
+            }
+
             if (editTotalCapacity.text.trim().isEmpty()) {
                 Toast.makeText(
                     this@InsulinActivity,
                     getString(R.string.com_j2d2_insulin_ins_message_total_insulin_capacity),
                     Toast.LENGTH_SHORT
                 ).show()
+                editTotalCapacity.requestFocus()
                 return@setOnClickListener
             }
             val modified = this.isModifyed
@@ -227,7 +314,44 @@ class InsulinActivity : AppCompatActivity() {
                         ?: return@launch
                 for (ins: Insulin in insulins) {
                     println("date : ${ins.millis.toString()}")
-                    println("type : ${if (ins.type == 0) "휴물린엔" else "캐닌슐린"}")
+                    println("type : ${when (ins.type) {
+                        0 -> {
+                            "휴물린엔"
+                        }
+                        1 -> {
+                            "캐닌슐린"
+                        }
+                        2 -> {
+                            "노보린"
+                        }
+                        3 -> {
+                            "란투스"
+                        }
+                        4 -> {
+                            "이노렛"
+                        }
+                        5 -> {
+                            "애피드라"
+                        }
+                        6 -> {
+                            "노보래피드"
+                        }
+                        7 -> {
+                            "레버미어"
+                        }
+                        8 -> {
+                            "휴마로그"
+                        }
+                        9 -> {
+                            "휴마로그믹스"
+                        }
+                        10 -> {
+                            "노보믹스"
+                        }
+                        else -> {
+                            "기타"
+                        }
+                    }}")
                     println("undt : ${ins.undiluted.toString()}")
                     println("dilt : ${if (ins.dilution == 1) "희석" else "희석X"}")
                     println("volm : ${ins.totalCapacity.toString()}")
@@ -273,17 +397,18 @@ class InsulinActivity : AppCompatActivity() {
     private fun getLatestInputDataFromPreference() {
         with(SharedPref.prefs) {
             if(contains(R.string.com_j2d2_insulin_ins_type.toString())) {
-                if (getInt(R.string.com_j2d2_insulin_ins_type.toString(), 0) == 0) {
-                    rdoHumulinN!!.post {
-                        rdoHumulinN!!.isChecked = true
-                        rdoHumulinN!!.jumpDrawablesToCurrentState()
-                    }
-                } else {
-                    rdoCaninsulin!!.post {
-                        rdoCaninsulin!!.isChecked = true
-                        rdoCaninsulin!!.jumpDrawablesToCurrentState()
-                    }
-                }
+                insulinType.setSelection(getInt(R.string.com_j2d2_insulin_ins_type.toString(), 0))
+//                if (getInt(R.string.com_j2d2_insulin_ins_type.toString(), 0) == 0) {
+//                    rdoHumulinN!!.post {
+//                        rdoHumulinN!!.isChecked = true
+//                        rdoHumulinN!!.jumpDrawablesToCurrentState()
+//                    }
+//                } else {
+//                    rdoCaninsulin!!.post {
+//                        rdoCaninsulin!!.isChecked = true
+//                        rdoCaninsulin!!.jumpDrawablesToCurrentState()
+//                    }
+//                }
             }
 
             if(contains(R.string.com_j2d2_insulin_ins_dilution.toString())) {

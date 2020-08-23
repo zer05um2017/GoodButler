@@ -14,6 +14,7 @@
     <string name="com.j2d2.insulin.ins_memo">ins_memo</string>
     <string name="com.j2d2.insulin.ins_message.undiluted_capacity">원액 용량을 입력하세요.</string>
     <string name="com.j2d2.insulin.ins_message.total_insulin_capacity">인슐린 주사량을 입력하세요.</string>
+    <string name="com.j2d2.insulin.ins_message.total_insulin_type_wrong">소숫점 주사량은 입력이 안됩니다.</string>
     <string name="com.j2d2.insulin.ins_message.input_complete">입력이 완료 되었습니다.</string>
 
     <!-- Feeding Activity -->
@@ -24,12 +25,14 @@
     <string name="com.j2d2.feeding.feed_memo">feed_memo</string>
     <string name="com.j2d2.feeding.feed_message.brand">사료 브랜드명을 입력하세요.</string>
     <string name="com.j2d2.feeding.feed_message.amount">급여량을 입력하세요.</string>
+    <string name="com.j2d2.feeding.feed_message.amount_wrong">소숫점 급여량은 입력이 안됩니다.</string>
     <string name="com.j2d2.feeding.feed_message.input_complete">입력이 완료 되었습니다.</string>
 
     <!-- BloodGlucoseAcitivity -->
     <string name="com.j2d2.bloodglucose.title">혈당</string>
     <string name="com.j2d2.bloodglucose.blood_message.input_complete">입력이 완료 되었습니다.</string>
     <string name="com.j2d2.bloodglucose.blood_message.input_value">혈당값을 입력하세요.</string>
+    <string name="com.j2d2.bloodglucose.blood_message.input_value_wrong">소숫점 혈당값은 입력할 수 업습니다.</string>
 
     <!-- PedometerActivity -->
     <string name="com.j2d2.pedometer.title">산책</string>
@@ -65,5 +68,60 @@
     <!-- General -->
     <string name="delete_message">삭제하시겠습니까?</string>
     <string name="delete_alert_message">그래프에서 삭제할 데이터를 선택하세요.</string>
+    <string name="title_activity_guide">GuideActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <!-- GuideAcitivty -->
+    <string name="guide_title">채혈 방법</string>
+    <string name="guide_contents">
+        <b>혈당 검사</b>\n
+지극히 개인적인 경험을 바탕으로 설명드립니다.\n
+체혈 부위가 발바닥, 꼬리, 귀 등 여러군데가 있지만 강아지 귀가 체혈하기 가장 쉬운 것 같습니다.\n
+혼자서는 쉽지 않아 두명을 기준으로 설명드립니다. 그리고 작은 강아지 기준입니다.\n
+\n\n
+        <b>체혈전 준비</b>\n
+우선 강아지 귀 안쪽의 잔털을 전기면도기로 밀어줍니다.\n
+(일반 날 면도기는 아무래도 다칠 위험이 있습니다.)\n
+이렇게 하는 이유는 체혈 시 털이 있는경우 털의 방향에 따라 혈액이 스며들면서 길게 피가 번집니다.\n
+그러면 혈당 측정검사지에 혈액이 충분히 흡수되지 않아 오류가 발생합니다.\n
+\n\n
+        <b>체혈 방법</b>\n
+1. 한분이 강아지를 안습니다. 한손으로 고개를 고정시킵니다. 강아지가 입질이 있다면 용접용 장갑 사용을 추천드립니다.(일반적으로 고개가 왼쪽이나 오른쪽으로 가도록 안지요.)\n
+2. 체혈하시는 분은 손을 깨끗이 씻고 손바닥을 말립니다.\n
+3. 양손바닥을 맞대고 빠르게 비벼서 열이 나도록 합니다.\n
+4. 충분히 열이 나면 강아지 한쪽귀를 양손 바닥 사이에 두고 밀착시킵니다.\n
+5. 힘을 줘서 손바닥을 서로 밀착시켰다가 힘을뺐다가를 반복합니다.(아프지 않도록 너무 세게 밀착하지 않아야합니다.)\n
+충분히 30회 정도 1초에 한번씩 밀착을 하면 귀 안쪽 면이 충혈이 됩니다.\n
+6. 처음에는 알콜솜 끝부분으로 체혈 부위를 살짝 살짝 닿게 해서 놀라지 않게합니다.\n
+그리고는 알콜솜으로 귀 안쪽면을 충분히 넓게 소독을 합니다.\n
+7. 체혈침 깊이 조절을 3으로 합니다. (VetMate 혈당측정기를 기준으로 설명드겠습니다.)\n
+가장 덜 고통스럽고 적당한 혈액양을 추출하기에 좋은 듯합니다.(상황에따라 조절하세요.)\n
+8. 체혈 할 부위의 귀 바깥면을 손가락으로 받치고 귀 안쪽에 체혈침으로 체혈을 합니다.\n
+손가락을 받치는 이유는 침이 조절한 만큼 깊게 박혀야 하기 때문입니다.\n
+9. 귀가 충분히 충혈된 경우 혈액이 잘 나오지만 그렇지 않은경우 손가락으로 체혈 부위 주변을 눌러서 짜야합니다.\n
+너무 세게 누르지 않도록합니다. 체혈양은 깨알 크기 정도의 양이면 적당합니다.\n
+10. 이제 검사지를 측정기에 꽂고 체혈 준비가 됐다고 화면에 나오면 측정기를 비스듬히 뉘여서 혈액에 가져다 댑니다.\n
+혈액이 검사지로 쑥 흡수가 됩니다.\n
+\n
+        <b>인슐린 주사</b>\n
+병원에서 주사 방법을 충분히 전달받으셨을 텐데요.\n
+해당 지시사항을 따른다면 문제는 없을 겁니다.\n
+다만 약병에서 주사기로 인슐린을 뽑을 때 기포가 주사기 안으로 들어갑니다.\n
+보통 두가지 경우가 발생합니다.\n
+\n\n
+1. 기포가 주사기 안의 고무쪽에 붙어있는경우\n
+ : 이 경우는 처방 주사량 보다 조금 더 늘려서(대략 기포량 만큼) 뽑고 강아지에게 주사 시 더 뽑은만큼 주사를 덜 하면됩니다.\n
+   그러니까 주사눈금의 한칸을 더 뽑았다면 마지막 한칸 만큼 덜 주사하는겁니다.\n
+\n
+2. 기포가 윗쪽(주사바늘쪽)에 있는경우\n
+ : 주사량을 조금 늘려 뽑고난 뒤 주사기를 위 아래로 조절하면서 기포를 위로 몰아주고 처방 주사량 눈금에 맞춰 주사기를 눌러  줍니다. 인슐린이 밖으로 나오니 조심스럽게 안전한 장소에서 합니다.
+    </string>
 
 </resources>

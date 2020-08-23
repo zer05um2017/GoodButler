@@ -733,7 +733,44 @@ class GraphActivity : AppCompatActivity(),
                                 "시간 : %02d시%02d분\n종류 : %s\n원액양 : %1.1f iu\n주사량 : %d iu\n희석 : %s\n비고 : %s".format(
                                     calendar.get(Calendar.HOUR_OF_DAY),
                                     calendar.get(Calendar.MINUTE),
-                                    if (data.type == 0) "휴물린엔" else "캐닌슐린",
+                                    when (data.type) {
+                                        0 -> {
+                                            "휴물린엔"
+                                        }
+                                        1 -> {
+                                            "캐닌슐린"
+                                        }
+                                        2 -> {
+                                            "노보린"
+                                        }
+                                        3 -> {
+                                            "란투스"
+                                        }
+                                        4 -> {
+                                            "이노렛"
+                                        }
+                                        5 -> {
+                                            "애피드라"
+                                        }
+                                        6 -> {
+                                            "노보래피드"
+                                        }
+                                        7 -> {
+                                            "레버미어"
+                                        }
+                                        8 -> {
+                                            "휴마로그"
+                                        }
+                                        9 -> {
+                                            "휴마로그믹스"
+                                        }
+                                        10 -> {
+                                            "노보믹스"
+                                        }
+                                        else -> {
+                                            "기타"
+                                        }
+                                    },
                                     data.undiluted,
                                     data.totalCapacity,
                                     if (data.dilution == 1) "Yes" else "No",

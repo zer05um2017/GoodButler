@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="inaulin_type">
+        <item>휴물린</item>
+        <item>캐닌슐린</item>
+        <item>노보린</item>
+        <item>란투스</item>
+        <item>이노렛</item>
+        <item>애피드라</item>
+        <item>노보래피드</item>
+        <item>레버미어</item>
+        <item>휴마로그</item>
+        <item>휴마로그믹스</item>
+        <item>노보믹스</item>
+    </string-array>
+</resources>

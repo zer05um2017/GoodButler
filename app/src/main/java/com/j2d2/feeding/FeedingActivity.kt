@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_feeding.btnSave
 import kotlinx.android.synthetic.main.activity_feeding.editRemark
 import kotlinx.android.synthetic.main.activity_feeding.editTextDate
 import kotlinx.android.synthetic.main.activity_feeding.editTextTime
+import kotlinx.android.synthetic.main.activity_insulin.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -41,7 +42,9 @@ class FeedingActivity : AppCompatActivity() {
         if (intent.hasExtra("data")) {
             isModifyed = true
             var data = intent.getParcelableExtra<FeedParcel>("data")
-            parcelData = data
+            if (data != null) {
+                parcelData = data
+            }
             editBrand?.setText(data?.brandName)
             editRemark?.setText(data?.remark)
             editAmount?.setText(data?.totalCapacity.toString())
@@ -51,7 +54,9 @@ class FeedingActivity : AppCompatActivity() {
             }
 
             val calendar = GregorianCalendar.getInstance()
-            calendar.timeInMillis = data.millis
+            if (data != null) {
+                calendar.timeInMillis = data.millis
+            }
             editTextDate.setText("%02d-%02d-%02d".format(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)))
             editTextTime.setText("%02d:%02d".format(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)))
         } else {
@@ -76,6 +81,16 @@ class FeedingActivity : AppCompatActivity() {
 
             if (editAmount.text.trim().isEmpty()) {
                 Toast.makeText(this@FeedingActivity, getString(R.string.com_j2d2_feeding_feed_message_amount), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (editAmount.text.trim().toString().contains(".")) {
+                Toast.makeText(
+                    this@FeedingActivity,
+                    getString(R.string.com_j2d2_feeding_feed_message_amount_wrong),
+                    Toast.LENGTH_SHORT
+                ).show()
+                editAmount.requestFocus()
                 return@setOnClickListener
             }
 
